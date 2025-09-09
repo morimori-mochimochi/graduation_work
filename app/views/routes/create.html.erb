@@ -11,14 +11,28 @@
   <button id="stopNaviBtn">ナビ終了</button>
 
   <div id="map"></div>
-  
-  <%= render 'shared/map' %>
-  <%= render 'shared/maps_ready' %>
-  <%= render 'shared/set_marker' %>
-  <%= render 'shared/search_box' %>
-  <%= render 'shared/geocode_address' %>
-  <%= render 'shared/search_parking' %>
-  <%= render 'shared/current_position' %>
-  <%= render 'shared/route' %>
-  <%= render 'shared/navigation' %>
+  <script type="module">
+    import "maps_ready";
+    import { initMap } from "map";
+    import "set_marker";
+    import { highlightMarker } from "search_box";
+    import "geocode_address";
+    import "search_parking";
+    import "current_position";
+    import "route";
+    import "navigation";
+
+    document.addEventListener("DOMContentLoaded", async() => {
+      // map要素が存在するかチェック
+      const mapDiv = document.getElementById("map");
+      if (!mapDiv) {
+        console.warn("mapDivが存在しません");
+        return;
+      }
+
+      await window.mapAPILoaded;
+      initMap(mapDiv);
+    });
+
+  </script>
 </body>

@@ -1,4 +1,4 @@
-import barba from "https://cdn.jsdelivr.net/npm/@barba/core/dist/barba.min.mjs";
+import barba from "@barba/core";
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");

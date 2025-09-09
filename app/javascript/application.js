@@ -1,7 +1,10 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
-import Splide from "https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.esm.min.js";
+import Splide from "@splidejs/splide";
+import barba from "@barba/core";
 
-document.addEventListener('DOMContentLoaded', function(){
+// 初期化
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // splide初期化
   const el = document.querySelector('#splide');
   if (el) {
     new Splide(el, {
@@ -13,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function(){
       pagination: true
     }).mount();
   }
+
+  // barba.js初期化
+  barba.init ({
+    transitions: [
+      {
+        enter({ next }) {
+        },
+      },
+    ],
+  });
 });
 
-import './barba'
