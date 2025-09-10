@@ -1,3 +1,5 @@
+console.log("set_marker module loaded");
+
 export async function initMarkerEvents() {
   console.log("マーカーイベントが発火しました");
 

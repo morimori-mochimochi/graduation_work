@@ -14,21 +14,23 @@
   <script type="module">
     import "maps_ready";
     import { initMap } from "map";
+    import { initMarkerEvents } from "set_marker";
+    import { highlightMarker } from "search_box";
+    import "geocode_address";
+    import { searchParking } from "search_parking";
+    import "current_position";
+    import "walk_route";
+    import "navigation";
 
     document.addEventListener("DOMContentLoaded", () => {
       const mapDiv = document.getElementById("map");
       if (mapDiv && !mapDiv.dataset.mapInitialized) {
         initMap(mapDiv);
         mapDiv.dataset.mapInitialized = "true";
+        initMarkerEvents();
+        highlightMarker();
+        searchParking();
       }
     });
-
-    import "set_marker";
-    import { highlightMarker } from "search_box";
-    import "geocode_address";
-    import "search_parking";
-    import "current_position";
-    import "walk_route";
-    import "navigation";
   </script>
 </body>

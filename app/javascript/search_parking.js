@@ -1,4 +1,4 @@
-async function searchParking(){
+export async function searchParking(){
   // #set_markerで保存してある"最後においたマーカーの座標"
   const center = window.searchCenter;
   console.log("マーカーを取得しました");

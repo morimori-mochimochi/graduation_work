@@ -1,5 +1,8 @@
 import * as barbaModule from "@barba/core";
 import { initMap } from "map";
+import { initMarkerEvents } from "set_marker";
+import { highlightMarker} from "search_box";
+import { searchParking } from "search_parking";
 
 const barba = barbaModule.default;
 
@@ -51,6 +54,28 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Barba遷移後にinitMapを呼び出します");
             window.initMap(mapDiv);
             mapDiv.dataset.mapInitialized = "true";
+
+            // マーカー関連イベントを初期化
+            console.log("Barba遷移後: initMarkerEvents 型:", typeof initMarkerEvents);
+            try {
+              initMarkerEvents();
+            } catch (e) {
+              console.error("Barba遷移後: initMarkerEvents 実行失敗", e);
+            }
+
+            console.log("Barba遷移後: highlightMarker 型:", typeof highlightMarker);
+            try {
+              highlightMarker();
+            } catch (e) {
+              console.error("Barba遷移後: highlightMarker 実行失敗", e);
+            }
+
+            console.log("Barba遷移後: searchParking 型:", typeof searchParking);
+            try {
+              searchParking();
+            } catch (e) {
+              console.error("Barba遷移後: searchParking 実行失敗", e);
+            }
           }
         }
       }
