@@ -39,8 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         afterEnter({ next }) {
-          if (next.container.querySelector('#map')) {
-            window.initMap();
+          // ページにmapが含まれる時initMapを呼ぶ
+          const mapDiv = next.container.querySelector('#map');
+          if (mapDiv && window.initMap) {
+            console.log("Barba遷移後にinitMapを呼び出します");
+            window.initMap(mapDiv);
           }
         }
       }

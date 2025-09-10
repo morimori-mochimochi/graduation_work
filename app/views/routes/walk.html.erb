@@ -21,18 +21,5 @@
     import "current_position";
     import "walk_route";
     import "navigation";
-
-    document.addEventListener("DOMContentLoaded", async() => {
-      // map要素が存在するかチェック
-      const mapDiv = document.getElementById("map");
-      if (!mapDiv) {
-        console.warn("mapDivが存在しません");
-        return;
-      }
-
-      await window.mapAPILoaded;
-      initMap(mapDiv);
-    });
-
   </script>
 </body>
