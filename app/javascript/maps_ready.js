@@ -1,16 +1,33 @@
 window.mapApiLoaded = new Promise((resolve) => {
   if (window.google && window.google.maps) {
-    resolve(); // #APIが読み込まれている時はすぐに解決
-  } else {
-    const originalInitMap = window.initMap;  // #元のinitMap関数を保存(上書きしても元の処理が消えないように)
-    window.initMap = () => {
-      console.log("initMapがオリジナルに上書きされました");
-      // #typeofは指定した値のデータ型を調べ、文字列で返す
-      if (typeof originalInitMap === 'function') {
-        originalInitMap();
-      }
-      resolve();
-    };
+    resolve();
+    return; // #APIが読み込まれている時はすぐに解決
+  } 
+   
+  // Google Maps APIの<script>を探す
+  const script = document.querySelector(
+    'script[src*="https://maps.googleapis.com/maps/api/js"]'
+  );
+
+  if (!script) {
+    reject(new Error("Google Maps API script not found"));
+    return;
   }
+
+  // scriptの読み込み完了イベントを監視
+  script.addEventListener("load", () => {
+    //読み込んでもgoogle.mapsがなければエラー
+    if (window.google && window.google.maps) {
+      console.log("Google Maps API fully loaded");
+      resolve();
+    } else {
+      reject(new Error("Google Maps API loaded but google.map is missing"));
+    }
+  });
+  // 読み込みエラーをキャッチ
+  script.addEventListener("error", () => {
+    reject(new Error("Faild to load Google Maps API script"));
+  });
 });
+
 window.mapApiLoaded.then(() => console.log("mapsReadyがresolve"));

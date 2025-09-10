@@ -13,11 +13,11 @@
   </head>
 
   <body>
-    <%= render 'shared/component/barba_wrapper' do %>
-      <%= yield %>
-    <% end %>
     <script async defer 
       src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&libraries=places,marker,geometry">
     </script>
+    <%= render 'shared/component/barba_wrapper' do %>
+      <%= yield %>
+    <% end %>
   </body>
 </html>
