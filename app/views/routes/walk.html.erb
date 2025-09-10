@@ -14,6 +14,15 @@
   <script type="module">
     import "maps_ready";
     import { initMap } from "map";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const mapDiv = document.getElementById("map");
+      if (mapDiv && !mapDiv.dataset.mapInitialized) {
+        initMap(mapDiv);
+        mapDiv.dataset.mapInitialized = "true";
+      }
+    });
+
     import "set_marker";
     import { highlightMarker } from "search_box";
     import "geocode_address";

@@ -1,4 +1,5 @@
 import * as barbaModule from "@barba/core";
+import { initMap } from "map";
 
 const barba = barbaModule.default;
 
@@ -39,11 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         afterEnter({ next }) {
+          console.log("afterEnterが呼ばれました", next.container);
+
           // ページにmapが含まれる時initMapを呼ぶ
           const mapDiv = next.container.querySelector('#map');
-          if (mapDiv && window.initMap) {
+          console.log("Google Maps API:", window.google && window.google.maps);
+          console.log("window.initMap:", window.initMap);
+
+          if (mapDiv && !mapDiv.dataset.mapInitialized) {
             console.log("Barba遷移後にinitMapを呼び出します");
             window.initMap(mapDiv);
+            mapDiv.dataset.mapInitialized = "true";
           }
         }
       }
