@@ -1,7 +1,12 @@
-import barba from "@barba/core";
+import * as barbaModule from "@barba/core";
+
+const barba = barbaModule.default;
+
+console.log(barba);
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");
+
   barba.init({
     transitions: [
       {

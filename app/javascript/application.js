@@ -1,5 +1,5 @@
 import Splide from "@splidejs/splide";
-import barba from "@barba/core";
+import "./barba";
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,15 +16,5 @@ document.addEventListener('DOMContentLoaded', () => {
       pagination: true
     }).mount();
   }
-
-  // barba.js初期化
-  barba.init ({
-    transitions: [
-      {
-        enter({ next }) {
-        },
-      },
-    ],
-  });
 });
 
