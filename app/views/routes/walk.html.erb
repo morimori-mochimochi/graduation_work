@@ -19,7 +19,7 @@
     import "geocode_address";
     import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
-    import "walk_route";
+    import { drawRoute } from "walk_route";
     import "navigation";
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -31,6 +31,7 @@
         highlightMarker();
         searchParking();
         getCurrentPosition();
+        drawRoute();
       }
     });
   </script>
