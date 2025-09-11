@@ -6,7 +6,7 @@ let watchId;
 // #stepIndexはDirectionsResult内の経路をどのステップまで進んだか管理する番号
 let stepIndex = 0;
 
-function startNavigation() {
+export function startNavigation() {
   if (!window.directionsResult) {
     alert("ルートが設定されていません");
     return;
@@ -71,16 +71,20 @@ function stopNavigation() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const naviBtn = document.getElementById("naviBtn");
+const naviBtn = document.getElementById("naviBtn");
+
+if (naviBtn) {
   naviBtn.addEventListener("click", () => {
     startNavigation();
   });
-    
-  const stopNaviBtn = document.getElementById("stopNaviBtn");
-  if (stopNaviBtn) {
-    stopNaviBtn.addEventListener("click", () => {
-      stopNavigation();
-    });
-  }
-});
+}
+
+const stopNaviBtn = document.getElementById("stopNaviBtn");
+
+if (stopNaviBtn) {
+  stopNaviBtn.addEventListener("click", () => {
+    stopNavigation();
+    console.log("ナビを終了しました");
+  });
+}
+

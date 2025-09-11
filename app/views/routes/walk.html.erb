@@ -20,7 +20,7 @@
     import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
     import { drawRoute } from "walk_route";
-    import "navigation";
+    import { startNavigation } from "navigation";
 
     document.addEventListener("DOMContentLoaded", () => {
       const mapDiv = document.getElementById("map");
@@ -31,7 +31,6 @@
         highlightMarker();
         searchParking();
         getCurrentPosition();
-        drawRoute();
       }
     });
   </script>
