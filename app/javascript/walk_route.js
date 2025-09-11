@@ -50,11 +50,13 @@ export async function walkDrawRoute(){
   )
 };
 
-const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
+export function walkRouteBtn() {
+  const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
 
-if (walkDrawRouteBtn) {
-  walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
-}else{
-  console.warn("walkDrawRouteボタンが存在しません");
+  if (walkDrawRouteBtn) {
+    walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
+  }else{
+    console.warn("walkDrawRouteボタンが存在しません");
+  }
+  console.log("walkDrawRouteBtn: ", walkDrawRouteBtn);
 }
-console.log("walkDrawRouteBtn: ", walkDrawRouteBtn);

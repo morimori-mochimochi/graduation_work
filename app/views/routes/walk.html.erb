@@ -21,7 +21,8 @@
     import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
-    import { startNavigation } from "navigation";
+    import { walkRouteBtn } from "walk_route";
+    import { naviBtn } from "navigation";
 
     document.addEventListener("DOMContentLoaded", () => {
       const mapDiv = document.getElementById("map");
@@ -33,6 +34,8 @@
         highlightMarker();
         searchParking();
         getCurrentPosition();
+        walkRouteBtn();
+        naviBtn();
       }
     });
   </script>

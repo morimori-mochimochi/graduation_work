@@ -7,7 +7,8 @@ import { searchParking } from "search_parking";
 import { getCurrentPosition } from "current_position";
 import { walkDrawRoute } from "walk_route";
 import { carDrawRoute } from "car_route";
-import { startNavigation } from "navigation";
+import { naviBtn } from "navigation";
+import { walkRouteBtn } from "walk_route";
 
 const barba = barbaModule.default;
 
@@ -59,17 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Barba遷移後にinitMapを呼び出します");
             window.initMap(mapDiv);
             mapDiv.dataset.mapInitialized = "true";
-
-            // マーカー関連イベントを初期化
-            console.log("Barba遷移後: initMarkerEvents 型:", typeof initMarkerEvents);
-            try {
-              initMarkerEvents();
-            } catch (e) {
-              console.error("Barba遷移後: initMarkerEvents 実行失敗", e);
-            }
-
-            console.log("initSearchBoxが初期化");
+            initMarkerEvents();
             initSearchBox();
+            searchParking();
+            getCurrentPosition();
+            walkRouteBtn();
+            naviBtn();
           }
         }
       }

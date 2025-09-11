@@ -77,20 +77,21 @@ function stopNavigation() {
   }
 }
 
-const naviBtn = document.getElementById("naviBtn");
+export function naviBtn() {
+  const naviBtn = document.getElementById("naviBtn");
 
-if (naviBtn) {
-  naviBtn.addEventListener("click", () => {
-    startNavigation();
-  });
+  if (naviBtn) {
+    naviBtn.addEventListener("click", () => {
+      startNavigation();
+    });
+  }
+
+  const stopNaviBtn = document.getElementById("stopNaviBtn");
+
+  if (stopNaviBtn) {
+    stopNaviBtn.addEventListener("click", () => {
+      stopNavigation();
+      console.log("ナビを終了しました");
+    });
+  }
 }
-
-const stopNaviBtn = document.getElementById("stopNaviBtn");
-
-if (stopNaviBtn) {
-  stopNaviBtn.addEventListener("click", () => {
-    stopNavigation();
-    console.log("ナビを終了しました");
-  });
-}
-
