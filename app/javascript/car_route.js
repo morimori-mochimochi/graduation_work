@@ -50,12 +50,11 @@ async function drawRoute(){
   )
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  const drawRouteBtn = document.getElementById("drawRoute");
-  if (drawRouteBtn) {
-    drawRouteBtn.addEventListener("click", drawRoute);
-  }else{
-    console.warn("drawRouteボタンが存在しません");
-  }
-  console.log("drawRouteBtn: ", drawRouteBtn);
-});
+const drawRouteBtn = document.getElementById("drawRoute");
+
+if (drawRouteBtn) {
+  drawRouteBtn.addEventListener("click", drawRoute);
+}else{
+  console.warn("drawRouteボタンが存在しません");
+}
+console.log("drawRouteBtn: ", drawRouteBtn);
