@@ -1,7 +1,23 @@
-import barba from "https://cdn.jsdelivr.net/npm/@barba/core/dist/barba.min.mjs";
+import * as barbaModule from "@barba/core";
+import { initMap } from "map";
+import { initMarkerEvents } from "set_marker";
+import { highlightMarker} from "search_box";
+import { initSearchBox } from "search_box";
+import { searchParking } from "search_parking";
+import { getCurrentPosition } from "current_position";
+import { walkDrawRoute } from "walk_route";
+import { carDrawRoute } from "car_route";
+import { naviBtn } from "navigation";
+import { walkRouteBtn } from "walk_route";
+import { carRouteBtn } from "car_route";
+
+const barba = barbaModule.default;
+
+console.log(barba);
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");
+
   barba.init({
     transitions: [
       {
@@ -34,8 +50,24 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         afterEnter({ next }) {
-          if (next.container.querySelector('#map')) {
-            window.initMap();
+          console.log("afterEnterが呼ばれました", next.container);
+
+          // ページにmapが含まれる時initMapを呼ぶ
+          const mapDiv = next.container.querySelector('#map');
+          console.log("Google Maps API:", window.google && window.google.maps);
+          console.log("window.initMap:", window.initMap);
+
+          if (mapDiv && !mapDiv.dataset.mapInitialized) {
+            console.log("Barba遷移後にinitMapを呼び出します");
+            window.initMap(mapDiv);
+            mapDiv.dataset.mapInitialized = "true";
+            initMarkerEvents();
+            initSearchBox();
+            searchParking();
+            getCurrentPosition();
+            walkRouteBtn();
+            carRouteBtn();
+            naviBtn();
           }
         }
       }

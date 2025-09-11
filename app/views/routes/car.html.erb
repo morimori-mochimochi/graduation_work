@@ -1,23 +1,42 @@
-<h1>目的地の選択</h1>
-<input type="text" id="address" placeholder="住所や施設名を入力">
-<button id="searchBtn">検索</button>
+<body>
+  <h1>目的地の選択</h1>
+  <input type="text" id="address" placeholder="住所や施設名を入力">
+  <button id="searchBtn">検索</button>
 
-<button id="drawRoute">ルート検索</button>
+  <button id="carDrawRoute">ルート検索</button>
 
-<button id="searchNearby">周辺の駐車場を探す</button>
+  <button id="searchNearby">周辺の駐車場を探す</button>
 
-<button id="naviBtn">ナビ開始</button>
-<button id="stopNaviBtn">ナビ終了</button>
+  <button id="naviBtn">ナビ開始</button>
+  <button id="stopNaviBtn">ナビ終了</button>
 
-<div id="map"></div>
-<div id="resultContainer" style="max-height:200px; overflow-y:auto; border:1px solid #ccc; margin-top:10px;"></div>
+  <div id="map"></div>
+  <script type="module">
+    import "maps_ready";
+    import { initMap } from "map";
+    import { initMarkerEvents } from "set_marker";
+    import { highlightMarker } from "search_box";
+    import { initSearchBox } from "search_box";
+    import "geocode_address";
+    import { searchParking } from "search_parking";
+    import { getCurrentPosition } from "current_position";
+    import { carDrawRoute } from "car_route";
+    import { carRouteBtn } from "car_route";
+    import { naviBtn } from "navigation";
 
-<%= render 'shared/map' %>
-<%= render 'shared/maps_ready' %>
-<%= render 'shared/set_marker' %>
-<%= render 'shared/search_box' %>
-<%= render 'shared/geocode_address' %>
-<%= render 'shared/search_parking' %>
-<%= render 'shared/current_position' %>
-<%= render 'shared/route' %>
-<%= render 'shared/navigation' %>
+    document.addEventListener("DOMContentLoaded", () => {
+      const mapDiv = document.getElementById("map");
+      if (mapDiv && !mapDiv.dataset.mapInitialized) {
+        initMap(mapDiv);
+        mapDiv.dataset.mapInitialized = "true";
+        initMarkerEvents();
+        initSearchBox();
+        highlightMarker();
+        searchParking();
+        getCurrentPosition();
+        carRouteBtn();
+        naviBtn();
+      }
+    });
+  </script>
+</body>
