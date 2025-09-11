@@ -18,7 +18,7 @@
     import { highlightMarker } from "search_box";
     import "geocode_address";
     import { searchParking } from "search_parking";
-    import "current_position";
+    import { getCurrentPosition } from "current_position";
     import "walk_route";
     import "navigation";
 
@@ -30,6 +30,7 @@
         initMarkerEvents();
         highlightMarker();
         searchParking();
+        getCurrentPosition();
       }
     });
   </script>

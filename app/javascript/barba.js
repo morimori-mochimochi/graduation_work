@@ -3,6 +3,7 @@ import { initMap } from "map";
 import { initMarkerEvents } from "set_marker";
 import { highlightMarker} from "search_box";
 import { searchParking } from "search_parking";
+import { getCurrentPosition } from "current_position";
 
 const barba = barbaModule.default;
 
@@ -75,6 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
               searchParking();
             } catch (e) {
               console.error("Barba遷移後: searchParking 実行失敗", e);
+            }
+
+            console.log("Barba遷移後: getCurrentPosition 型:", typeof getCurrentPosition);
+            try {
+              getCurrentPosition();
+            } catch (e) {
+              console.error("Barba遷移後: getCurrentPosition 実行失敗", e);
             }
           }
         }
