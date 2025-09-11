@@ -9,6 +9,7 @@ import { walkDrawRoute } from "walk_route";
 import { carDrawRoute } from "car_route";
 import { naviBtn } from "navigation";
 import { walkRouteBtn } from "walk_route";
+import { carRouteBtn } from "car_route";
 
 const barba = barbaModule.default;
 
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             searchParking();
             getCurrentPosition();
             walkRouteBtn();
+            carRouteBtn();
             naviBtn();
           }
         }

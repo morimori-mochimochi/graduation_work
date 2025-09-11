@@ -50,11 +50,13 @@ export async function carDrawRoute(){
   )
 };
 
-const carDrawRouteBtn = document.getElementById("carDrawRoute");
+export function carRouteBtn() {
+  const carDrawRouteBtn = document.getElementById("carDrawRoute");
 
-if (carDrawRouteBtn) {
-  carDrawRouteBtn.addEventListener("click", carDrawRoute);
-}else{
+  if (carDrawRouteBtn) {
+    carDrawRouteBtn.addEventListener("click", carDrawRoute);
+  }else{
   console.warn("carDrawRouteボタンが存在しません");
+  }
+  console.log("carDrawRouteBtn: ", carDrawRouteBtn);
 }
-console.log("carDrawRouteBtn: ", carDrawRouteBtn);
