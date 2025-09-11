@@ -1,7 +1,7 @@
 console.log("current_positionの読み込みが完了しました");
 
-export async function drawRoute(){
-  console.log("drawRoute開始")
+export async function walkDrawRoute(){
+  console.log("walkDrawRoute開始")
   await window.mapApiLoaded;
 
   const currentPos = await new Promise ((resolve) => {
@@ -50,11 +50,11 @@ export async function drawRoute(){
   )
 };
 
-const drawRouteBtn = document.getElementById("drawRoute");
+const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
 
-if (drawRouteBtn) {
-  drawRouteBtn.addEventListener("click", drawRoute);
+if (walkDrawRouteBtn) {
+  walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
 }else{
-  console.warn("drawRouteボタンが存在しません");
+  console.warn("walkDrawRouteボタンが存在しません");
 }
-console.log("drawRouteBtn: ", drawRouteBtn);
+console.log("walkDrawRouteBtn: ", walkDrawRouteBtn);

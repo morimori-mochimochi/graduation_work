@@ -2,9 +2,11 @@ import * as barbaModule from "@barba/core";
 import { initMap } from "map";
 import { initMarkerEvents } from "set_marker";
 import { highlightMarker} from "search_box";
+import { initSearchBox } from "search_box";
 import { searchParking } from "search_parking";
 import { getCurrentPosition } from "current_position";
-import { drawRoute } from "walk_route";
+import { walkDrawRoute } from "walk_route";
+import { carDrawRoute } from "car_route";
 import { startNavigation } from "navigation";
 
 const barba = barbaModule.default;
@@ -65,6 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (e) {
               console.error("Barba遷移後: initMarkerEvents 実行失敗", e);
             }
+
+            console.log("initSearchBoxが初期化");
+            initSearchBox();
           }
         }
       }

@@ -3,7 +3,7 @@
   <input type="text" id="address" placeholder="住所や施設名を入力">
   <button id="searchBtn">検索</button>
 
-  <button id="drawRoute">ルート検索</button>
+  <button id="carDrawRoute">ルート検索</button>
 
   <button id="searchNearby">周辺の駐車場を探す</button>
 
@@ -16,10 +16,11 @@
     import { initMap } from "map";
     import { initMarkerEvents } from "set_marker";
     import { highlightMarker } from "search_box";
+    import { initSearchBox } from "search_box";
     import "geocode_address";
     import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
-    import { drawRoute } from "car_route";
+    import { carDrawRoute } from "car_route";
     import { startNavigation } from "navigation";
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -28,6 +29,7 @@
         initMap(mapDiv);
         mapDiv.dataset.mapInitialized = "true";
         initMarkerEvents();
+        initSearchBox();
         highlightMarker();
         searchParking();
         getCurrentPosition();

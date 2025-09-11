@@ -161,7 +161,7 @@ async function searchExactPlace(query) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+export function initSearchBox() {
   const btn = document.getElementById("searchBtn");
   const input = document.getElementById("address");
   console.log("検索ボタンアクションが呼ばれました");
@@ -176,4 +176,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-});
+}
