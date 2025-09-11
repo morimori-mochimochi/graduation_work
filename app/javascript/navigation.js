@@ -69,6 +69,12 @@ function stopNavigation() {
     navigator.geolocation.clearWatch(watchId);
     watchId = null;
   }
+
+  // 現在地マーカーを消す
+  if (currentMarker) {
+    currentMarker.setMap(null);
+    currentMarker = null;
+  }
 }
 
 const naviBtn = document.getElementById("naviBtn");
