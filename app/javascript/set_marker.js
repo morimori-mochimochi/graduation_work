@@ -59,11 +59,34 @@ export async function initMarkerEvents() {
             },
             (places, pStatus) => {
               if (pStatus === "OK" && places.length > 0) {
-                const placeName = places[0].name;
-                content = `<div><strong>${placeName}</strong><br>${results[0].formatted_address}</div>`;
+                const place = places[0];
+                let content = `
+                  <div>
+                    <strong>${place.name}</strong><br>
+                    ${results[0].formatted_address}<br>
+                    <button id="setStart">ここを出発地に設定</button>
+                    <button id="setDestination">ここを目的地に設定</button> 
+                  </div>
+                `;
+              
+                infoWindow.setContent(content);
+                infoWindow.open(map, selectedMarker);
+
+                // InfoWindowがDOMに描画された後にイベントを登録
+                google.maps.event.addListenerOnce(infoWindow, "domready", () => {
+                  document.getElementById("setStart").addEventListener("click", () => {
+                    console.log("出発地に設定: ", event.latLng.toString());
+                    window.routeStart = event.latLng; //グローバルに保存
+                  });
+                  document.getElementById("setDestination").addEventListener("click", () => {
+                    console.log("到着地に設定: ", event.latLng.toString());
+                    window.routeDestination = event.latLng; //グローバルに保存
+                  });
+                });
+              }else{
+                infoWindow.setContent(content);
+                infoWindow.open(map, selectedMarker);
               }
-              infoWindow.setContent(content);
-              infoWindow.open(map, selectedMarker);
             }
           )
         }

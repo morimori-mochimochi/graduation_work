@@ -1,4 +1,3 @@
-
 // クリックしたマーカーが大きくなる
 export function highlightMarker(marker, duration = 1500) {
   if (!marker) return;
@@ -13,6 +12,11 @@ export function highlightMarker(marker, duration = 1500) {
         newIcon.scaledSize.height * 1.5
       );
     }
+    if (window.markers && window.markers.length > 0){
+      window.markers.forEach(m => m.setMap(null));
+    }
+    window.markers = [];
+    window.markers.push(marker);
     marker.setIcon(newIcon);
   }
   marker.setAnimation(google.maps.Animation.BOUNCE);
