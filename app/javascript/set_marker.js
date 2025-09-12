@@ -20,6 +20,9 @@ export async function initMarkerEvents() {
 
   // #マーカーが無い、という初期状態を作る
   let selectedMarker = null;
+  const infoWindow = new google.maps.InfoWindow();
+  const geocoder = new google.maps.Geocoder();
+  const placesService = new google.maps.places.PlacesService(map); 
 
   // #マップクリックでマーカー配置
   google.maps.event.addListener(window.map, "click", (event) => {
@@ -28,6 +31,7 @@ export async function initMarkerEvents() {
   // #既存のマーカーを削除
     if (selectedMarker) {
       selectedMarker.setMap(null);
+      infoWindow.close();
     }
 
   // #新しいマーカーを配置
@@ -39,5 +43,28 @@ export async function initMarkerEvents() {
     
   // #検索用に座標を保存
     window.searchCenter = event.latLng;
+
+  // 逆ジオコーディングで住所取得
+    geocoder.geocode({ location: event.latLng}, (results, status) => {
+      if (status === "OK" && results[0]) {
+        let content = `<div><strong>住所: </strong> ${results[0].formatted_address}</div>`;
+
+        // 近隣の施設名を検索
+        placesService.nearbySearch(
+          {
+            location: event.latLng,
+            radius: 50, //半径50m以内
+          },
+          (places, pStatus) => {
+            if (pStatus === "OK" && places.length > 0) {
+              const placeName = places[0].name;
+              content = `<div><strong>${placeName}</strong><br>${results[0].formatted_address}</div>`;
+            }
+            infoWindow.setContent(content);
+            infoWindow.open(map, selectedMarker);
+          }
+        );
+      }
+    });
   });
 };
