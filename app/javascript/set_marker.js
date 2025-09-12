@@ -59,29 +59,13 @@ export async function initMarkerEvents() {
             },
             (places, pStatus) => {
               if (pStatus === "OK" && places.length > 0) {
-                const placeId = places[0].place_id;
-
-                //place_idから詳細情報を取得
-                placesService.getDetails(
-                  {
-                    placeId: placeId,
-                    fields: ["name", "formatted_address", "types"], //必要な情報だけ取得
-                  },
-                  (place, dStatus) => {
-                    if (dStatus === "OK" && place) {
-                      content = `<div><strong>${place.name}</strong><br>${place.formatted_address}</div>`;
-                    }
-                    infoWindow.setContent(content);
-                    infoWindow.open(map, selectedMarker);
-                  }
-                );
-              } else {
-                // 周辺に施設が見つからなかったとき
-                infoWindow.setContent(content);
-                infoWindow.open(map, selectedMarker);
+                const placeName = places[0].name;
+                content = `<div><strong>${placeName}</strong><br>${results[0].formatted_address}</div>`;
               }
+              infoWindow.setContent(content);
+              infoWindow.open(map, selectedMarker);
             }
-          );
+          )
         }
       });
     }
