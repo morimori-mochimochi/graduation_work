@@ -15,9 +15,6 @@ export async function initMarkerEvents() {
     return;
   }
 
-  console.log("addListener前のmapの型:", window.map.constructor.name);
-  console.log("addListenerの有無: ", typeof window.map.addListener);
-
   // #マーカーが無い、という初期状態を作る
   let selectedMarker = null;
   const infoWindow = new google.maps.InfoWindow();
@@ -77,10 +74,21 @@ export async function initMarkerEvents() {
                   document.getElementById("setStart").addEventListener("click", () => {
                     console.log("出発地に設定: ", event.latLng.toString());
                     window.routeStart = event.latLng; //グローバルに保存
+
+                    const startBtn = document.getElementById("startpoint");
+                    if (startBtn) {
+                      startBtn.textContent = place.name || results[0].formatted_address;
+                    }
                   });
+                  
                   document.getElementById("setDestination").addEventListener("click", () => {
                     console.log("到着地に設定: ", event.latLng.toString());
                     window.routeDestination = event.latLng; //グローバルに保存
+
+                    const destinationBtn = document.getElementById("destinationPoint");
+                    if (destinationBtn) {
+                      destinationBtn.textContent = place.name || results[0].formatted_address;
+                    }
                   });
                 });
               }else{
