@@ -77,17 +77,17 @@ export async function initMarkerEvents() {
 
                     const startBtn = document.getElementById("startpoint");
                     if (startBtn) {
-                      startBtn.textContent = place.name || results[0].formatted_address;
+                      startBtn.textContent = results[0].formatted_address;  
                     }
                   });
-                  
+
                   document.getElementById("setDestination").addEventListener("click", () => {
                     console.log("到着地に設定: ", event.latLng.toString());
                     window.routeDestination = event.latLng; //グローバルに保存
 
                     const destinationBtn = document.getElementById("destinationPoint");
                     if (destinationBtn) {
-                      destinationBtn.textContent = place.name || results[0].formatted_address;
+                      destinationBtn.textContent = results[0].formatted_address;
                     }
                   });
                 });
