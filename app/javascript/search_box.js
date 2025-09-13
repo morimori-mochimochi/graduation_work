@@ -32,7 +32,6 @@ export function highlightMarker(marker, duration = 1500) {
     content: infoContent
   });
   infoWindow.open(marker.getMap(), marker);
-  console.log("InfoWindowをopenしました:", facilityName, facilityAddress);
   window.activeInfoWindow = infoWindow;
 
   //ボタンクリックベントを設定
@@ -119,6 +118,9 @@ async function searchExactPlace(query) {
       position: place.location,
       map: map,
       title: place.displayName,
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      }
     });
     window.markers.push(marker);
   });
