@@ -33,8 +33,8 @@ export async function carDrawRoute(){
 
   directionsService.route(
     {
-      origin: currentPos,
-      destination: "小倉駅",
+      origin: window.routeStart || currentPos,
+      destination: routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.DRIVING
     },
