@@ -2,6 +2,7 @@
 
 pin "application"
 pin "@barba/core", to: "https://cdn.jsdelivr.net/npm/@barba/core@2.9.7/dist/barba.mjs"
+pin "barba", to: "barba.js"
 pin "@splidejs/splide", to: "https://ga.jspm.io/npm:@splidejs/splide@4.1.4/dist/js/splide.min.js"
 
 pin "maps_ready", to: "maps_ready.js"

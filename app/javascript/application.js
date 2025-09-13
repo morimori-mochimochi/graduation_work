@@ -1,5 +1,5 @@
 import Splide from "@splidejs/splide";
-import "./barba";
+import "barba";
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
