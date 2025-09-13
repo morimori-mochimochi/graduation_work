@@ -23,7 +23,7 @@ export async function searchParking(){
         const request = {
           textQuery: "parking",
           locationBias: { lat: center.lat(), lng: center.lng() },
-          fields: ["location"]
+          fields: ["location", "displayName", "formattedAddress"]
         };
      
         const result = await Place.searchByText(request);
@@ -34,7 +34,7 @@ export async function searchParking(){
         }
         // #複数返ってくるので、一件ずつマーカー表示
         result.places.forEach(place => {
-          new google.maps.marker.AdvancedMarkerElement({
+          const marker = new google.maps.marker.AdvancedMarkerElement({
             map: window.map,
             position: place.location,
             content: (() => {
@@ -53,6 +53,28 @@ export async function searchParking(){
               `;
               return div;
             })()
+          });
+
+          // infoWindowを表示する処理
+          marker.addListener("click", () => {
+            if (window.activeInfoWindow) {
+              window.activeInfoWindow.close();
+            }
+
+            const infoWindow = new google.maps.InfoWindow({
+              content: `
+                <div style="min-width:200px">
+                  <div style="font-size:0.95em;color:#555;">
+                    ${place.formattedAddress || "住所情報なし"}
+                  </div>
+                  <button id="setParking" style="marin-right:8px;">ここに駐車する</button>
+                </div>
+              `
+            });
+            console.log("place.displayName: ", place.displayName);
+
+            infoWindow.open(window.map, marker);
+            window.activeInfoWindow = infoWindow;
           });
         });
 
