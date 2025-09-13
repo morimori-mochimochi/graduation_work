@@ -1,26 +1,80 @@
-
 // クリックしたマーカーが大きくなる
 export function highlightMarker(marker, duration = 1500) {
   if (!marker) return;
+  // 施設の名前を取り出す
+  let facilityName = marker.getTitle ? marker.getTitle() : "";
+  // 施設の住所を取り出す
+  let facilityAddress = marker.placeResult && marker.placeResult.formattedAddress
+    ? marker.placeResult.formattedAddress
+    : (marker.formattedAddress || "");
 
-  const originalIcon = marker.getIcon ? marker.getIcon() : null;
+  console.log("施設名、住所を取り出しました");
+    
+  // フォールバック: データの種類が足りない時に備えて代替フィールドを順に探す
+  if (!facilityAddress && marker.address) facilityAddress = marker.address;
+  if (!facilityAddress && marker.label) facilityAddress = marker.label;
 
-  if (originalIcon) {
-    const newIcon = { ...originalIcon };
-    if (newIcon.scaledSize) {
-      newIcon.scaledSize = new google.maps.Size(
-        newIcon.scaledSize.width * 1.5,
-        newIcon.scaledSize.height * 1.5
-      );
-    }
-    marker.setIcon(newIcon);
+  // InfoWindowの内容ボタン
+  const infoContent = `
+    <div style = "min-width:200px";>
+      <div style="font-weight:bold;font-size:1.1em;margin-bottom:4px;">${facilityName}</div>
+      <div style="font-size:0.95em;margin-bottom:8px;color:#555;">${facilityAddress}</div>
+      <button id="setStr" style="marin-right:8px;">ここを出発地に設定</button>
+      <button id="setDest">ここを到着地に設定</button>
+    </div>
+  `;
+  // 既存のInfoWindowを閉じる
+  if (window.activeInfoWindow) {
+    window.activeInfoWindow.close();
   }
+
+  const infoWindow = new google.maps.InfoWindow({
+    content: infoContent
+  });
+  infoWindow.open(marker.getMap(), marker);
+  console.log("InfoWindowをopenしました:", facilityName, facilityAddress);
+  window.activeInfoWindow = infoWindow;
+
+  //ボタンクリックベントを設定
+  google.maps.event.addListenerOnce(infoWindow, "domready", function() {
+    console.log("setStr:", document.getElementById("setStr"));
+    console.log("setDest:", document.getElementById("setDest"));
+
+    const start_btn = document.getElementById("setStr");
+    const destination_btn = document.getElementById("setDest");
+    
+    if (start_btn) {
+      start_btn.addEventListener("click", function() {
+        window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
+
+        const uiStart = document.getElementById("startPoint"); 
+        if (uiStart) {
+          console.log("出発地UIを更新します:", uiStart);
+          uiStart.textContent = facilityName || "選択した場所";
+        }
+      });
+    }
+
+    console.log("出発地ボタンにイベント登録しました", start_btn);
+
+    if (destination_btn) {
+      destination_btn.addEventListener("click", function() {
+        window.routeDestination = marker.getPosition ? marker.getPosition() : marker.position;
+
+        const uiDest = document.getElementById("destinationPoint");
+        if (uiDest) {
+          console.log("目的地UIを更新します:", uiDest);
+          uiDest.textContent = facilityName || "選択した場所";
+        }
+      });
+    }
+
+    console.log("目的地ボタンにイベント登録しました", destination_btn);
+  });
+  
   marker.setAnimation(google.maps.Animation.BOUNCE);
 
   setTimeout(() => {
-    if (originalIcon) {
-      marker.setIcon(originalIcon);
-    }
     marker.setAnimation(null);
   }, duration);
 }
@@ -40,7 +94,6 @@ async function searchExactPlace(query) {
 
   const result = await Place.searchByText(request);
   console.log(result);
-  console.log("検索が実行されました");
 
   // #結果が一件もなければ終了
   if (!result.places || result.places.length === 0) {
@@ -54,8 +107,6 @@ async function searchExactPlace(query) {
     const distB = google.maps.geometry.spherical.computeDistanceBetween(center, b.location);
     return distA - distB;
   });
-
-  console.log("検索結果の並べ替えを行いました");
     
   // 既存のマーカーを削除
   if (window.markers && window.markers.length > 0) {
@@ -89,8 +140,6 @@ async function searchExactPlace(query) {
     container.innerHTML = ""; //前回の結果をクリア
   }
 
-  console.log("検索結果をリストで表示しました");
-
   // forEachはJSの繰り返し処理。マーカーとリストを対応付けてリストのHTMLを作る。
   sortedPlaces.forEach((place, index) => {
     const marker = window.markers[index];
@@ -117,15 +166,11 @@ async function searchExactPlace(query) {
     item.style.borderBottom = "1px solid #eee";
     item.style.padding = "5px";
     item.style.cursor = "pointer";
-
-    console.log("div要素を作りました");
       
     // 施設名
     const name = document.createElement("h4");
     name.textContent = place.displayName;
     name.style.margin = "0 0 3px 0";
-
-    console.log("h4要素を作りました");
 
     // 住所
     const address = document.createElement("p");
@@ -133,7 +178,6 @@ async function searchExactPlace(query) {
     address.style.margin = "0 0 3px 0";
     address.style.fontSize = "0.9em";
     address.style.color = "#555";
-    console.log("p要素を作りました");
 
     // 画像
     let img;
@@ -142,8 +186,6 @@ async function searchExactPlace(query) {
       img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
       img.style.display = "block";
       img.style.marginBottom = "3px";
-
-      console.log("画像を挿入しました");
     }
 
     item.appendChild(name);
@@ -151,12 +193,11 @@ async function searchExactPlace(query) {
     item.appendChild(address);
     container.appendChild(item);
 
-    console.log("HTMLを挿入しました");
-
     //クリックでマップを移動
     item.addEventListener("click", () => {
       map.panTo(place.location);
       highlightMarker(markers[index]);
+      console.log("highlightMarkerが呼ばれた");
     });
   });
 }

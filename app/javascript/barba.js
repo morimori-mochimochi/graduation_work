@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             walkRouteBtn();
             carRouteBtn();
             naviBtn();
+            console.log("highlightMarkerの型:", highlightMarker);
           }
         }
       }
