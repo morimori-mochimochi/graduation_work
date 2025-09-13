@@ -32,7 +32,6 @@ export function highlightMarker(marker, duration = 1500) {
     content: infoContent
   });
   infoWindow.open(marker.getMap(), marker);
-  console.log("InfoWindowをopenしました:", facilityName, facilityAddress);
   window.activeInfoWindow = infoWindow;
 
   //ボタンクリックベントを設定
