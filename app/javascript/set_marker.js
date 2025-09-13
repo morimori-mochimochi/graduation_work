@@ -75,7 +75,7 @@ export async function initMarkerEvents() {
                     console.log("出発地に設定: ", event.latLng.toString());
                     window.routeStart = event.latLng; //グローバルに保存
 
-                    const startBtn = document.getElementById("startpoint");
+                    const startBtn = document.getElementById("startPoint");
                     if (startBtn) {
                       startBtn.textContent = results[0].formatted_address;  
                     }

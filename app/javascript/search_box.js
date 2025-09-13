@@ -16,11 +16,11 @@ export function highlightMarker(marker, duration = 1500) {
 
   // InfoWindowの内容ボタン
   const infoContent = `
-    <div style = "min-width:200px;>
+    <div style = "min-width:200px";>
       <div style="font-weight:bold;font-size:1.1em;margin-bottom:4px;">${facilityName}</div>
       <div style="font-size:0.95em;margin-bottom:8px;color:#555;">${facilityAddress}</div>
-      <button id="setStart" style="marin-right:8px;">ここを出発地に設定</button>
-      <button id="setDestination">ここを到着地に設定</button>
+      <button id="setStr" style="marin-right:8px;">ここを出発地に設定</button>
+      <button id="setDest">ここを到着地に設定</button>
     </div>
   `;
   // 既存のInfoWindowを閉じる
@@ -37,19 +37,39 @@ export function highlightMarker(marker, duration = 1500) {
 
   //ボタンクリックベントを設定
   google.maps.event.addListenerOnce(infoWindow, "domready", function() {
-    const startBtn = document.getElementById("setStart");
-    const destinationBtn = document.getElementById("setDestination");
-    if (startBtn) {
-      startBtn.addEventListener("click", function() {
+    console.log("setStr:", document.getElementById("setStr"));
+    console.log("setDest:", document.getElementById("setDest"));
+
+    const start_btn = document.getElementById("setStr");
+    const destination_btn = document.getElementById("setDest");
+    
+    if (start_btn) {
+      start_btn.addEventListener("click", function() {
         window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
+
+        const uiStart = document.getElementById("startPoint"); 
+        if (uiStart) {
+          console.log("出発地UIを更新します:", uiStart);
+          uiStart.textContent = facilityName || "選択した場所";
+        }
       });
     }
 
-    if (destinationBtn) {
-      destinationBtn.addEventListener("click", function() {
+    console.log("出発地ボタンにイベント登録しました", start_btn);
+
+    if (destination_btn) {
+      destination_btn.addEventListener("click", function() {
         window.routeDestination = marker.getPosition ? marker.getPosition() : marker.position;
+
+        const uiDest = document.getElementById("destinationPoint");
+        if (uiDest) {
+          console.log("目的地UIを更新します:", uiDest);
+          uiDest.textContent = facilityName || "選択した場所";
+        }
       });
     }
+
+    console.log("目的地ボタンにイベント登録しました", destination_btn);
   });
   
   marker.setAnimation(google.maps.Animation.BOUNCE);
