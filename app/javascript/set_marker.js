@@ -79,6 +79,7 @@ export async function initMarkerEvents() {
                     if (startBtn) {
                       startBtn.textContent = results[0].formatted_address;  
                     }
+                    infoWindow.close();
                   });
 
                   document.getElementById("setDestination").addEventListener("click", () => {
