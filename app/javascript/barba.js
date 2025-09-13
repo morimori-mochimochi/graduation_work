@@ -1,4 +1,4 @@
-import * as barbaModule from "@barba/core";
+import barba from "@barba/core";
 import { initMap } from "map";
 import { initMarkerEvents } from "set_marker";
 import { highlightMarker} from "search_box";
@@ -10,10 +10,6 @@ import { carDrawRoute } from "car_route";
 import { naviBtn } from "navigation";
 import { walkRouteBtn } from "walk_route";
 import { carRouteBtn } from "car_route";
-
-const barba = barbaModule.default;
-
-console.log(barba);
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");
