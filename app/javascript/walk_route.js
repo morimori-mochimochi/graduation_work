@@ -1,12 +1,8 @@
-console.log("current_positionの読み込みが完了しました");
-
 export async function walkDrawRoute(){
-  console.log("walkDrawRoute開始")
   await window.mapApiLoaded;
 
   const currentPos = await new Promise ((resolve) => {
     if (window.currentPos) {
-    console.log("現在地の取得が完了しました", window.currentPos);
       resolve(window.currentPos);
     } else {
       const check = setInterval(() => {
@@ -17,7 +13,6 @@ export async function walkDrawRoute(){
         }
       }, 200);
     }
-    console.log("現在地の取得が完了しました");
   });
 
   // #DirectionsAPIで使うオブジェクトの生成
@@ -28,8 +23,6 @@ export async function walkDrawRoute(){
   const directionsRenderer = new google.maps.DirectionsRenderer();
   // #どのマップにルートを描画するかを指定
   directionsRenderer.setMap(window.map);
-
-  console.log("ルート描画の準備ができました");
 
   directionsService.route(
     {
