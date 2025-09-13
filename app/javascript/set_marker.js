@@ -65,7 +65,7 @@ export async function initMarkerEvents() {
                     <button id="setDestination">ここを目的地に設定</button> 
                   </div>
                 `;
-              
+
                 infoWindow.setContent(content);
                 infoWindow.open(map, selectedMarker);
 
@@ -79,6 +79,7 @@ export async function initMarkerEvents() {
                     if (startBtn) {
                       startBtn.textContent = results[0].formatted_address;  
                     }
+                    infoWindow.close();
                   });
 
                   document.getElementById("setDestination").addEventListener("click", () => {
@@ -89,6 +90,7 @@ export async function initMarkerEvents() {
                     if (destinationBtn) {
                       destinationBtn.textContent = results[0].formatted_address;
                     }
+                    infoWindow.close();
                   });
                 });
               }else{
