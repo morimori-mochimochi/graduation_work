@@ -74,26 +74,27 @@ export async function searchParking(){
 
             infoWindow.open(window.map, marker);
             window.activeInfoWindow = infoWindow;
-          });
-        });
 
-        google.maps.event.addListenerOnce(infoWindow, "domready", function() {
-          const parkingBtn = document.getElementById("setParking");
+            google.maps.event.addListenerOnce(infoWindow, "domready", () => {
+              const parkingBtn = document.getElementById("setParking");
 
-          if (parkingBtn) {
-            parkingBtn.addEventListener("click", function() {
-              //選択した駐車場の位置保存
-              window.routeParking = place.location;
+              if (parkingBtn) {
+                parkingBtn.addEventListener("click", () => {
+                  //選択した駐車場の位置保存
+                  window.routeParking = place.location;
 
-              //UI更新
-              const parkingPointBtn = document.getElementById("parkingPoint");
-              if (parkingPointBtn) {
-                parkingPointBtn.textContent = place.formattedAddress || "駐車場";
+                  //UI更新
+                  const routeParkingBtn = document.getElementById("routeParking");
+                  if (routeParkingBtn) {
+                    routeParkingBtn.textContent = place.formattedAddress || "駐車場";
+                    routeParkingBtn.style.display = "inline-block";
+                  }
+                  infoWindow.close();
+                });
               }
             });
-          }
-        })
-
+          });
+        });
          // #マップを最初の駐車場に合わせてパン
         // #panToとは地図の中心をゆっくりと滑らせながら移動させるメソッド
         window.map.panTo(result.places[0].location);

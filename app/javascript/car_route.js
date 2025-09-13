@@ -35,6 +35,7 @@ export async function carDrawRoute(){
     {
       origin: window.routeStart || currentPos,
       destination: routeDestination,
+      waypoints: window.routeParking ? [{ location: window.routeParking }]: [],
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.DRIVING
     },
