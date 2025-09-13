@@ -119,6 +119,9 @@ async function searchExactPlace(query) {
       position: place.location,
       map: map,
       title: place.displayName,
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      }
     });
     window.markers.push(marker);
   });

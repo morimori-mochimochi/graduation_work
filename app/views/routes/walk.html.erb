@@ -5,8 +5,6 @@
 
   <button id="walkDrawRoute">ルート検索</button>
 
-  <button id="searchNearby">周辺の駐車場を探す</button>
-
   <button id="naviBtn">ナビ開始</button>
   <button id="stopNaviBtn">ナビ終了</button>
 
@@ -24,7 +22,6 @@
     import { highlightMarker } from "search_box";
     import { initSearchBox } from "search_box";
     import "geocode_address";
-    import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
     import { walkRouteBtn } from "walk_route";
@@ -38,7 +35,6 @@
         initMarkerEvents();
         initSearchBox();
         highlightMarker();
-        searchParking();
         getCurrentPosition();
         walkRouteBtn();
         naviBtn();
