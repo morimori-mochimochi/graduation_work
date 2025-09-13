@@ -20,7 +20,7 @@ export function highlightMarker(marker, duration = 1500) {
       <div style="font-weight:bold;font-size:1.1em;margin-bottom:4px;">${facilityName}</div>
       <div style="font-size:0.95em;margin-bottom:8px;color:#555;">${facilityAddress}</div>
       <button id="setStr" style="marin-right:8px;">ここを出発地に設定</button>
-      <button id="setDest">ここを到着地に設定</button>
+      <button id="setDest">ここを目的地に設定</button>
     </div>
   `;
   // 既存のInfoWindowを閉じる

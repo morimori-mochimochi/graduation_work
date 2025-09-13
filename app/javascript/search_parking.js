@@ -6,11 +6,11 @@ export async function searchParking(){
 
   if (btn) {
     btn.addEventListener("click", async() => {
-      const center = window.searchCenter;
+      const center = window.routeDestination;
       console.log("マーカーを取得しました");
         
       if (!center){
-        alert("マーカーを設置してください");
+        alert("目的地を設定してください");
         return;
       }
 

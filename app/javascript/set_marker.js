@@ -82,7 +82,7 @@ export async function initMarkerEvents() {
                   });
 
                   document.getElementById("setDestination").addEventListener("click", () => {
-                    console.log("到着地に設定: ", event.latLng.toString());
+                    console.log("目的地に設定: ", event.latLng.toString());
                     window.routeDestination = event.latLng; //グローバルに保存
 
                     const destinationBtn = document.getElementById("destinationPoint");
