@@ -51,6 +51,7 @@ export function highlightMarker(marker, duration = 1500) {
           console.log("出発地UIを更新します:", uiStart);
           uiStart.textContent = facilityName || "選択した場所";
         }
+        infoWindow.close();
       });
     }
 
@@ -65,6 +66,7 @@ export function highlightMarker(marker, duration = 1500) {
           console.log("目的地UIを更新します:", uiDest);
           uiDest.textContent = facilityName || "選択した場所";
         }
+        infoWindow.close();
       });
     }
 
