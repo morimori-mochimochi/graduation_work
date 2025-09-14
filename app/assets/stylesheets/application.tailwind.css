@@ -8,6 +8,7 @@
 @import "./components/slider.css"; 
 @import "./components/map.css";
 @import "./components/logo.css";
+@import "./components/character.css";
 /* @import "./pages/top.css"; */
 
 body {
