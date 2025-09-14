@@ -1,3 +1,10 @@
-<h1>どうやって移動しますか？</h1>
-  <%= link_to "徒歩", walk_routes_path, class: "btn btn-primary" %>
-  <%= link_to "車", car_routes_path, class: "btn btn-primary" %>
+<link href='https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap' rel="stylesheet">
+<h1 class="cute-title">どのように移動しますか?</h1>
+<div class="how_to_go">
+  <%= link_to walk_routes_path do %>
+    <%= image_tag "walk_logo.png", alt: "walk_logo" %>
+  <% end %>
+  <%= link_to car_routes_path do %>
+    <%= image_tag "car_logo.png", alt: "car_logo"%>
+  <% end %>
+</div>

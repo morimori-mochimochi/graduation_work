@@ -1,0 +1,14 @@
+.cute-title {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 1.5rem;
+  color: #624007;
+
+  text-align: center; /* 横中央 */
+  margin-top: 2rem; /* 上余白 */
+  margin-bottom: 2rem; /* 下余白 */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 45vh;
+}
