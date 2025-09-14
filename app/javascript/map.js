@@ -1,5 +1,5 @@
-// 地図生成後に「読み込み完了」を通知するためにinitMapをラップ
-// Google Maps API callback. ここでマップを生成しmapsreadyを解決
+await window.mapApiLoaded;
+
 export function initMap(mapDiv) {
   const gmap = new google.maps.Map(mapDiv, {
     center: { lat: 35.6812, lng: 139.7671 },
