@@ -1,4 +1,5 @@
 import barba from "@barba/core";
+import Splide from "@splidejs/splide";
 import { initMap } from "map";
 import { initMarkerEvents } from "set_marker";
 import { highlightMarker} from "search_box";
@@ -48,8 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
         afterEnter({ next }) {
           console.log("afterEnterが呼ばれました", next.container);
 
+          const el = next.container.querySelector('#splide');
+          if (el) {
+            new Splide(el, {
+              type: 'loop',
+              autoplay: true,
+              interval: 3000,
+              pauseOnHover: true,
+              arrows: true,
+              pagination: true
+            }).mount();
+          }
+          console.log("afterEnter Splideが呼ばれました");
+
           // ページにmapが含まれる時initMapを呼ぶ
           const mapDiv = next.container.querySelector('#map');
+          console.log("mapDiv:", mapDiv); 
+
           console.log("Google Maps API:", window.google && window.google.maps);
           console.log("window.initMap:", window.initMap);
 
