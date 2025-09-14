@@ -7,11 +7,8 @@ export function initMap(mapDiv) {
     mapId: "56e6f7b7602076fe1ca74db5"
   });
 
-  console.log("gmapの型: ",gmap.constructor.name);
-
   // callbackとして参照されるようにグローバルへ登録
   window.map = gmap;
-  console.log("window.map完了: ", window.map);
 }
 
 // Google Maps APIがcallback=initMapしたときに参照できるように

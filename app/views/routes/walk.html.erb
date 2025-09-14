@@ -35,6 +35,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       const mapDiv = document.getElementById("map");
+
       if (mapDiv && !mapDiv.dataset.mapInitialized) {
         initMap(mapDiv);
         mapDiv.dataset.mapInitialized = "true";
