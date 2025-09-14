@@ -1,4 +1,3 @@
-
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号

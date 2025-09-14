@@ -5,8 +5,11 @@
 
   <button id="walkDrawRoute">ルート検索</button>
 
-  <button id="naviBtn">ナビ開始</button>
-  <button id="stopNaviBtn">ナビ終了</button>
+  <div class="navi_btn">
+    <%= link_to navigation_routes_path do %>
+      <%= image_tag "startNavi.png", alt: "startNavi" %>
+    <% end %>
+  </div>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>
@@ -14,9 +17,9 @@
     <button id="destinationPoint">目的地</button>
   </div>
 
-  <div class="flex flex-col items-center mt-20 space-y-6">
+  <div class="load_top">
     <%= link_to root_path do %>
-      <%= image_tag "load_top.png", alt: "load_top",  class: "load_top" %>
+      <%= image_tag "load_top.png", alt: "load_top"%>
     <% end %>
   </div>
 
@@ -30,8 +33,7 @@
     import "geocode_address";
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
-    import { walkRouteBtn } from "walk_route";
-    import { naviBtn } from "navigation";
+    import { walkRouteBtn } from "walk_route";  
 
     await window.mapApiLoaded;
 
@@ -46,7 +48,6 @@
         highlightMarker();
         getCurrentPosition();
         walkRouteBtn();
-        naviBtn();
       }
     });
   </script>
