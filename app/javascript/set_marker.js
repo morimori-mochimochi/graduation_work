@@ -24,7 +24,7 @@ export async function initMarkerEvents() {
   // #マップクリックでマーカー配置
   google.maps.event.addListener(window.map, "click", (event) => {
     // Googleマップの既存POIマーカークリックかどうか判定
-    console.log("このマーカーがクリックされました:", marker);
+    console.log("このマーカーがクリックされました:", selectedMarker);
     
     if (!event.placeId) {
       console.log("マーカーが置かれました");
