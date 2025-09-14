@@ -1,3 +1,9 @@
 <h1>どうやって移動しますか？</h1>
-  <%= link_to "徒歩", walk_routes_path, class: "btn btn-primary" %>
-  <%= link_to "車", car_routes_path, class: "btn btn-primary" %>
+<div class="flex flex-col items-center mt-20 space-y-6">
+  <%= link_to walk_routes_path do %>
+    <%= image_tag "walk_logo.png", alt: "walk_logo", class: "top_button" %>
+  <% end %>
+  <%= link_to car_routes_path do %>
+    <%= image_tag "car_logo.png", alt: "car_logo", class: "top_button" %>
+  <% end %>
+</div>
