@@ -27,7 +27,7 @@
     import { initMap } from "map";
     import { initMarkerEvents } from "set_marker";
     import { highlightMarker } from "search_box";
-    import { initSearchBox } from "search_box";
+    import { initSearchBox, clearSearchMarkersOnRouteDraw } from "search_box";
     import "geocode_address";
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
@@ -50,6 +50,7 @@
         highlightMarker();
         getCurrentPosition();
         walkRouteBtn();
+        clearSearchMarkersOnRouteDraw() 
       } else {
         console.warn("mapDivが存在しないか、既に初期化済みです");
       }

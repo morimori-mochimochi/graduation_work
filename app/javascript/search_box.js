@@ -222,3 +222,18 @@ export function initSearchBox() {
     });
   }
 }
+
+export function clearSearchMarkersOnRouteDraw() {
+  const walkBtn = document.getElementById("walkDrawRoute");
+  const carBtn = document.getElementById("carDrawRoute");
+
+  const clearMarkers = () => {
+    if (window.markers && window.markers.length > 0) {
+      window.markers.forEach(marker => marker.setMap(null));
+      window.markers = [];
+      console.log("検索マーカーを消しました");
+    }
+  };
+  if (walkBtn) walkBtn.addEventListener("click", clearMarkers);
+  if (carBtn) carBtn.addEventListener("click", clearMarkers);
+}

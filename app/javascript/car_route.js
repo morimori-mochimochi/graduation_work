@@ -26,9 +26,14 @@ export async function carDrawRoute(){
   // #どのマップにルートを描画するかを指定
   directionsRenderer.setMap(window.map);
   
-  if (window.routeParking && window.routeDestion) {
+  if (
+    window.routeParking && 
+    typeof window.routeParking.lat === "function" &&
+    typeof window.routeParking.lng === "function" &&
+    window.routeDestination
+  ) { 
     //1,駐車場がある場合　出発地→駐車場（車)
-    directionsService.route(
+    diretionsService.route(
       {
         origin: window.routeStart || currentPos,
         destination: window.routeParking,
@@ -38,7 +43,7 @@ export async function carDrawRoute(){
         if (status === "OK"){
           const renderer1 = new google.maps.DirectionsRenderer({
             map: window.map,
-            polylineOptions: { strokeColor: "blue" } //車ルートは青
+            polylineOptions: { strokeColor: "green" } //車ルートは緑
           });
           renderer1.setDirections(response);
         } else {
@@ -48,6 +53,7 @@ export async function carDrawRoute(){
     );
 
     //2,駐車場→目的地(徒歩)
+    console.log("徒歩ルートを検索します");
     directionsService.route(
       {
         origin: window.routeParking,
@@ -58,7 +64,7 @@ export async function carDrawRoute(){
         if (status === "OK") {
           const renderer2 = new google.maps.DirectionsRenderer({
             map: window.map,
-            polylineOptions: { strokeColor: "green" } //徒歩ルートは緑
+            polylineOptions: { strokeColor: "blue" } //徒歩ルートは青
           });
           renderer2.setDirections(response);
         }else{
