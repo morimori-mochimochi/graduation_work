@@ -21,6 +21,18 @@
     <% end %>
   </div>
 
+  <button id="currentPosBtn">
+    <%= image_tag "currentPos.png", alt:"current_pos", class:"current_pos" %>
+  </button>
+
+  <script type="module">
+    import { initCurrentPosBtn } from "current_pos";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCurrentPosBtn();
+    });
+  </script>
+
   <div id="map"></div>
   <script type="module">
     import "maps_ready";
@@ -32,6 +44,7 @@
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
     import { walkRouteBtn } from "walk_route";  
+    import { initCurrentPosBtn } from "current_pos";
 
     await window.mapApiLoaded;
 

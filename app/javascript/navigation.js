@@ -1,3 +1,5 @@
+import { getLatLngFromPosition } from "./current_pos";
+
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号
@@ -18,10 +20,8 @@ export function startNavigation() {
   // #現在地の追跡開始
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const currentPos = {
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      };
+      const currentPos = getLatLngFromPosition(pos);
+      
       // #最初の一回はマーカーを作成。それ以降はそれを更新
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({

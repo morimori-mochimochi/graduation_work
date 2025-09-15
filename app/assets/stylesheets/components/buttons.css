@@ -48,4 +48,11 @@
     top: 5rem;
     right: 10rem;
   }
+
+  .current_pos {
+    position: absolute;
+    top: 7rem;
+    right: 5rem;
+    z-index: 1000;
+  }
 }
