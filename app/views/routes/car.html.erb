@@ -19,6 +19,18 @@
     <button id="destinationPoint">目的地</button>
   </div>
 
+  <button id="currentPosBtnCar">
+    <%= image_tag "currentPos.png", alt:"current_pos", class:"current_pos" %>
+  </button>
+
+  <script type="module">
+    import { initCurrentPosBtn } from "current_pos";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
+    });
+  </script>
+
   <div class="flex flex-col items-center mt-20 space-y-6">
     <%= link_to root_path do %>
       <%= image_tag "load_top.png", alt: "load_top",  class: "load_top" %>
