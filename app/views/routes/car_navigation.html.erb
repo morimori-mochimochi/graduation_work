@@ -8,9 +8,8 @@
     import "maps_ready";
     import { initMap } from "map";
     import { getCurrentPosition } from "current_position";
-    import { carDrawRoute } from "car_route";
-    import { carRouteBtn } from "car_route";
-    import { naviBtn } from "navigation";
+    import { carDrawRoute, carRouteBtn } from "car_route";
+    import { startNavigation } from "navigation";
 
     await window.mapApiLoaded;
 
@@ -21,8 +20,11 @@
         initMap(carNaviMapDiv);
         carNaviMapDiv.dataset.mapInitialized = "true";
         getCurrentPosition();
-        carRouteBtn();
-        naviBtn();
+        
+        if (window.routeStart && routeDestination){
+          carDrawRoute();
+        }
+        startNavigation();
       }
     });
   </script>
