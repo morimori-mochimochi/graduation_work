@@ -12,7 +12,8 @@ Rails.application.routes.draw do
     collection do
       get :walk
       get :car
-      get :navigation
+      get :walk_navigation
+      get :car_navigation
     end
   end
   # Defines the root path route ("/")

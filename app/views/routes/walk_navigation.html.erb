@@ -17,7 +17,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       const naviMapDiv = document.getElementById("naviMap");
 
-      if (mapDiv && !mapDiv.dataset.mapInitialized) {
+      if (naviMapDiv && !naviMapDiv.dataset.mapInitialized) {
         initMap(naviMapDiv);
         naviMapDiv.dataset.mapInitialized = "true";
         getCurrentPosition();
