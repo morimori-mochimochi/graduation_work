@@ -5,8 +5,9 @@
 
   <button id="walkDrawRoute">ルート検索</button>
 
-  <button id="naviBtn">ナビ開始</button>
-  <button id="stopNaviBtn">ナビ終了</button>
+  <%= link_to walk_navigation_routes_path do %>
+    <%= image_tag "startNavi.png", alt: "startNavi", class:"navi_btn" %>
+  <% end %>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>
@@ -14,11 +15,23 @@
     <button id="destinationPoint">目的地</button>
   </div>
 
-  <div class="flex flex-col items-center mt-20 space-y-6">
+  <div class="load_top">
     <%= link_to root_path do %>
-      <%= image_tag "load_top.png", alt: "load_top",  class: "load_top" %>
+      <%= image_tag "load_top.png", alt: "load_top"%>
     <% end %>
   </div>
+
+  <button id="currentPosBtn">
+    <%= image_tag "currentPos.png", alt:"current_pos", class:"current_pos" %>
+  </button>
+
+  <script type="module">
+    import { initCurrentPosBtn } from "current_pos";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCurrentPosBtn();
+    });
+  </script>
 
   <div id="map"></div>
   <script type="module">
@@ -26,19 +39,23 @@
     import { initMap } from "map";
     import { initMarkerEvents } from "set_marker";
     import { highlightMarker } from "search_box";
-    import { initSearchBox } from "search_box";
+    import { initSearchBox, clearSearchMarkersOnRouteDraw } from "search_box";
     import "geocode_address";
     import { getCurrentPosition } from "current_position";
     import { walkDrawRoute } from "walk_route";
-    import { walkRouteBtn } from "walk_route";
-    import { naviBtn } from "navigation";
+    import { walkRouteBtn } from "walk_route";  
+    import { initCurrentPosBtn } from "current_pos";
 
     await window.mapApiLoaded;
 
     document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOMContentLoaded発火");
+
       const mapDiv = document.getElementById("map");
+      console.log("mapDiv取得:", mapDiv);
 
       if (mapDiv && !mapDiv.dataset.mapInitialized) {
+        console.log("initMap呼び出し直前に到達");
         initMap(mapDiv);
         mapDiv.dataset.mapInitialized = "true";
         initMarkerEvents();
@@ -46,7 +63,9 @@
         highlightMarker();
         getCurrentPosition();
         walkRouteBtn();
-        naviBtn();
+        clearSearchMarkersOnRouteDraw() 
+      } else {
+        console.warn("mapDivが存在しないか、既に初期化済みです");
       }
     });
   </script>

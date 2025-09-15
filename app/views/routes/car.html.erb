@@ -7,8 +7,9 @@
 
   <button id="searchNearby">周辺の駐車場を探す</button>
 
-  <button id="naviBtn">ナビ開始</button>
-  <button id="stopNaviBtn">ナビ終了</button>
+  <%= link_to car_navigation_routes_path do %>
+    <%= image_tag "startNavi.png", alt: "startNavi", class:"navi_btn" %>
+  <% end %>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>
@@ -17,6 +18,18 @@
     <%= image_tag "arrow.png", alt: "arrow", class: "arrow" %>
     <button id="destinationPoint">目的地</button>
   </div>
+
+  <button id="currentPosBtnCar">
+    <%= image_tag "currentPos.png", alt:"current_pos", class:"current_pos" %>
+  </button>
+
+  <script type="module">
+    import { initCurrentPosBtn } from "current_pos";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
+    });
+  </script>
 
   <div class="flex flex-col items-center mt-20 space-y-6">
     <%= link_to root_path do %>
@@ -31,13 +44,14 @@
     import { initMap } from "map";
     import { initMarkerEvents } from "set_marker";
     import { highlightMarker } from "search_box";
-    import { initSearchBox } from "search_box";
+    import { initSearchBox, clearSearchMarkersOnRouteDraw } from "search_box";
     import "geocode_address";
     import { searchParking } from "search_parking";
     import { getCurrentPosition } from "current_position";
     import { carDrawRoute } from "car_route";
     import { carRouteBtn } from "car_route";
     import { naviBtn } from "navigation";
+    import { initCurrentPosBtn } from "current_pos";
 
     await window.mapApiLoaded;
 
@@ -53,6 +67,7 @@
         getCurrentPosition();
         carRouteBtn();
         naviBtn();
+        clearSearchMarkersOnRouteDraw() 
       }
     });
   </script>

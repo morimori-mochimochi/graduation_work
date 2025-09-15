@@ -55,6 +55,13 @@ export async function searchParking(){
             })()
           });
 
+          //駐車場マーカーの配列をグローバルに初期化
+          if (!window. parkingMarkers) {
+           window.parkingMarkers = [];
+          }
+          window.parkingMarkers.push(marker);
+
+
           // infoWindowを表示する処理
           marker.addListener("click", () => {
             if (window.activeInfoWindow) {
@@ -82,6 +89,14 @@ export async function searchParking(){
                 parkingBtn.addEventListener("click", () => {
                   //選択した駐車場の位置保存
                   window.routeParking = place.location;
+
+                  if (window.parkingMarkers) {
+                    window.parkingMarkers.forEach(m => {
+                      if (m !== marker){
+                        m.map = null; //マップから消す
+                      }
+                    });
+                  }
 
                   //UI更新
                   const routeParkingBtn = document.getElementById("routeParking");

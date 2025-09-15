@@ -1,0 +1,30 @@
+<body>
+  <%= link_to walk_routes_path do %>
+    <%= image_tag "stopNavi.png", alt: "stopNavi", class:"navi_btn" %>
+  <% end %>
+  <div id="naviMap"></div>
+
+  <script type="module">
+    import "maps_ready";
+    import { initMap } from "map";
+    import { getCurrentPosition } from "current_position";
+    import { walkDrawRoute, walkRouteBtn } from "walk_route";
+    import { startNavigation } from "navigation";
+
+    await window.mapApiLoaded;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const naviMapDiv = document.getElementById("naviMap");
+
+      if (naviMapDiv && !naviMapDiv.dataset.mapInitialized) {
+        initMap(naviMapDiv);
+        naviMapDiv.dataset.mapInitialized = "true";
+        getCurrentPosition();
+
+        if (window.routeStart && routeDestination){
+          walkDrawRoute();
+        }
+        startNavigation();
+      }
+    });
+  </script>

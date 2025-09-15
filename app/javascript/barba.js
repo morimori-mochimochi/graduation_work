@@ -62,26 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           console.log("afterEnter Splideが呼ばれました");
 
-          // ページにmapが含まれる時initMapを呼ぶ
-          const mapDiv = next.container.querySelector('#map');
-          console.log("mapDiv:", mapDiv); 
-
-          console.log("Google Maps API:", window.google && window.google.maps);
-          console.log("window.initMap:", window.initMap);
-
-          if (mapDiv && !mapDiv.dataset.mapInitialized) {
-            console.log("Barba遷移後にinitMapを呼び出します");
-            window.initMap(mapDiv);
-            mapDiv.dataset.mapInitialized = "true";
-            initMarkerEvents();
-            initSearchBox();
-            searchParking();
-            getCurrentPosition();
-            walkRouteBtn();
-            carRouteBtn();
-            naviBtn();
-            console.log("highlightMarkerの型:", highlightMarker);
-          }
+          const mapIds = ['map', 'naviMap', 'carNaviMap'];
+          mapIds.forEach(id => {
+            const mapDiv = next.container.querySelector(`#${id}`);
+            if (mapDiv && !mapDiv.dataset.mapInitialized) {
+              initMap(mapDiv);
+              mapDiv.dataset.mapInitialized = "true";
+              initMarkerEvents();
+              initSearchBox();
+              searchParking();
+              getCurrentPosition();
+              walkRouteBtn();
+              carRouteBtn();
+              naviBtn();
+              console.log("highlightMarkerの型:", highlightMarker);
+            }
+          });
         }
       }
     ]
