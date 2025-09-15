@@ -1,6 +1,9 @@
 export async function carDrawRoute(){
   await window.mapApiLoaded;
 
+  console.log("routeDestination:", window.routeDestination);
+  console.log("routeParking:", window.routeParking);
+
   const currentPos = await new Promise ((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
@@ -23,7 +26,7 @@ export async function carDrawRoute(){
   // #どのマップにルートを描画するかを指定
   directionsRenderer.setMap(window.map);
   
-  if (window.routeParking) {
+  if (window.routeParking && window.routeDestion) {
     //1,駐車場がある場合　出発地→駐車場（車)
     directionsService.route(
       {
@@ -47,7 +50,7 @@ export async function carDrawRoute(){
     //2,駐車場→目的地(徒歩)
     directionsService.route(
       {
-        origin: routeParking,
+        origin: window.routeParking,
         destination: window.routeDestination,
         travelMode: google.maps.TravelMode.WALKING
       },
@@ -63,7 +66,7 @@ export async function carDrawRoute(){
         }
       }
     );
-  }else{
+  }else if (window.routeDestination){
     //駐車場がない場合
     directionsService.route(
       {
@@ -80,6 +83,8 @@ export async function carDrawRoute(){
         }
       }
     );
+  }else{
+    alert("目的地を設定してください");
   }
 };
 

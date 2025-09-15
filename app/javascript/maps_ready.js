@@ -30,4 +30,4 @@ window.mapApiLoaded = new Promise((resolve) => {
   });
 });
 
-window.mapApiLoaded.then(() => console.log("mapsReadyがresolve"));
+window.mapApiLoaded.then(() => console.log("mapsReadyがresolveされたのでinitMap", window.google?.maps));
