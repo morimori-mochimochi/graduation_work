@@ -5,11 +5,9 @@
 
   <button id="walkDrawRoute">ルート検索</button>
 
-  <div class="navi_btn">
-    <%= link_to walk_navigation_routes_path do %>
-      <%= image_tag "startNavi.png", alt: "startNavi" %>
-    <% end %>
-  </div>
+  <%= link_to walk_navigation_routes_path do %>
+    <%= image_tag "startNavi.png", alt: "startNavi", class:"navi_btn" %>
+  <% end %>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>

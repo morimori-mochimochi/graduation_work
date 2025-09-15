@@ -7,8 +7,9 @@
 
   <button id="searchNearby">周辺の駐車場を探す</button>
 
-  <button id="naviBtn">ナビ開始</button>
-  <button id="stopNaviBtn">ナビ終了</button>
+  <%= link_to car_navigation_routes_path do %>
+    <%= image_tag "startNavi.png", alt: "startNavi", class:"navi_btn" %>
+  <% end %>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>

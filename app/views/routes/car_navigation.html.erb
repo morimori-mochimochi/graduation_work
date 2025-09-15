@@ -15,9 +15,9 @@
     await window.mapApiLoaded;
 
     document.addEventListener("DOMContentLoaded", () => {
-      const naviMapDiv = document.getElementById("carNaviMap");
+      const carNaviMapDiv = document.getElementById("carNaviMap");
 
-      if (mapDiv && !mapDiv.dataset.mapInitialized) {
+      if (carNaviMapDiv && !carNaviMapDiv.dataset.mapInitialized) {
         initMap(carNaviMapDiv);
         carNaviMapDiv.dataset.mapInitialized = "true";
         getCurrentPosition();
