@@ -28,6 +28,7 @@ COPY . .
 
 #アセットをプリコンパイル
 RUN bundle exec rails assets:precompile
+RUN yarn build:css
 
 #コンテナ外部からアクセス可能にするポート解放
 EXPOSE 3000
