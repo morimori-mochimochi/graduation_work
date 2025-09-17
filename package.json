@@ -1,12 +1,16 @@
 {
   "dependencies": {
     "@barba/core": "^2.10.3",
+    "@splidejs/splide": "^4.1.4",
     "@tailwindcss/cli": "^4.1.12",
     "daisyui": "^5.1.6",
     "tailwindcss": "^4.1.12"
   },
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
-    "build": "yarn build:css"
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.9"
   }
 }
