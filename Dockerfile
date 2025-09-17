@@ -26,8 +26,9 @@ RUN gem install bundler && bundle install
 #アプリの全ファイルをコピー
 COPY . .
 
-#アセットをプリコンパイル
-RUN bundle exec rails assets:precompile
+# CSS / JS をビルド
+RUN yarn install
+RUN yarn build
 RUN yarn build:css
 
 #コンテナ外部からアクセス可能にするポート解放
