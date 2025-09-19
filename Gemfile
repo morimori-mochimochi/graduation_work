@@ -11,7 +11,6 @@ ruby '3.2.3'
 gem 'rails', '~> 7.1.0'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 6.0'
-gem 'sass-rails'
 gem 'importmap-rails'
 gem 'turbo-rails'
 gem 'stimulus-rails'
@@ -36,3 +35,5 @@ group :development do
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
 end
+
+gem "jsbundling-rails", "~> 1.3"

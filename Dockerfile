@@ -19,15 +19,18 @@ WORKDIR /app
 
 #指定したファイルをコンテナにコピー
 COPY Gemfile Gemfile.lock ./
+COPY package.json yarn.lock ./
 
 #bundlerをインストールして依存関係を解決
 RUN gem install bundler && bundle install
+RUN yarn install
 
 #アプリの全ファイルをコピー
 COPY . .
 
-#アセットをプリコンパイル
-RUN bundle exec rails assets:precompile
+# CSS / JS をビルド
+RUN yarn build
+RUN yarn build:css
 
 #コンテナ外部からアクセス可能にするポート解放
 EXPOSE 3000

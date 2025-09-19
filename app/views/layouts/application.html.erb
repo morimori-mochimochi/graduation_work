@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    
-    <%# importmap.rbに書かれたJSが読み込まれる %>
-    <%= javascript_importmap_tags %>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link rel="stylesheet" href="/assets/application.css" data-turbo-track="reload" >
+    <script type="module" src="/assets/application.js" data-turbo-track="reload"></script>
   </head>
 
   <body>

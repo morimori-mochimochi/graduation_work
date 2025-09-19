@@ -1,22 +1,22 @@
 <h1 class="flex justify-center mt-30 ml-10">
-  <%= image_tag "logo.png", alt: "Sketto", class: "logo" %>
+  <%= image_tag "/images/logo.png", alt: "Sketto", class: "logo" %>
 </h1>
 
 <div class="flex flex-col items-center mt-20 space-y-6">
   <%= link_to new_route_path do %>
-    <%= image_tag "top_button1.png", alt: "topButton1", class: "top_button" %>
+    <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "top_button" %>
   <% end %>
   <%= link_to new_user_session_path do %>
-    <%= image_tag "top_button2.png", alt: "topButton2", class: "top_button" %>
+    <%= image_tag "/images/top_button2.png", alt: "topButton2", class: "top_button" %>
   <% end %>
 </div>
 
 <div id="splide" class="splide relative -mt-20 -translate-x-10">
   <div class="splide__track">
     <ul class="splide__list">
-      <li class="splide__slide"><img src="<%= asset_path 'intro_page1.png' %>" alt="Slide 01"></li>
-      <li class="splide__slide"><img src="<%= asset_path 'intro_page2.png' %>" alt="Slide 02"></li>
-      <li class="splide__slide"><img src="<%= asset_path 'intro_page3.png' %>" alt="Slide 03"></li>
+      <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
+      <li class="splide__slide"><%= image_tag "intro_page2.png" %></li>
+      <li class="splide__slide"><%= image_tag "intro_page3.png" %></li>
     </ul>
   </div>
 </div>

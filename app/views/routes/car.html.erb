@@ -8,19 +8,19 @@
   <button id="searchNearby">周辺の駐車場を探す</button>
 
   <%= link_to car_navigation_routes_path do %>
-    <%= image_tag "startNavi.png", alt: "startNavi", class:"navi_btn" %>
+    <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
   <% end %>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>
-    <%= image_tag "arrow.png", alt: "arrow", class: "arrow" %>
+    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
     <button id="routeParking"style="display:none;">駐車場</button>
-    <%= image_tag "arrow.png", alt: "arrow", class: "arrow" %>
+    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
     <button id="destinationPoint">目的地</button>
   </div>
 
   <button id="currentPosBtnCar">
-    <%= image_tag "currentPos.png", alt:"current_pos", class:"current_pos" %>
+    <%= image_tag "/images/currentPos.png", alt:"current_pos", class:"current_pos" %>
   </button>
 
   <script type="module">
@@ -33,7 +33,7 @@
 
   <div class="flex flex-col items-center mt-20 space-y-6">
     <%= link_to root_path do %>
-      <%= image_tag "load_top.png", alt: "load_top",  class: "load_top" %>
+      <%= image_tag "/images/load_top.png", alt: "load_top",  class: "load_top" %>
     <% end %>
   </div>
 

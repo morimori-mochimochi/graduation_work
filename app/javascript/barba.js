@@ -1,16 +1,13 @@
 import barba from "@barba/core";
 import Splide from "@splidejs/splide";
-import { initMap } from "map";
-import { initMarkerEvents } from "set_marker";
-import { highlightMarker} from "search_box";
-import { initSearchBox } from "search_box";
-import { searchParking } from "search_parking";
-import { getCurrentPosition } from "current_position";
-import { walkDrawRoute } from "walk_route";
-import { carDrawRoute } from "car_route";
-import { naviBtn } from "navigation";
-import { walkRouteBtn } from "walk_route";
-import { carRouteBtn } from "car_route";
+import { initMap } from "./map";
+import { initMarkerEvents } from "./set_marker";
+import { highlightMarker, initSearchBox} from "./search_box";
+import { searchParking } from "./search_parking";
+import { getCurrentPosition } from "./current_position";
+import { naviBtn } from "./navigation";
+import { walkRouteBtn } from "./walk_route";
+import { carRouteBtn } from "./car_route";
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");
@@ -68,13 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
               initMap(mapDiv);
               mapDiv.dataset.mapInitialized = "true";
-              initMarkerEvents();
-              initSearchBox();
-              searchParking();
-              getCurrentPosition();
-              walkRouteBtn();
-              carRouteBtn();
-              naviBtn();
+
+              if (document.querySelector('#map')) initMarkerEvents();
+              if (document.querySelector('#map')) initSearchBox();
+              if (document.querySelector('#map')) searchParking();
+              if (document.querySelector('#map')) getCurrentPosition();
+              if (document.querySelector('#map')) walkRouteBtn();
+              if (document.querySelector('#map')) carRouteBtn();
+              if (document.querySelector('#map')) naviBtn();
               console.log("highlightMarkerの型:", highlightMarker);
             }
           });
