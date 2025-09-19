@@ -19,15 +19,16 @@ WORKDIR /app
 
 #指定したファイルをコンテナにコピー
 COPY Gemfile Gemfile.lock ./
+COPY package.json yarn.lock ./
 
 #bundlerをインストールして依存関係を解決
 RUN gem install bundler && bundle install
+RUN yarn install
 
 #アプリの全ファイルをコピー
 COPY . .
 
 # CSS / JS をビルド
-RUN yarn install
 RUN yarn build
 RUN yarn build:css
 
