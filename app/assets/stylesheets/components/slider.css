@@ -12,3 +12,9 @@
   display: block;
   object-fit: contain; 
 }
+
+@layer components {
+  .splide__list {
+    display: flex !important;
+  }
+}
