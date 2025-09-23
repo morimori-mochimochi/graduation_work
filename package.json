@@ -7,8 +7,8 @@
     "tailwindcss": "^4.1.12"
   },
   "scripts": {
-    "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
-    "build": "esbuild app/javascript/application.js --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./public/assets/builds/application.css --minify",
+    "build": "esbuild app/javascript/application.js --bundle --sourcemap --format=esm --outdir=public/assets/builds --public-path=/assets/builds",
     "build:js": "esbuild app/javascript/application.js --bundle --sourcemap --outdir=app/assets/builds --format=esm"
   },
   "devDependencies": {
