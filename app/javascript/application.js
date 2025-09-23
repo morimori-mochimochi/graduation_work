@@ -1,6 +1,7 @@
+console.log("application.jsを読み込みます");
+
 import Splide from "@splidejs/splide"
 import "./barba"
-
 import "./maps_ready"
 import "./map"
 import "./set_marker"
@@ -12,7 +13,8 @@ import "./walk_route"
 import "./navigation"
 import "./current_pos"
 import "./geocode_address"
-import "./current_pos"
+
+console.log("DOMContentLoaded読み込み直前");
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
