@@ -16,6 +16,8 @@ import "./geocode_address"
 
 console.log("DOMContentLoaded読み込み直前");
 
+await window.mapApiLoaded;
+
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
   

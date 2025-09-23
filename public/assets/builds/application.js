@@ -4309,6 +4309,7 @@ window.mapApiLoaded.then(() => {
 // app/javascript/application.js
 console.log("application.js\u3092\u8AAD\u307F\u8FBC\u307F\u307E\u3059");
 console.log("DOMContentLoaded\u8AAD\u307F\u8FBC\u307F\u76F4\u524D");
+await window.mapApiLoaded;
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.querySelector("#splide");
   if (el) {
