@@ -11,6 +11,8 @@ import "./car_route"
 import "./walk_route"
 import "./navigation"
 import "./current_pos"
+import "./geocode_address"
+import "./current_pos"
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,6 +28,24 @@ document.addEventListener('DOMContentLoaded', () => {
       arrows: true,
       pagination: true
     }).mount();
+  }
+
+  const mapDiv = document.getElementById("map");
+  console.log("mapDiv取得:", mapDiv);
+
+  if (mapDiv && !mapDiv.dataset.mapInitialized) {
+    console.log("initMap呼び出し直前に到達");
+    initMap(mapDiv);
+    mapDiv.dataset.mapInitialized = "true";
+    initMarkerEvents();
+    initSearchBox();
+    highlightMarker();
+    getCurrentPosition();
+    walkRouteBtn();
+    clearSearchMarkersOnRouteDraw() 
+    initCurrentPosBtn()
+  } else {
+    console.warn("mapDivが存在しないか、既に初期化済みです");
   }
 });
 

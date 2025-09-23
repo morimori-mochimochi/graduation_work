@@ -25,48 +25,5 @@
     <%= image_tag "/images/currentPos.png", alt:"current_pos", class:"current_pos" %>
   </button>
 
-  <script type="module">
-    import { initCurrentPosBtn } from "current_pos";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initCurrentPosBtn();
-    });
-  </script>
-
   <div id="map"></div>
-  <script type="module">
-    import "maps_ready";
-    import { initMap } from "map";
-    import { initMarkerEvents } from "set_marker";
-    import { highlightMarker } from "search_box";
-    import { initSearchBox, clearSearchMarkersOnRouteDraw } from "search_box";
-    import "geocode_address";
-    import { getCurrentPosition } from "current_position";
-    import { walkDrawRoute } from "walk_route";
-    import { walkRouteBtn } from "walk_route";  
-    import { initCurrentPosBtn } from "current_pos";
-
-    await window.mapApiLoaded;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      console.log("DOMContentLoaded発火");
-
-      const mapDiv = document.getElementById("map");
-      console.log("mapDiv取得:", mapDiv);
-
-      if (mapDiv && !mapDiv.dataset.mapInitialized) {
-        console.log("initMap呼び出し直前に到達");
-        initMap(mapDiv);
-        mapDiv.dataset.mapInitialized = "true";
-        initMarkerEvents();
-        initSearchBox();
-        highlightMarker();
-        getCurrentPosition();
-        walkRouteBtn();
-        clearSearchMarkersOnRouteDraw() 
-      } else {
-        console.warn("mapDivが存在しないか、既に初期化済みです");
-      }
-    });
-  </script>
 </body>
