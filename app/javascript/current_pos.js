@@ -5,7 +5,7 @@ export function getLatLngFromPosition(pos) {
   };
 }
 
-export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "initCurrentPosBtn"]) {
+export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
   console.log("現在地取得開始");
   buttonIds.forEach((buttonId) => {
 
