@@ -3987,7 +3987,7 @@ function getLatLngFromPosition(pos) {
     lng: pos.coords.longitude
   };
 }
-function initCurrentPosBtn(buttonIds = ["currentPosBtn", "initCurrentPosBtn"]) {
+function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
   console.log("\u73FE\u5728\u5730\u53D6\u5F97\u958B\u59CB");
   buttonIds.forEach((buttonId) => {
     const btn = document.getElementById(buttonId);
