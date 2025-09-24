@@ -5,11 +5,11 @@
   <div id="naviMap"></div>
 
   <script type="module">
-    import "maps_ready";
-    import { initMap } from "map";
-    import { getCurrentPosition } from "current_position";
-    import { walkDrawRoute, walkRouteBtn } from "walk_route";
-    import { startNavigation } from "navigation";
+    import "./maps_ready.js";
+    import { initMap } from "./map.js";
+    import { getCurrentPosition } from "./current_position.js";
+    import { walkDrawRoute, walkRouteBtn } from "./walk_route.js";
+    import { startNavigation } from "./navigation.js";
 
     await window.mapApiLoaded;
 

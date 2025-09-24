@@ -33,7 +33,7 @@ export async function carDrawRoute(){
     window.routeDestination
   ) { 
     //1,駐車場がある場合　出発地→駐車場（車)
-    diretionsService.route(
+    directionsService.route(
       {
         origin: window.routeStart || currentPos,
         destination: window.routeParking,
