@@ -24,7 +24,7 @@
   </button>
 
   <script type="module">
-    import { initCurrentPosBtn } from "current_pos";
+    import { initCurrentPosBtn } from "./current_pos.js";
 
     document.addEventListener("DOMContentLoaded", () => {
       initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
@@ -37,38 +37,5 @@
     <% end %>
   </div>
 
-
   <div id="map"></div>
-  <script type="module">
-    import "maps_ready";
-    import { initMap } from "map";
-    import { initMarkerEvents } from "set_marker";
-    import { highlightMarker } from "search_box";
-    import { initSearchBox, clearSearchMarkersOnRouteDraw } from "search_box";
-    import "geocode_address";
-    import { searchParking } from "search_parking";
-    import { getCurrentPosition } from "current_position";
-    import { carDrawRoute } from "car_route";
-    import { carRouteBtn } from "car_route";
-    import { naviBtn } from "navigation";
-    import { initCurrentPosBtn } from "current_pos";
-
-    await window.mapApiLoaded;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const mapDiv = document.getElementById("map");
-      if (mapDiv && !mapDiv.dataset.mapInitialized) {
-        initMap(mapDiv);
-        mapDiv.dataset.mapInitialized = "true";
-        initMarkerEvents();
-        initSearchBox();
-        highlightMarker();
-        searchParking();
-        getCurrentPosition();
-        carRouteBtn();
-        naviBtn();
-        clearSearchMarkersOnRouteDraw() 
-      }
-    });
-  </script>
 </body>

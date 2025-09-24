@@ -1659,7 +1659,7 @@ function Elements(Splide2, Components2, options) {
   var isUsingKey;
   function setup() {
     collect();
-    init();
+    init2();
     update();
   }
   function mount() {
@@ -1715,7 +1715,7 @@ function Elements(Splide2, Components2, options) {
       slides
     });
   }
-  function init() {
+  function init2() {
     var id = root.id || uniqueId(PROJECT_CODE);
     var role = options.role;
     root.id = id;
@@ -1874,11 +1874,11 @@ function Slides(Splide2, Components2, options) {
   var _Components2$Elements = Components2.Elements, slides = _Components2$Elements.slides, list = _Components2$Elements.list;
   var Slides2 = [];
   function mount() {
-    init();
+    init2();
     on(EVENT_REFRESH, destroy);
-    on(EVENT_REFRESH, init);
+    on(EVENT_REFRESH, init2);
   }
-  function init() {
+  function init2() {
     slides.forEach(function(slide, index) {
       register(slide, index, -1);
     });
@@ -1999,12 +1999,12 @@ function Layout(Splide2, Components2, options) {
   var rootRect;
   var overflow;
   function mount() {
-    init();
+    init2();
     bind(window, "resize load", Throttle(apply(emit, EVENT_RESIZE)));
-    on([EVENT_UPDATED, EVENT_REFRESH], init);
+    on([EVENT_UPDATED, EVENT_REFRESH], init2);
     on(EVENT_RESIZE, resize);
   }
-  function init() {
+  function init2() {
     vertical = options.direction === TTB;
     style(root, "maxWidth", unit(options.width));
     style(track, resolve("paddingLeft"), cssPadding(false));
@@ -2305,11 +2305,11 @@ function Controller(Splide2, Components2, options) {
   var perMove;
   var perPage;
   function mount() {
-    init();
-    on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], init);
+    init2();
+    on([EVENT_UPDATED, EVENT_REFRESH, EVENT_END_INDEX_CHANGED], init2);
     on(EVENT_RESIZED, onResized);
   }
-  function init() {
+  function init2() {
     slideCount = getLength(true);
     perMove = options.perMove;
     perPage = options.perPage;
@@ -2478,14 +2478,14 @@ function Arrows(Splide2, Components2, options) {
   var wrapperClasses;
   var arrows = {};
   function mount() {
-    init();
+    init2();
     on(EVENT_UPDATED, remount);
   }
   function remount() {
     destroy();
     mount();
   }
-  function init() {
+  function init2() {
     var enabled = options.arrows;
     if (enabled && !(prev && next)) {
       createArrows();
@@ -2768,9 +2768,9 @@ function Drag(Splide2, Components2, options) {
       capture: true
     });
     bind(track, "dragstart", prevent);
-    on([EVENT_MOUNTED, EVENT_UPDATED], init);
+    on([EVENT_MOUNTED, EVENT_UPDATED], init2);
   }
-  function init() {
+  function init2() {
     var drag = options.drag;
     disable(!drag);
     isFree = drag === "free";
@@ -2931,12 +2931,12 @@ function Keyboard(Splide2, Components2, options) {
   var target;
   var disabled;
   function mount() {
-    init();
+    init2();
     on(EVENT_UPDATED, destroy);
-    on(EVENT_UPDATED, init);
+    on(EVENT_UPDATED, init2);
     on(EVENT_MOVE, onMove);
   }
-  function init() {
+  function init2() {
     var keyboard = options.keyboard;
     if (keyboard) {
       target = keyboard === "global" ? window : root;
@@ -2982,11 +2982,11 @@ function LazyLoad(Splide2, Components2, options) {
   var entries = [];
   function mount() {
     if (options.lazyLoad) {
-      init();
-      on(EVENT_REFRESH, init);
+      init2();
+      on(EVENT_REFRESH, init2);
     }
   }
-  function init() {
+  function init2() {
     empty(entries);
     register();
     if (isSequential) {
@@ -3374,9 +3374,9 @@ var DEFAULTS = {
 function Fade(Splide2, Components2, options) {
   var Slides2 = Components2.Slides;
   function mount() {
-    EventInterface(Splide2).on([EVENT_MOUNTED, EVENT_REFRESH], init);
+    EventInterface(Splide2).on([EVENT_MOUNTED, EVENT_REFRESH], init2);
   }
-  function init() {
+  function init2() {
     Slides2.forEach(function(Slide2) {
       Slide2.style("transform", "translateX(-" + 100 * Slide2.index + "%)");
     });
@@ -3584,7 +3584,7 @@ var import_core = __toESM(require_barba_umd());
 
 // app/javascript/map.js
 await window.mapApiLoaded;
-function initMap(mapDiv) {
+function initMap2(mapDiv) {
   console.log("initMap\u547C\u3073\u51FA\u3057\u76F4\u524D", !!window.google?.maps, mapDiv);
   const gmap = new google.maps.Map(mapDiv, {
     center: { lat: 35.6812, lng: 139.7671 },
@@ -3593,7 +3593,7 @@ function initMap(mapDiv) {
   });
   window.map = gmap;
 }
-window.initMap = initMap;
+window.initMap = initMap2;
 
 // app/javascript/set_marker.js
 console.log("set_marker module loaded");
@@ -3844,6 +3844,19 @@ function initSearchBox() {
     });
   }
 }
+function clearSearchMarkersOnRouteDraw() {
+  const walkBtn = document.getElementById("walkDrawRoute");
+  const carBtn = document.getElementById("carDrawRoute");
+  const clearMarkers = () => {
+    if (window.markers && window.markers.length > 0) {
+      window.markers.forEach((marker) => marker.setMap(null));
+      window.markers = [];
+      console.log("\u691C\u7D22\u30DE\u30FC\u30AB\u30FC\u3092\u6D88\u3057\u307E\u3057\u305F");
+    }
+  };
+  if (walkBtn) walkBtn.addEventListener("click", clearMarkers);
+  if (carBtn) carBtn.addEventListener("click", clearMarkers);
+}
 
 // app/javascript/search_parking.js
 async function searchParking() {
@@ -3973,6 +3986,46 @@ function getLatLngFromPosition(pos) {
     lat: pos.coords.latitude,
     lng: pos.coords.longitude
   };
+}
+function initCurrentPosBtn(buttonIds = ["currentPosBtn", "initCurrentPosBtn"]) {
+  console.log("\u73FE\u5728\u5730\u53D6\u5F97\u958B\u59CB");
+  buttonIds.forEach((buttonId) => {
+    const btn = document.getElementById(buttonId);
+    console.log("btn:", btn);
+    if (!btn) {
+      console.warn(`\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093: ${buttonId}`);
+      return;
+    }
+    btn.addEventListener("click", (e) => {
+      console.log("\u30AF\u30EA\u30C3\u30AF\u30A4\u30D9\u30F3\u30C8\u767A\u706B:", e.target);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const currentPos = getLatLngFromPosition(pos);
+          window.currentPos = currentPos;
+          console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
+          const map2 = window.map;
+          if (map2) {
+            map2.setCenter(currentPos);
+            if (window.currentPosMarker) {
+              window.currentPosMarker.setMap(null);
+            }
+            window.currentPosMarker = new google.maps.Marker({
+              position: currentPos,
+              map: map2,
+              title: "\u73FE\u5728\u5730",
+              animation: google.maps.Animation.BOUNCE
+            });
+          } else {
+            console.warn("\u30DE\u30C3\u30D7\u304C\u307E\u3060\u5B58\u5728\u3057\u307E\u305B\u3093");
+          }
+        },
+        (err) => {
+          console.log("\u73FE\u5728\u5730\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: ", err);
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
+      );
+    });
+  });
 }
 
 // app/javascript/navigation.js
@@ -4116,7 +4169,7 @@ async function carDrawRoute() {
   const directionsRenderer = new google.maps.DirectionsRenderer();
   directionsRenderer.setMap(window.map);
   if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && window.routeDestination) {
-    diretionsService.route(
+    directionsService.route(
       {
         origin: window.routeStart || currentPos,
         destination: window.routeParking,
@@ -4237,7 +4290,7 @@ document.addEventListener("DOMContentLoaded", () => {
           mapIds.forEach((id) => {
             const mapDiv = next.container.querySelector(`#${id}`);
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
-              initMap(mapDiv);
+              initMap2(mapDiv);
               mapDiv.dataset.mapInitialized = "true";
               if (document.querySelector("#map")) initMarkerEvents();
               if (document.querySelector("#map")) initSearchBox();
@@ -4282,20 +4335,83 @@ window.mapApiLoaded = new Promise((resolve) => {
 });
 window.mapApiLoaded.then(() => console.log("mapsReady\u304Cresolve\u3055\u308C\u305F\u306E\u3067initMap", window.google?.maps));
 
-// app/javascript/application.js
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.querySelector("#splide");
-  if (el) {
-    new Splide(el, {
-      type: "loop",
-      autoplay: true,
-      interval: 3e3,
-      pauseOnHover: true,
-      arrows: true,
-      pagination: true
-    }).mount();
-  }
+// app/javascript/geocode_address.js
+window.mapApiLoaded.then(() => {
+  console.log("API\u306E\u6E96\u5099\u304C\u3067\u304D\u307E\u3057\u305F");
+  let geocoder = new google.maps.Geocoder();
+  window.geocodeAddress = function() {
+    const address = document.getElementById("address").value;
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK") {
+        const location = results[0].geometry.location;
+        window.map.setCenter(location);
+        if (window.marker) {
+          window.marker.setMap(null);
+        }
+        window.marker = new google.maps.Marker({
+          map: window.map,
+          position: location
+        });
+      } else {
+        alert("\u30B8\u30AA\u30B3\u30FC\u30C7\u30A3\u30F3\u30B0\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
+      }
+    });
+  };
 });
+
+// app/javascript/application.js
+console.log("application.js\u3092\u8AAD\u307F\u8FBC\u307F\u307E\u3059");
+console.log("DOMContentLoaded\u8AAD\u307F\u8FBC\u307F\u76F4\u524D");
+await window.mapApiLoaded;
+console.log("await\u7D42\u4E86");
+function init() {
+  console.log("readyState at addEventListener:", document.readyState);
+  console.log("splide\u30C1\u30A7\u30C3\u30AF\u958B\u59CB");
+  const el = document.querySelector("#splide");
+  console.log("el\u53D6\u5F97:", el);
+  console.log("Splide\u578B:", typeof Splide);
+  if (el && typeof Splide !== "undefined") {
+    try {
+      new Splide(el, {
+        type: "loop",
+        autoplay: true,
+        interval: 3e3,
+        pauseOnHover: true,
+        arrows: true,
+        pagination: true
+      }).mount();
+    } catch (e) {
+      console.log("Splide initialization skipped: ", e);
+    }
+  }
+  console.log("splide\u7D42\u4E86");
+  const mapDiv = document.getElementById("map");
+  console.log("mapDiv\u53D6\u5F97:", mapDiv);
+  if (mapDiv && !mapDiv.dataset.mapInitialized) {
+    console.log("initMap\u547C\u3073\u51FA\u3057\u76F4\u524D\u306B\u5230\u9054");
+    initMap(mapDiv);
+    mapDiv.dataset.mapInitialized = "true";
+    initMarkerEvents();
+    initSearchBox();
+    highlightMarker();
+    searchParking();
+    getCurrentPosition();
+    walkRouteBtn();
+    clearSearchMarkersOnRouteDraw();
+    initCurrentPosBtn();
+  } else {
+    console.warn("mapDiv\u304C\u5B58\u5728\u3057\u306A\u3044\u304B\u3001\u65E2\u306B\u521D\u671F\u5316\u6E08\u307F\u3067\u3059");
+  }
+  console.log("\u73FE\u5728\u5730\u30DC\u30BF\u30F3\u521D\u671F\u5316\u30C1\u30A7\u30C3\u30AF");
+  if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
+    initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
+  }
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 /*! Bundled license information:
 
 @splidejs/splide/dist/js/splide.esm.js:
@@ -4306,4 +4422,4 @@ document.addEventListener("DOMContentLoaded", () => {
    * Copyright: 2022 Naotoshi Fujita
    *)
 */
-//# sourceMappingURL=application.js.map
+//# sourceMappingURL=/assets/builds/application.js.map
