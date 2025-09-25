@@ -8,10 +8,11 @@ import { initMarkerEvents } from "./set_marker"
 import { initSearchBox, highlightMarker, clearSearchMarkersOnRouteDraw } from "./search_box"
 import { searchParking } from "./search_parking"
 import { getCurrentPosition } from "./current_position"
-import { carDrawRoute } from "./car_route"
+import { carDrawRoute, carRouteBtn } from "./car_route"
 import { walkDrawRoute, walkRouteBtn } from "./walk_route"
 import { startNavigation } from "./navigation"
 import { initCurrentPosBtn } from "./current_pos"
+console.log("navigation.js typeof getLatLngFromPosition:", typeof getLatLngFromPosition);
 import "./geocode_address"
 
 console.log("DOMContentLoaded読み込み直前");
@@ -48,25 +49,35 @@ function init() {
   console.log("splide終了");
 
   // map初期化
-  const mapDiv = document.getElementById("map");
-  console.log("mapDiv取得:", mapDiv);
+  const initMapIds = ['map', 'naviMap', 'carNaviMap'];
 
-  if (mapDiv && !mapDiv.dataset.mapInitialized) {
-    console.log("initMap呼び出し直前に到達");
-    initMap(mapDiv);
-    mapDiv.dataset.mapInitialized = "true";
-    initMarkerEvents();
-    initSearchBox();
-    highlightMarker();
-    searchParking();
-    getCurrentPosition();
-    walkRouteBtn();
-    clearSearchMarkersOnRouteDraw() 
-    initCurrentPosBtn()
-  } else {
-    console.warn("mapDivが存在しないか、既に初期化済みです");
-  }
+  initMapIds.forEach(id => {
+    const mapDiv = document.getElementById(id);
+    if (mapDiv && !mapDiv.dataset.mapInitialized) {
+      console.log(`initMap呼び出し: #${id}`);
+      initMap(mapDiv);
+      mapDiv.dataset.mapInitialized = "true";
 
+      // IDごとの追加処理
+      if (id === 'map') {
+        initMarkerEvents();
+        initSearchBox();
+        highlightMarker();
+        searchParking();
+        walkRouteBtn();
+        clearSearchMarkersOnRouteDraw() 
+        initCurrentPosBtn()
+      } else if (id === 'naviMap'){
+        getCurrentPosition();
+        startNavigation();
+      } else if (id === 'carNaviMap') {
+        getCurrentPosition();
+        startNavigation();
+      } else {
+        console.warn("mapDivが存在しないか、既に初期化済みです");
+      }
+    }
+  })
   // 現在地取得ボタン
   console.log("現在地ボタン初期化チェック");
   if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
@@ -78,6 +89,7 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+
 
 
 

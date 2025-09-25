@@ -1,4 +1,4 @@
-import { getLatLngFromPosition } from "./current_pos";
+console.log("navigation.jsを始めます");
 
 // #現在地マーカー
 let currentMarker;
@@ -73,24 +73,5 @@ function stopNavigation() {
   if (currentMarker) {
     currentMarker.setMap(null);
     currentMarker = null;
-  }
-}
-
-export function naviBtn() {
-  const naviBtn = document.getElementById("naviBtn");
-
-  if (naviBtn) {
-    naviBtn.addEventListener("click", () => {
-      startNavigation();
-    });
-  }
-
-  const stopNaviBtn = document.getElementById("stopNaviBtn");
-
-  if (stopNaviBtn) {
-    stopNaviBtn.addEventListener("click", () => {
-      stopNavigation();
-      console.log("ナビを終了しました");
-    });
   }
 }

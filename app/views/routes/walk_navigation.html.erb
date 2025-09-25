@@ -3,28 +3,3 @@
     <%= image_tag "/images/stopNavi.png", alt: "stopNavi", class:"navi_btn" %>
   <% end %>
   <div id="naviMap"></div>
-
-  <script type="module">
-    import "./maps_ready.js";
-    import { initMap } from "./map.js";
-    import { getCurrentPosition } from "./current_position.js";
-    import { walkDrawRoute, walkRouteBtn } from "./walk_route.js";
-    import { startNavigation } from "./navigation.js";
-
-    await window.mapApiLoaded;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const naviMapDiv = document.getElementById("naviMap");
-
-      if (naviMapDiv && !naviMapDiv.dataset.mapInitialized) {
-        initMap(naviMapDiv);
-        naviMapDiv.dataset.mapInitialized = "true";
-        getCurrentPosition();
-
-        if (window.routeStart && routeDestination){
-          walkDrawRoute();
-        }
-        startNavigation();
-      }
-    });
-  </script>

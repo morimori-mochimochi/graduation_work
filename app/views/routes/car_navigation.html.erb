@@ -3,28 +3,3 @@
     <%= image_tag "/images/stopNavi.png", alt: "stopNavi", class:"navi_btn" %>
   <% end %>
   <div id="carNaviMap"></div>
-
-  <script type="module">
-    import "maps_ready";
-    import { initMap } from "map";
-    import { getCurrentPosition } from "current_position";
-    import { carDrawRoute, carRouteBtn } from "car_route";
-    import { startNavigation } from "navigation";
-
-    await window.mapApiLoaded;
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const carNaviMapDiv = document.getElementById("carNaviMap");
-
-      if (carNaviMapDiv && !carNaviMapDiv.dataset.mapInitialized) {
-        initMap(carNaviMapDiv);
-        carNaviMapDiv.dataset.mapInitialized = "true";
-        getCurrentPosition();
-        
-        if (window.routeStart && routeDestination){
-          carDrawRoute();
-        }
-        startNavigation();
-      }
-    });
-  </script>
