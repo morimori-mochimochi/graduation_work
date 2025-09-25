@@ -5,7 +5,7 @@ import { initMarkerEvents } from "./set_marker";
 import { highlightMarker, initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { getCurrentPosition } from "./current_position";
-import { getLatLngFromPosition } from "./current_pos";
+import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 initMarkerEvents();
                 initSearchBox();
                 searchParking();
-                getLatLngFromPosition();
+                initCurrentPosBtn();
               }
 
               if (id === 'naviMap') {

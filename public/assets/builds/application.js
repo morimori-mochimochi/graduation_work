@@ -3964,13 +3964,13 @@ function getCurrentPosition() {
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const currentPos = {
+        const currentPosition = {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude
         };
-        window.currentPos = currentPos;
-        console.log("\u73FE\u5728\u5730\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F", currentPos);
-        resolve(currentPos);
+        window.currentPosition = currentPosition;
+        console.log("\u73FE\u5728\u5730\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F", currentPosition);
+        resolve(currentPosition);
       },
       (err) => {
         console.error("\u4F4D\u7F6E\u60C5\u5831\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", err.message);
@@ -4080,7 +4080,9 @@ function startNavigation() {
 
 // app/javascript/walk_route.js
 async function walkDrawRoute() {
+  console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
+  console.log("await\u7D42\u4E86");
   const currentPos = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
@@ -4096,9 +4098,7 @@ async function walkDrawRoute() {
   });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
-  console.log("window.map:", window.map);
   directionsRenderer.setMap(window.map);
-  console.log("route\u547C\u3073\u51FA\u3057\u76F4\u524D:", window.routeStart, routeDestination);
   directionsService.route(
     {
       origin: window.routeStart || currentPos,
@@ -4107,13 +4107,9 @@ async function walkDrawRoute() {
       travelMode: google.maps.TravelMode.WALKING
     },
     (response, status) => {
-      console.log("route\u30B3\u30FC\u30EB\u30D0\u30C3\u30AF\u547C\u3070\u308C\u305F", status);
-      console.log("response\u306E\u4E2D\u8EAB:", response);
       if (status === "OK") {
         directionsRenderer.setDirections(response);
-        console.log("directionsResult\u8A2D\u5B9A\u524D:", response);
         window.directionsResult = response;
-        console.log("window.directionsResult:", window.directionsResult);
       } else {
         alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
       }
@@ -4122,11 +4118,11 @@ async function walkDrawRoute() {
 }
 function walkRouteBtn() {
   const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-  console.log("walkDrawRouteBtn:", walkDrawRouteBtn);
-  console.log("walkDrawRouteBtn listener count:", walkDrawRouteBtn?.__listeners?.length);
   if (walkDrawRouteBtn) {
-    walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
-    console.log("walkDrawRoute\u30DC\u30BF\u30F3\u306B\u30A4\u30D9\u30F3\u30C8\u767B\u9332\u5B8C\u4E86");
+    walkDrawRouteBtn.addEventListener("click", () => {
+      walkDrawRoute();
+      console.log("walkRouteBtn\u304C\u62BC\u3055\u308C\u307E\u3057\u305F");
+    });
   } else {
     console.warn("walkDrawRoute\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093");
   }
@@ -4282,7 +4278,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 initMarkerEvents();
                 initSearchBox();
                 searchParking();
-                getLatLngFromPosition2();
+                initCurrentPosBtn();
               }
               if (id === "naviMap") {
                 console.log("naviMap \u7528 afterEnter \u51E6\u7406\u958B\u59CB");
@@ -4360,7 +4356,6 @@ window.mapApiLoaded.then(() => {
 
 // app/javascript/application.js
 console.log("application.js\u3092\u8AAD\u307F\u8FBC\u307F\u307E\u3059");
-console.log("navigation.js typeof getLatLngFromPosition:", typeof getLatLngFromPosition);
 console.log("DOMContentLoaded\u8AAD\u307F\u8FBC\u307F\u76F4\u524D");
 await window.mapApiLoaded;
 console.log("await\u7D42\u4E86");

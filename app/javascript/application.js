@@ -12,7 +12,6 @@ import { carDrawRoute, carRouteBtn } from "./car_route"
 import { walkDrawRoute, walkRouteBtn } from "./walk_route"
 import { startNavigation } from "./navigation"
 import { initCurrentPosBtn } from "./current_pos"
-console.log("navigation.js typeof getLatLngFromPosition:", typeof getLatLngFromPosition);
 import "./geocode_address"
 
 console.log("DOMContentLoaded読み込み直前");

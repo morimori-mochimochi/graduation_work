@@ -9,13 +9,13 @@ export function getCurrentPosition() {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const currentPos = {
+        const currentPosition = {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude
         };
-        window.currentPos = currentPos;
-        console.log("現在地を取得しました", currentPos);
-        resolve(currentPos);
+        window.currentPosition = currentPosition;
+        console.log("現在地を取得しました", currentPosition);
+        resolve(currentPosition);
       },  
       (err) => {
         console.error("位置情報の取得に失敗しました:", err.message);
