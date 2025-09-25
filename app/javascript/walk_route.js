@@ -1,4 +1,5 @@
 export async function walkDrawRoute(){
+
   await window.mapApiLoaded;
 
   const currentPos = await new Promise ((resolve) => {
@@ -22,18 +23,22 @@ export async function walkDrawRoute(){
   // #DirectionsRendererは検索したルートをマップに描画するクラス
   const directionsRenderer = new google.maps.DirectionsRenderer();
   // #どのマップにルートを描画するかを指定
+
+  console.log("window.map:", window.map);
   directionsRenderer.setMap(window.map);
 
   console.log("route呼び出し直前:", window.routeStart, routeDestination);
   directionsService.route(
     {
       origin: window.routeStart || currentPos,
-      destination: routeDestination,
+      destination: window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
     (response, status) => {
       console.log("routeコールバック呼ばれた", status);
+      console.log("responseの中身:", response);
+
       if (status === "OK"){
         directionsRenderer.setDirections(response);
         // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
@@ -49,7 +54,9 @@ export async function walkDrawRoute(){
 
 export function walkRouteBtn() {
   const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-  console.log("walkDrawRouteBtn(直接取得):", walkDrawRouteBtn);
+  
+  console.log("walkDrawRouteBtn:", walkDrawRouteBtn);
+  console.log("walkDrawRouteBtn listener count:", walkDrawRouteBtn?.__listeners?.length);
     
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", walkDrawRoute);

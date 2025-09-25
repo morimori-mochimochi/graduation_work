@@ -4096,17 +4096,19 @@ async function walkDrawRoute() {
   });
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer();
+  console.log("window.map:", window.map);
   directionsRenderer.setMap(window.map);
   console.log("route\u547C\u3073\u51FA\u3057\u76F4\u524D:", window.routeStart, routeDestination);
   directionsService.route(
     {
       origin: window.routeStart || currentPos,
-      destination: routeDestination,
+      destination: window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
     (response, status) => {
       console.log("route\u30B3\u30FC\u30EB\u30D0\u30C3\u30AF\u547C\u3070\u308C\u305F", status);
+      console.log("response\u306E\u4E2D\u8EAB:", response);
       if (status === "OK") {
         directionsRenderer.setDirections(response);
         console.log("directionsResult\u8A2D\u5B9A\u524D:", response);
@@ -4120,7 +4122,8 @@ async function walkDrawRoute() {
 }
 function walkRouteBtn() {
   const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-  console.log("walkDrawRouteBtn(\u76F4\u63A5\u53D6\u5F97):", walkDrawRouteBtn);
+  console.log("walkDrawRouteBtn:", walkDrawRouteBtn);
+  console.log("walkDrawRouteBtn listener count:", walkDrawRouteBtn?.__listeners?.length);
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
     console.log("walkDrawRoute\u30DC\u30BF\u30F3\u306B\u30A4\u30D9\u30F3\u30C8\u767B\u9332\u5B8C\u4E86");
