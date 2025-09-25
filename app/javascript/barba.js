@@ -4,7 +4,6 @@ import { initMap } from "./map";
 import { initMarkerEvents } from "./set_marker";
 import { highlightMarker, initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
-import { getCurrentPosition } from "./current_position";
 import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";

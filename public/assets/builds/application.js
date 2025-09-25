@@ -3954,33 +3954,8 @@ async function searchParking() {
   }
 }
 
-// app/javascript/current_position.js
-function getCurrentPosition() {
-  return new Promise((resolve, reject2) => {
-    if (!navigator.geolocation) {
-      console.warn("\u3053\u306E\u30D6\u30E9\u30A6\u30B6\u306F\u4F4D\u7F6E\u60C5\u5831\u306B\u5BFE\u5FDC\u3057\u3066\u3044\u307E\u305B\u3093");
-      reject2(new Error("Geolocation not supported"));
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const currentPosition = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        };
-        window.currentPosition = currentPosition;
-        console.log("\u73FE\u5728\u5730\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F", currentPosition);
-        resolve(currentPosition);
-      },
-      (err) => {
-        console.error("\u4F4D\u7F6E\u60C5\u5831\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", err.message);
-        reject2(err);
-      }
-    );
-  });
-}
-
 // app/javascript/current_pos.js
+var currentPos = null;
 function getLatLngFromPosition2(pos) {
   return {
     lat: pos.coords.latitude,
@@ -4000,17 +3975,18 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
       console.log("\u30AF\u30EA\u30C3\u30AF\u30A4\u30D9\u30F3\u30C8\u767A\u706B:", e.target);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const currentPos = getLatLngFromPosition2(pos);
-          window.currentPos = currentPos;
+          const newPos = getLatLngFromPosition2(pos);
+          currentPos = newPos;
+          window.currentPos = newPos;
           console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
           const map2 = window.map;
           if (map2) {
-            map2.setCenter(currentPos);
+            map2.setCenter(newPos);
             if (window.currentPosMarker) {
               window.currentPosMarker.setMap(null);
             }
             window.currentPosMarker = new google.maps.Marker({
-              position: currentPos,
+              position: newPos,
               map: map2,
               title: "\u73FE\u5728\u5730",
               animation: google.maps.Animation.BOUNCE
@@ -4042,10 +4018,10 @@ function startNavigation() {
   const steps = route.steps;
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const currentPos = getLatLngFromPosition(pos);
+      const currentPos2 = getLatLngFromPosition(pos);
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({
-          position: currentPos,
+          position: currentPos2,
           map: window.map,
           title: "\u73FE\u5728\u5730",
           icon: {
@@ -4058,12 +4034,12 @@ function startNavigation() {
           }
         });
       } else {
-        currentMarker.setPosition(currentPos);
+        currentMarker.setPosition(currentPos2);
       }
-      window.map.panTo(currentPos);
+      window.map.panTo(currentPos2);
       const nextStep = steps[stepIndex].end_location;
       const distance = google.maps.geometry.spherical.computeDistanceBetween(
-        new google.maps.LatLng(currentPos),
+        new google.maps.LatLng(currentPos2),
         nextStep
       );
       if (distance < 30 && stepIndex < steps.length - 1) {
@@ -4083,7 +4059,7 @@ async function walkDrawRoute() {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
-  const currentPos = await new Promise((resolve) => {
+  const currentPos2 = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
     } else {
@@ -4101,7 +4077,7 @@ async function walkDrawRoute() {
   directionsRenderer.setMap(window.map);
   directionsService.route(
     {
-      origin: window.routeStart || currentPos,
+      origin: window.routeStart || currentPos2,
       destination: window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
@@ -4133,7 +4109,7 @@ async function carDrawRoute() {
   await window.mapApiLoaded;
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
-  const currentPos = await new Promise((resolve) => {
+  const currentPos2 = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
     } else {
@@ -4151,7 +4127,7 @@ async function carDrawRoute() {
   if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos,
+        origin: window.routeStart || currentPos2,
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       },
@@ -4191,7 +4167,7 @@ async function carDrawRoute() {
   } else if (window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos,
+        origin: window.routeStart || currentPos2,
         destination: window.routeDestination,
         travelMode: google.maps.TravelMode.DRIVING
       },

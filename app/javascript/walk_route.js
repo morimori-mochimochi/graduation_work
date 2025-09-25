@@ -1,3 +1,5 @@
+import { getLatLngFromPosition } from "./current_pos"
+
 export async function walkDrawRoute(){
   console.log("ルートを作ります");
   await window.mapApiLoaded;
