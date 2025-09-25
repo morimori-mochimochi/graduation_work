@@ -3954,34 +3954,9 @@ async function searchParking() {
   }
 }
 
-// app/javascript/current_position.js
-function getCurrentPosition() {
-  return new Promise((resolve, reject2) => {
-    if (!navigator.geolocation) {
-      console.warn("\u3053\u306E\u30D6\u30E9\u30A6\u30B6\u306F\u4F4D\u7F6E\u60C5\u5831\u306B\u5BFE\u5FDC\u3057\u3066\u3044\u307E\u305B\u3093");
-      reject2(new Error("Geolocation not supported"));
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const currentPos = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        };
-        window.currentPos = currentPos;
-        console.log("\u73FE\u5728\u5730\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F", currentPos);
-        resolve(currentPos);
-      },
-      (err) => {
-        console.error("\u4F4D\u7F6E\u60C5\u5831\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", err.message);
-        reject2(err);
-      }
-    );
-  });
-}
-
 // app/javascript/current_pos.js
-function getLatLngFromPosition(pos) {
+var currentPos = null;
+function getLatLngFromPosition2(pos) {
   return {
     lat: pos.coords.latitude,
     lng: pos.coords.longitude
@@ -4000,17 +3975,18 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
       console.log("\u30AF\u30EA\u30C3\u30AF\u30A4\u30D9\u30F3\u30C8\u767A\u706B:", e.target);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const currentPos = getLatLngFromPosition(pos);
-          window.currentPos = currentPos;
+          const newPos = getLatLngFromPosition2(pos);
+          currentPos = newPos;
+          window.currentPos = newPos;
           console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
           const map2 = window.map;
           if (map2) {
-            map2.setCenter(currentPos);
+            map2.setCenter(newPos);
             if (window.currentPosMarker) {
               window.currentPosMarker.setMap(null);
             }
             window.currentPosMarker = new google.maps.Marker({
-              position: currentPos,
+              position: newPos,
               map: map2,
               title: "\u73FE\u5728\u5730",
               animation: google.maps.Animation.BOUNCE
@@ -4029,6 +4005,7 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
 }
 
 // app/javascript/navigation.js
+console.log("navigation.js\u3092\u59CB\u3081\u307E\u3059");
 var currentMarker;
 var watchId;
 var stepIndex = 0;
@@ -4041,10 +4018,10 @@ function startNavigation() {
   const steps = route.steps;
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const currentPos = getLatLngFromPosition(pos);
+      const currentPos2 = getLatLngFromPosition(pos);
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({
-          position: currentPos,
+          position: currentPos2,
           map: window.map,
           title: "\u73FE\u5728\u5730",
           icon: {
@@ -4057,12 +4034,12 @@ function startNavigation() {
           }
         });
       } else {
-        currentMarker.setPosition(currentPos);
+        currentMarker.setPosition(currentPos2);
       }
-      window.map.panTo(currentPos);
+      window.map.panTo(currentPos2);
       const nextStep = steps[stepIndex].end_location;
       const distance = google.maps.geometry.spherical.computeDistanceBetween(
-        new google.maps.LatLng(currentPos),
+        new google.maps.LatLng(currentPos2),
         nextStep
       );
       if (distance < 30 && stepIndex < steps.length - 1) {
@@ -4076,36 +4053,13 @@ function startNavigation() {
     { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
   );
 }
-function stopNavigation() {
-  if (watchId) {
-    navigator.geolocation.clearWatch(watchId);
-    watchId = null;
-  }
-  if (currentMarker) {
-    currentMarker.setMap(null);
-    currentMarker = null;
-  }
-}
-function naviBtn() {
-  const naviBtn2 = document.getElementById("naviBtn");
-  if (naviBtn2) {
-    naviBtn2.addEventListener("click", () => {
-      startNavigation();
-    });
-  }
-  const stopNaviBtn = document.getElementById("stopNaviBtn");
-  if (stopNaviBtn) {
-    stopNaviBtn.addEventListener("click", () => {
-      stopNavigation();
-      console.log("\u30CA\u30D3\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F");
-    });
-  }
-}
 
 // app/javascript/walk_route.js
 async function walkDrawRoute() {
+  console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
-  const currentPos = await new Promise((resolve) => {
+  console.log("await\u7D42\u4E86");
+  const currentPos2 = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
     } else {
@@ -4123,8 +4077,8 @@ async function walkDrawRoute() {
   directionsRenderer.setMap(window.map);
   directionsService.route(
     {
-      origin: window.routeStart || currentPos,
-      destination: routeDestination,
+      origin: window.routeStart || currentPos2,
+      destination: window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
@@ -4141,11 +4095,13 @@ async function walkDrawRoute() {
 function walkRouteBtn() {
   const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
   if (walkDrawRouteBtn) {
-    walkDrawRouteBtn.addEventListener("click", walkDrawRoute);
+    walkDrawRouteBtn.addEventListener("click", () => {
+      walkDrawRoute();
+      console.log("walkRouteBtn\u304C\u62BC\u3055\u308C\u307E\u3057\u305F");
+    });
   } else {
     console.warn("walkDrawRoute\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093");
   }
-  console.log("walkDrawRouteBtn: ", walkDrawRouteBtn);
 }
 
 // app/javascript/car_route.js
@@ -4153,7 +4109,7 @@ async function carDrawRoute() {
   await window.mapApiLoaded;
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
-  const currentPos = await new Promise((resolve) => {
+  const currentPos2 = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
     } else {
@@ -4171,7 +4127,7 @@ async function carDrawRoute() {
   if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos,
+        origin: window.routeStart || currentPos2,
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       },
@@ -4211,7 +4167,7 @@ async function carDrawRoute() {
   } else if (window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos,
+        origin: window.routeStart || currentPos2,
         destination: window.routeDestination,
         travelMode: google.maps.TravelMode.DRIVING
       },
@@ -4289,18 +4245,33 @@ document.addEventListener("DOMContentLoaded", () => {
           const mapIds = ["map", "naviMap", "carNaviMap"];
           mapIds.forEach((id) => {
             const mapDiv = next.container.querySelector(`#${id}`);
+            console.log("mapDiv\u30C1\u30A7\u30C3\u30AF:", id, mapDiv);
+            console.log("dataset.mapInitialized:", mapDiv?.dataset.mapInitialized);
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
               initMap2(mapDiv);
               mapDiv.dataset.mapInitialized = "true";
-              if (document.querySelector("#map")) initMarkerEvents();
-              if (document.querySelector("#map")) initSearchBox();
-              if (document.querySelector("#map")) searchParking();
-              if (document.querySelector("#map")) getCurrentPosition();
-              if (document.querySelector("#map")) walkRouteBtn();
-              if (document.querySelector("#map")) carRouteBtn();
-              if (document.querySelector("#map")) naviBtn();
-              console.log("highlightMarker\u306E\u578B:", highlightMarker);
+              if (id === "map") {
+                initMarkerEvents();
+                initSearchBox();
+                searchParking();
+                initCurrentPosBtn();
+              }
+              if (id === "naviMap") {
+                console.log("naviMap \u7528 afterEnter \u51E6\u7406\u958B\u59CB");
+                getCurrentPosition();
+                walkRouteBtn();
+                carRouteBtn();
+                console.log("afterEnter directionsResult:", window.directionsResult);
+                startNavigation();
+              }
+              if (id === "carNaviMap") {
+                getCurrentPosition();
+                walkRouteBtn();
+                carRouteBtn();
+                startNavigation();
+              }
             }
+            console.log("afterEnter\u304C\u7D42\u308F\u308A\u307E\u3057\u305F");
           });
         }
       }
@@ -4385,23 +4356,32 @@ function init() {
     }
   }
   console.log("splide\u7D42\u4E86");
-  const mapDiv = document.getElementById("map");
-  console.log("mapDiv\u53D6\u5F97:", mapDiv);
-  if (mapDiv && !mapDiv.dataset.mapInitialized) {
-    console.log("initMap\u547C\u3073\u51FA\u3057\u76F4\u524D\u306B\u5230\u9054");
-    initMap(mapDiv);
-    mapDiv.dataset.mapInitialized = "true";
-    initMarkerEvents();
-    initSearchBox();
-    highlightMarker();
-    searchParking();
-    getCurrentPosition();
-    walkRouteBtn();
-    clearSearchMarkersOnRouteDraw();
-    initCurrentPosBtn();
-  } else {
-    console.warn("mapDiv\u304C\u5B58\u5728\u3057\u306A\u3044\u304B\u3001\u65E2\u306B\u521D\u671F\u5316\u6E08\u307F\u3067\u3059");
-  }
+  const initMapIds = ["map", "naviMap", "carNaviMap"];
+  initMapIds.forEach((id) => {
+    const mapDiv = document.getElementById(id);
+    if (mapDiv && !mapDiv.dataset.mapInitialized) {
+      console.log(`initMap\u547C\u3073\u51FA\u3057: #${id}`);
+      initMap(mapDiv);
+      mapDiv.dataset.mapInitialized = "true";
+      if (id === "map") {
+        initMarkerEvents();
+        initSearchBox();
+        highlightMarker();
+        searchParking();
+        walkRouteBtn();
+        clearSearchMarkersOnRouteDraw();
+        initCurrentPosBtn();
+      } else if (id === "naviMap") {
+        getCurrentPosition();
+        startNavigation();
+      } else if (id === "carNaviMap") {
+        getCurrentPosition();
+        startNavigation();
+      } else {
+        console.warn("mapDiv\u304C\u5B58\u5728\u3057\u306A\u3044\u304B\u3001\u65E2\u306B\u521D\u671F\u5316\u6E08\u307F\u3067\u3059");
+      }
+    }
+  });
   console.log("\u73FE\u5728\u5730\u30DC\u30BF\u30F3\u521D\u671F\u5316\u30C1\u30A7\u30C3\u30AF");
   if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
     initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);

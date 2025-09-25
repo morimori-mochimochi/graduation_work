@@ -1,3 +1,7 @@
+//現在地を保持する変数
+let currentPos = null;
+
+// 現在地取得関数
 export function getLatLngFromPosition(pos) {
   return {
     lat: pos.coords.latitude,
@@ -5,10 +9,15 @@ export function getLatLngFromPosition(pos) {
   };
 }
 
+//外から現在地を読む関数
+export function getCurrentPos() {
+  return currentPos();
+}
+
+//ボタンの初期化
 export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
   console.log("現在地取得開始");
   buttonIds.forEach((buttonId) => {
-
     const btn = document.getElementById(buttonId);
     console.log("btn:", btn);
     if (!btn) {
@@ -21,14 +30,15 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const currentPos = getLatLngFromPosition(pos);
-          window.currentPos = currentPos;
+          const newPos = getLatLngFromPosition(pos);
+          currentPos = newPos;
+          window.currentPos = newPos;
           console.log("現在地取得完了:", currentPos);
 
           // マーカーが存在する場合は中心を移動してマーカー立てる
           const map = window.map;
           if (map) {
-            map.setCenter(currentPos);
+            map.setCenter(newPos);
 
             //既存のマーカーを消す
             if (window.currentPosMarker) {
@@ -37,7 +47,7 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
 
             //新しいマーカーを作成
             window.currentPosMarker = new google.maps.Marker({
-              position: currentPos,
+              position: newPos,
               map: map,
               title: "現在地",
               animation: google.maps.Animation.BOUNCE,

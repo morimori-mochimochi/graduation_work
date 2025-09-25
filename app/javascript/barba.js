@@ -4,8 +4,8 @@ import { initMap } from "./map";
 import { initMarkerEvents } from "./set_marker";
 import { highlightMarker, initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
-import { getCurrentPosition } from "./current_position";
-import { naviBtn } from "./navigation";
+import { initCurrentPosBtn } from "./current_pos";
+import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
@@ -62,19 +62,38 @@ document.addEventListener('DOMContentLoaded', () => {
           const mapIds = ['map', 'naviMap', 'carNaviMap'];
           mapIds.forEach(id => {
             const mapDiv = next.container.querySelector(`#${id}`);
+
+            console.log("mapDivチェック:", id, mapDiv);
+            console.log("dataset.mapInitialized:", mapDiv?.dataset.mapInitialized);
+            
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
               initMap(mapDiv);
               mapDiv.dataset.mapInitialized = "true";
 
-              if (document.querySelector('#map')) initMarkerEvents();
-              if (document.querySelector('#map')) initSearchBox();
-              if (document.querySelector('#map')) searchParking();
-              if (document.querySelector('#map')) getCurrentPosition();
-              if (document.querySelector('#map')) walkRouteBtn();
-              if (document.querySelector('#map')) carRouteBtn();
-              if (document.querySelector('#map')) naviBtn();
-              console.log("highlightMarkerの型:", highlightMarker);
+              if (id === 'map') {
+                initMarkerEvents();
+                initSearchBox();
+                searchParking();
+                initCurrentPosBtn();
+              }
+
+              if (id === 'naviMap') {
+                console.log("naviMap 用 afterEnter 処理開始");
+                getCurrentPosition();
+                walkRouteBtn();
+                carRouteBtn();
+                console.log("afterEnter directionsResult:", window.directionsResult);
+                startNavigation();
+              }
+
+              if (id === 'carNaviMap') {
+                getCurrentPosition();
+                walkRouteBtn();
+                carRouteBtn();
+                startNavigation();
+              }
             }
+            console.log("afterEnterが終わりました");
           });
         }
       }
