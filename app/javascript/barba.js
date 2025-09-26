@@ -2,7 +2,7 @@ import barba from "@barba/core";
 import Splide from "@splidejs/splide";
 import { initMap } from "./map";
 import { initMarkerEvents } from "./set_marker";
-import { highlightMarker, initSearchBox} from "./search_box";
+import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
@@ -74,22 +74,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 initMarkerEvents();
                 initSearchBox();
                 searchParking();
+                walkRouteBtn();
+                carRouteBtn();
+                clearSearchMarkersOnRouteDraw(); 
                 initCurrentPosBtn();
               }
 
               if (id === 'naviMap') {
-                console.log("naviMap 用 afterEnter 処理開始");
-                getCurrentPosition();
-                walkRouteBtn();
-                carRouteBtn();
-                console.log("afterEnter directionsResult:", window.directionsResult);
+                fetchCurrentPos();
                 startNavigation();
               }
 
               if (id === 'carNaviMap') {
-                getCurrentPosition();
-                walkRouteBtn();
-                carRouteBtn();
+                fetchCurrentPos();
                 startNavigation();
               }
             }

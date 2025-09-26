@@ -1,5 +1,12 @@
 console.log("navigation.jsを始めます");
 
+import { fetchCurrentPos } from "./current_pos";
+
+async function updateNavigation() {
+  const pos = await fetchCurrentPos();
+  console.log("updateNavigation:", pos);
+}
+
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号

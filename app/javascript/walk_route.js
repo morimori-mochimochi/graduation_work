@@ -1,23 +1,11 @@
-import { getLatLngFromPosition } from "./current_pos"
+import { fetchCurrentPos } from "./current_pos"
 
 export async function walkDrawRoute(){
   console.log("ルートを作ります");
   await window.mapApiLoaded;
   console.log("await終了");
 
-  const currentPos = await new Promise ((resolve) => {
-    if (window.currentPos) {
-      resolve(window.currentPos);
-    } else {
-      const check = setInterval(() => {
-        if (window.currentPos) {
-          clearInterval(check);
-          console.log("現在地の取得が完了しました", window.currentPos)
-          resolve(window.currentPos);
-        }
-      }, 200);
-    }
-  });
+  const currentPos = await fetchCurrentPos();
 
   // #DirectionsAPIで使うオブジェクトの生成
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
@@ -54,7 +42,6 @@ export function walkRouteBtn() {
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", () => {
       walkDrawRoute();
-      console.log("walkRouteBtnが押されました");
     });
   }else{
     console.warn("walkDrawRouteボタンが存在しません");

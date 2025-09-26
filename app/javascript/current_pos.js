@@ -9,12 +9,37 @@ export function getLatLngFromPosition(pos) {
   };
 }
 
-//外から現在地を読む関数
-export function getCurrentPos() {
-  return currentPos();
+// 現在地を取得してPromiseで返す
+//成功すると{lat, lng}を返す
+export function fetchCurrentPos() {
+  return new Promise ((resolve, reject) => {
+    // すでに取得されている時はそれを使う
+    if (currentPos) {
+      resolve(currentPos);
+      return;
+    }
+    //ブラウザの位置情報を取得
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const newPos = getLatLngFromPosition(pos);
+        currentPos = newPos;
+        window.currentPos = newPos; //既存コード互換のため
+        resolve(newPos);
+        console.log("現在地取得完了:", currentPos);
+      },
+      (err) => reject(err),
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+    );
+  });
 }
 
-//ボタンの初期化
+//外から現在地を読む関数
+export function getCurrentPos() {
+  return currentPos;
+}
+
+//現在地ボタンの初期化
+//ボタンをクリックすると現在地取得とマップの移動＆マーカー表示
 export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
   console.log("現在地取得開始");
   buttonIds.forEach((buttonId) => {
@@ -25,42 +50,34 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
       return;
     }
 
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", async(e) => {
       console.log("クリックイベント発火:", e.target);
+      try{
+        const newPos = await fetchCurrentPos();
+        console.log("現在地取得完了:", newPos);
 
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const newPos = getLatLngFromPosition(pos);
-          currentPos = newPos;
-          window.currentPos = newPos;
-          console.log("現在地取得完了:", currentPos);
+        const map = window.map;
+        if (map) {
+          map.setCenter(newPos);
 
-          // マーカーが存在する場合は中心を移動してマーカー立てる
-          const map = window.map;
-          if (map) {
-            map.setCenter(newPos);
-
-            //既存のマーカーを消す
-            if (window.currentPosMarker) {
-              window.currentPosMarker.setMap(null);
-            }
-
-            //新しいマーカーを作成
-            window.currentPosMarker = new google.maps.Marker({
-              position: newPos,
-              map: map,
-              title: "現在地",
-              animation: google.maps.Animation.BOUNCE,
-            });
-          }else{
-            console.warn("マップがまだ存在しません")
+          //既存のマーカーを消す
+          if (window.currentPosMarker) {
+            window.currentPosMarker.setMap(null);
           }
-        },
-        (err) => {
-          console.log("現在地の取得に失敗しました: ", err)
-        },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
-      );
+
+          //新しいマーカーを作成
+          window.currentPosMarker = new google.maps.Marker({
+            position: newPos,
+            map: map,
+            title: "現在地",
+            animation: google.maps.Animation.BOUNCE,
+          });
+        }else{
+          console.warn("マップがまだ存在しません")
+        }
+      } catch (err) {
+        console.error("現在地取得に失敗しました:", err);
+      }
     });
   });
 }
