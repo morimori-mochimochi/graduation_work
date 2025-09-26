@@ -5,7 +5,7 @@
 
   <button id="walkDrawRoute">ルート検索</button>
 
-  <%= link_to walk_navigation_routes_path do %>
+  <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
     <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
   <% end %>
 
