@@ -1,16 +1,14 @@
-console.log("application.jsを読み込みます");
-
-import Splide from "@splidejs/splide"
-import "./barba"
-import "./maps_ready"
-import "./map"
-import { initMarkerEvents } from "./set_marker"
-import { initSearchBox, highlightMarker, clearSearchMarkersOnRouteDraw } from "./search_box"
-import { searchParking } from "./search_parking"
-import { carDrawRoute, carRouteBtn } from "./car_route"
-import { walkDrawRoute, walkRouteBtn } from "./walk_route"
-import { startNavigation } from "./navigation"
-import { initCurrentPosBtn } from "./current_pos"
+import Splide from "@splidejs/splide";
+import "./barba";
+import "./maps_ready";
+import "./map";
+import { initMarkerEvents } from "./set_marker";
+import { initSearchBox, clearSearchMarkersOnRouteDraw } from "./search_box";
+import { searchParking } from "./search_parking";
+import { carRouteBtn } from "./car_route";
+import { walkRouteBtn } from "./walk_route";
+import { startNavigation } from "./navigation";
+import { initCurrentPosBtn, fetchCurrentPos } from "./current_pos";
 import "./geocode_address"
 
 console.log("DOMContentLoaded読み込み直前");
@@ -60,16 +58,16 @@ function init() {
       if (id === 'map') {
         initMarkerEvents();
         initSearchBox();
-        highlightMarker();
         searchParking();
         walkRouteBtn();
+        carRouteBtn();
         clearSearchMarkersOnRouteDraw() 
         initCurrentPosBtn()
       } else if (id === 'naviMap'){
-        getCurrentPosition();
+        fetchCurrentPos();
         startNavigation();
       } else if (id === 'carNaviMap') {
-        getCurrentPosition();
+        fetchCurrentPos();
         startNavigation();
       } else {
         console.warn("mapDivが存在しないか、既に初期化済みです");

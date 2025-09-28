@@ -3844,7 +3844,7 @@ function initSearchBox() {
     });
   }
 }
-function clearSearchMarkersOnRouteDraw() {
+function clearSearchMarkersOnRouteDraw2() {
   const walkBtn = document.getElementById("walkDrawRoute");
   const carBtn = document.getElementById("carDrawRoute");
   const clearMarkers = () => {
@@ -3956,11 +3956,30 @@ async function searchParking() {
 
 // app/javascript/current_pos.js
 var currentPos = null;
-function getLatLngFromPosition2(pos) {
+function getLatLngFromPosition(pos) {
   return {
     lat: pos.coords.latitude,
     lng: pos.coords.longitude
   };
+}
+function fetchCurrentPos2() {
+  return new Promise((resolve, reject2) => {
+    if (currentPos) {
+      resolve(currentPos);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const newPos = getLatLngFromPosition(pos);
+        currentPos = newPos;
+        window.currentPos = newPos;
+        resolve(newPos);
+        console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
+      },
+      (err) => reject2(err),
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
+    );
+  });
 }
 function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
   console.log("\u73FE\u5728\u5730\u53D6\u5F97\u958B\u59CB");
@@ -3971,35 +3990,29 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
       console.warn(`\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093: ${buttonId}`);
       return;
     }
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", async (e) => {
       console.log("\u30AF\u30EA\u30C3\u30AF\u30A4\u30D9\u30F3\u30C8\u767A\u706B:", e.target);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const newPos = getLatLngFromPosition2(pos);
-          currentPos = newPos;
-          window.currentPos = newPos;
-          console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
-          const map2 = window.map;
-          if (map2) {
-            map2.setCenter(newPos);
-            if (window.currentPosMarker) {
-              window.currentPosMarker.setMap(null);
-            }
-            window.currentPosMarker = new google.maps.Marker({
-              position: newPos,
-              map: map2,
-              title: "\u73FE\u5728\u5730",
-              animation: google.maps.Animation.BOUNCE
-            });
-          } else {
-            console.warn("\u30DE\u30C3\u30D7\u304C\u307E\u3060\u5B58\u5728\u3057\u307E\u305B\u3093");
+      try {
+        const newPos = await fetchCurrentPos2();
+        console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", newPos);
+        const map2 = window.map;
+        if (map2) {
+          map2.setCenter(newPos);
+          if (window.currentPosMarker) {
+            window.currentPosMarker.setMap(null);
           }
-        },
-        (err) => {
-          console.log("\u73FE\u5728\u5730\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: ", err);
-        },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
-      );
+          window.currentPosMarker = new google.maps.Marker({
+            position: newPos,
+            map: map2,
+            title: "\u73FE\u5728\u5730",
+            animation: google.maps.Animation.BOUNCE
+          });
+        } else {
+          console.warn("\u30DE\u30C3\u30D7\u304C\u307E\u3060\u5B58\u5728\u3057\u307E\u305B\u3093");
+        }
+      } catch (err) {
+        console.error("\u73FE\u5728\u5730\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", err);
+      }
     });
   });
 }
@@ -4009,16 +4022,49 @@ console.log("navigation.js\u3092\u59CB\u3081\u307E\u3059");
 var currentMarker;
 var watchId;
 var stepIndex = 0;
+function stopNavigation() {
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    console.log("\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u3092\u505C\u6B62\u3057\u307E\u3057\u305F");
+  }
+  if (window.directionsRenderer) {
+    window.directionsRenderer.setMap(null);
+  }
+  if (currentMarker) {
+    currentMarker.setMap(null);
+    currentMarker = null;
+  }
+}
 function startNavigation() {
-  if (!window.directionsResult) {
+  stopNavigation();
+  stepIndex = 0;
+  const storedDirections = sessionStorage.getItem("directionsResult");
+  debugger;
+  if (!storedDirections) {
     alert("\u30EB\u30FC\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
     return;
   }
-  const route = window.directionsResult.routes[0].legs[0];
+  const directionsResult = JSON.parse(storedDirections);
+  console.log("\u2605 startNavigation\u958B\u59CB:", directionsResult);
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers: true,
+      //ナビ中の始点、終点のマーカーを非表示にする
+      preserveViewport: true
+      //ルート描画中に地図の表示領域を維持する
+    });
+  }
+  window.directionsRenderer.setMap(window.map);
+  window.directionsRenderer.setDirections(directionsResult);
+  const route = directionsResult.routes[0].legs[0];
   const steps = route.steps;
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      const currentPos2 = getLatLngFromPosition(pos);
+      const currentPos2 = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      };
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({
           position: currentPos2,
@@ -4042,13 +4088,19 @@ function startNavigation() {
         new google.maps.LatLng(currentPos2),
         nextStep
       );
-      if (distance < 30 && stepIndex < steps.length - 1) {
-        stepIndex++;
-        console.log("\u6B21\u306E\u30B9\u30C6\u30C3\u30D7\u3078\u9032\u307F\u307E\u3059:", steps[stepIndex].instructions);
+      if (distance < 30) {
+        if (stepIndex < steps.length - 1) {
+          stepIndex++;
+          console.log("\u6B21\u306E\u30B9\u30C6\u30C3\u30D7\u3078\u9032\u307F\u307E\u3059:", steps[stepIndex].instructions);
+        } else {
+          console.log("\u76EE\u7684\u5730\u306B\u5230\u7740\u3057\u307E\u3057\u305F\u3002\u30CA\u30D3\u3092\u7D42\u4E86\u3057\u307E\u3059\u3002");
+          stopNavigation();
+        }
       }
     },
     (err) => {
       console.error("\u4F4D\u7F6E\u60C5\u5831\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: ", err);
+      stopNavigation();
     },
     { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
   );
@@ -4059,22 +4111,12 @@ async function walkDrawRoute() {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
-  const currentPos2 = await new Promise((resolve) => {
-    if (window.currentPos) {
-      resolve(window.currentPos);
-    } else {
-      const check = setInterval(() => {
-        if (window.currentPos) {
-          clearInterval(check);
-          console.log("\u73FE\u5728\u5730\u306E\u53D6\u5F97\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F", window.currentPos);
-          resolve(window.currentPos);
-        }
-      }, 200);
-    }
-  });
+  const currentPos2 = await fetchCurrentPos2();
   const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer();
-  directionsRenderer.setMap(window.map);
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer();
+  }
+  window.directionsRenderer.setMap(window.map);
   directionsService.route(
     {
       origin: window.routeStart || currentPos2,
@@ -4084,8 +4126,11 @@ async function walkDrawRoute() {
     },
     (response, status) => {
       if (status === "OK") {
-        directionsRenderer.setDirections(response);
+        window.directionsRenderer.setDirections(response);
+        console.log("\u2605 directionsService OK", response);
         window.directionsResult = response;
+        sessionStorage.setItem("directionsResult", JSON.stringify(response));
+        console.log("\u2605 window.directionsResult set", window.directionsResult);
       } else {
         alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
       }
@@ -4097,7 +4142,6 @@ function walkRouteBtn() {
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", () => {
       walkDrawRoute();
-      console.log("walkRouteBtn\u304C\u62BC\u3055\u308C\u307E\u3057\u305F");
     });
   } else {
     console.warn("walkDrawRoute\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093");
@@ -4206,6 +4250,7 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("barba\u306E\u9014\u4E2D\u7D4C\u904E1");
         },
         leave({ current }) {
+          console.log("directionsResult\u304C\u6D88\u3048\u306A\u3044\u304B\u78BA\u8A8D: ", window.directionsResult);
           return new Promise((resolve) => {
             document.body.style.backgroundColor = "#FDF8F4";
             current.container.style.transform = "translateX(0)";
@@ -4215,6 +4260,7 @@ document.addEventListener("DOMContentLoaded", () => {
               current.container.style.opacity = "0";
             });
             setTimeout(resolve, 1e3);
+            console.log("\u30DA\u30FC\u30B8\u5207\u308A\u66FF\u3048\u307E\u3057\u305F");
           });
         },
         enter({ next }) {
@@ -4229,6 +4275,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         },
         afterEnter({ next }) {
+          console.log("afterEnter\u524D: directionsResult", window.directionsResult);
           console.log("afterEnter\u304C\u547C\u3070\u308C\u307E\u3057\u305F", next.container);
           const el = next.container.querySelector("#splide");
           if (el) {
@@ -4247,6 +4294,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const mapDiv = next.container.querySelector(`#${id}`);
             console.log("mapDiv\u30C1\u30A7\u30C3\u30AF:", id, mapDiv);
             console.log("dataset.mapInitialized:", mapDiv?.dataset.mapInitialized);
+            console.log("directionsResult \u5FA9\u5143:", window.directionsResult);
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
               initMap2(mapDiv);
               mapDiv.dataset.mapInitialized = "true";
@@ -4254,20 +4302,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 initMarkerEvents();
                 initSearchBox();
                 searchParking();
+                walkRouteBtn();
+                carRouteBtn();
+                clearSearchMarkersOnRouteDraw();
                 initCurrentPosBtn();
               }
               if (id === "naviMap") {
-                console.log("naviMap \u7528 afterEnter \u51E6\u7406\u958B\u59CB");
-                getCurrentPosition();
-                walkRouteBtn();
-                carRouteBtn();
-                console.log("afterEnter directionsResult:", window.directionsResult);
+                fetchCurrentPos();
                 startNavigation();
               }
               if (id === "carNaviMap") {
-                getCurrentPosition();
-                walkRouteBtn();
-                carRouteBtn();
+                fetchCurrentPos();
                 startNavigation();
               }
             }
@@ -4331,7 +4376,6 @@ window.mapApiLoaded.then(() => {
 });
 
 // app/javascript/application.js
-console.log("application.js\u3092\u8AAD\u307F\u8FBC\u307F\u307E\u3059");
 console.log("DOMContentLoaded\u8AAD\u307F\u8FBC\u307F\u76F4\u524D");
 await window.mapApiLoaded;
 console.log("await\u7D42\u4E86");
@@ -4366,16 +4410,16 @@ function init() {
       if (id === "map") {
         initMarkerEvents();
         initSearchBox();
-        highlightMarker();
         searchParking();
         walkRouteBtn();
-        clearSearchMarkersOnRouteDraw();
+        carRouteBtn();
+        clearSearchMarkersOnRouteDraw2();
         initCurrentPosBtn();
       } else if (id === "naviMap") {
-        getCurrentPosition();
+        fetchCurrentPos2();
         startNavigation();
       } else if (id === "carNaviMap") {
-        getCurrentPosition();
+        fetchCurrentPos2();
         startNavigation();
       } else {
         console.warn("mapDiv\u304C\u5B58\u5728\u3057\u306A\u3044\u304B\u3001\u65E2\u306B\u521D\u671F\u5316\u6E08\u307F\u3067\u3059");

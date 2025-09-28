@@ -1,5 +1,7 @@
 console.log("navigation.jsを始めます");
 
+import { fetchCurrentPos } from "./current_pos";
+
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号
@@ -7,22 +9,68 @@ let watchId;
 // #stepIndexはDirectionsResult内の経路をどのステップまで進んだか管理する番号
 let stepIndex = 0;
 
+export function stopNavigation() {
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    console.log("ナビゲーションを停止しました");
+  }
+
+  //描画されたルートを消す
+  if (window.directionsRenderer) {
+    window.directionsRenderer.setMap(null);
+  }
+
+  //現在地マーカーを消す
+  if (currentMarker) {
+    currentMarker.setMap(null);
+    currentMarker = null;
+  }
+}
+
 export function startNavigation() {
-  if (!window.directionsResult) {
+  //既存のナビがあれば停止
+  stopNavigation();
+  stepIndex = 0;
+
+  // sessionStorageから直接データを取得する
+  const storedDirections = sessionStorage.getItem("directionsResult");
+  debugger;
+
+  // データがない場合は処理を中断
+  if (!storedDirections) {
     alert("ルートが設定されていません");
     return;
   }
 
+  // JSON文字列をオブジェクトに変換
+  const directionsResult = JSON.parse(storedDirections);
+  console.log("★ startNavigation開始:", directionsResult);
+
+  // DirectionsRendererを初期化し、ルートを描画する
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers: true, //ナビ中の始点、終点のマーカーを非表示にする
+      preserveViewport: true, //ルート描画中に地図の表示領域を維持する
+    });
+  }
+  window.directionsRenderer.setMap(window.map);
+  window.directionsRenderer.setDirections(directionsResult);
+
   // #最初のルート情報を取得
-  const route = window.directionsResult.routes[0].legs[0];
+  const route = directionsResult.routes[0].legs[0];
   const steps = route.steps;
 
   // #現在地の追跡開始
   watchId = navigator.geolocation.watchPosition(
-    (pos) => {
-      const currentPos = getLatLngFromPosition(pos);
-      
-      // #最初の一回はマーカーを作成。それ以降はそれを更新
+    (pos) => { // asyncは不要に
+      // watchPositionのコールバック引数から直接位置情報を取得
+      const currentPos = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      };
+
+       // #最初の一回はマーカーを作成。それ以降はそれを更新
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({
           position: currentPos,
@@ -39,10 +87,9 @@ export function startNavigation() {
         });
       }else{
         currentMarker.setPosition(currentPos);
-      }
-
+      }  
       // #マップを追従
-      window.map.panTo(currentPos);
+        window.map.panTo(currentPos);
 
       // #現在地と次のステップの目的地との直線距離を計算
       const nextStep = steps[stepIndex].end_location;
@@ -52,26 +99,21 @@ export function startNavigation() {
       );
 
       // #次のステップに近づいたら進める
-      if (distance < 30 && stepIndex < steps.length - 1) {
-        stepIndex++;
-        console.log("次のステップへ進みます:", steps[stepIndex].instructions);
+      if (distance < 30) {
+        if (stepIndex < steps.length -1) {
+          stepIndex++;
+          console.log("次のステップへ進みます:", steps[stepIndex].instructions);
+        }else{
+          //最終目的地に到着
+          console.log("目的地に到着しました。ナビを終了します。");
+          stopNavigation();
+        }
       }
-    },
+    },            
     (err) => {
       console.error("位置情報の取得に失敗しました: ", err);
+      stopNavigation();
     },
     { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
   );
-}
-function stopNavigation() {
-  if (watchId) {
-    navigator.geolocation.clearWatch(watchId);
-    watchId = null;
-  }
-
-  // 現在地マーカーを消す
-  if (currentMarker) {
-    currentMarker.setMap(null);
-    currentMarker = null;
-  }
 }
