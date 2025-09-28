@@ -28,19 +28,29 @@ export function stopNavigation() {
   }
 }
 
-export function startNavigation() {
+export async function startNavigation() {
   //既存のナビがあれば停止
   stopNavigation();
   stepIndex = 0;
 
   // sessionStorageから直接データを取得する
   const storedDirections = sessionStorage.getItem("directionsResult");
-  debugger;
 
   // データがない場合は処理を中断
   if (!storedDirections) {
     alert("ルートが設定されていません");
     return;
+  }
+
+  try {
+    //まず現在地を取得して地図をそこにズームする
+    const initialPos = await fetchCurrentPos();
+    if (initialPos) {
+      window.map.panTo(initialPos);
+      window.map.setZoom(20);
+    }
+  } catch (error) {
+    console.error("初期位置の取得に失敗しました:", error);
   }
 
   // JSON文字列をオブジェクトに変換
