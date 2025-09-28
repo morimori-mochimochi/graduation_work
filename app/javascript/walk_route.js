@@ -12,10 +12,12 @@ export async function walkDrawRoute(){
   const directionsService = new google.maps.DirectionsService();
   // #取得したルートをマップに表示
   // #DirectionsRendererは検索したルートをマップに描画するクラス
-  const directionsRenderer = new google.maps.DirectionsRenderer();
-  // #どのマップにルートを描画するかを指定
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer();
+  }
 
-  directionsRenderer.setMap(window.map);
+  // #どのマップにルートを描画するかを指定
+  window.directionsRenderer.setMap(window.map);
 
   directionsService.route(
     {
@@ -26,7 +28,7 @@ export async function walkDrawRoute(){
     },
     (response, status) => {
       if (status === "OK"){
-        directionsRenderer.setDirections(response);
+        window.directionsRenderer.setDirections(response);
         console.log("★ directionsService OK", response);
         // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
         window.directionsResult = response;

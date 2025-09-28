@@ -3955,7 +3955,7 @@ async function searchParking() {
 }
 
 // app/javascript/current_pos.js
-var currentPos2 = null;
+var currentPos = null;
 function getLatLngFromPosition(pos) {
   return {
     lat: pos.coords.latitude,
@@ -3964,17 +3964,17 @@ function getLatLngFromPosition(pos) {
 }
 function fetchCurrentPos2() {
   return new Promise((resolve, reject2) => {
-    if (currentPos2) {
-      resolve(currentPos2);
+    if (currentPos) {
+      resolve(currentPos);
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const newPos = getLatLngFromPosition(pos);
-        currentPos2 = newPos;
+        currentPos = newPos;
         window.currentPos = newPos;
         resolve(newPos);
-        console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos2);
+        console.log("\u73FE\u5728\u5730\u53D6\u5F97\u5B8C\u4E86:", currentPos);
       },
       (err) => reject2(err),
       { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
@@ -4019,66 +4019,88 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
 
 // app/javascript/navigation.js
 console.log("navigation.js\u3092\u59CB\u3081\u307E\u3059");
-function restoreDirections() {
-  const storedDirections = sessionStorage.getItem("directionsResult");
-  if (!storedDirections) {
-    alert("\u30EB\u30FC\u30C8\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
-    return;
-  }
-  window.directionsResult = JSON.parse(storedDirections);
-  console.log("\u30D5\u30EB\u30EA\u30ED\u30FC\u30C9\u5F8C\u306B directionsResult \u5FA9\u5143:", window.directionsResult);
-  startNavigation();
-}
-async function updateNavigation() {
-  const pos = await fetchCurrentPos2();
-  console.log("updateNavigation:", pos);
-}
 var currentMarker;
 var watchId;
 var stepIndex = 0;
+function stopNavigation() {
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    console.log("\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u3092\u505C\u6B62\u3057\u307E\u3057\u305F");
+  }
+  if (window.directionsRenderer) {
+    window.directionsRenderer.setMap(null);
+  }
+  if (currentMarker) {
+    currentMarker.setMap(null);
+    currentMarker = null;
+  }
+}
 function startNavigation() {
-  console.log("\u2605 startNavigation\u958B\u59CB window.directionsResult", window.directionsResult);
-  if (!window.directionsResult) {
+  stopNavigation();
+  stepIndex = 0;
+  const storedDirections = sessionStorage.getItem("directionsResult");
+  debugger;
+  if (!storedDirections) {
     alert("\u30EB\u30FC\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
     return;
   }
-  const route = window.directionsResult.routes[0].legs[0];
+  const directionsResult = JSON.parse(storedDirections);
+  console.log("\u2605 startNavigation\u958B\u59CB:", directionsResult);
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers: true,
+      //ナビ中の始点、終点のマーカーを非表示にする
+      preserveViewport: true
+      //ルート描画中に地図の表示領域を維持する
+    });
+  }
+  window.directionsRenderer.setMap(window.map);
+  window.directionsRenderer.setDirections(directionsResult);
+  const route = directionsResult.routes[0].legs[0];
   const steps = route.steps;
   watchId = navigator.geolocation.watchPosition(
     (pos) => {
-      updateNavigation().then((latestPos) => {
-        const currentPos3 = latestPos;
-        if (!currentMarker) {
-          currentMarker = new google.maps.Marker({
-            position: currentPos3,
-            map: window.map,
-            title: "\u73FE\u5728\u5730",
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 6,
-              fillColor: "#00F",
-              fillOpacity: 1,
-              strokeWeight: 2,
-              strokeColor: "#FFF"
-            }
-          });
-        } else {
-          currentMarker.setPosition(currentPos3);
-        }
-        window.map.panTo(currentPos3);
-      });
+      const currentPos2 = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      };
+      if (!currentMarker) {
+        currentMarker = new google.maps.Marker({
+          position: currentPos2,
+          map: window.map,
+          title: "\u73FE\u5728\u5730",
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 6,
+            fillColor: "#00F",
+            fillOpacity: 1,
+            strokeWeight: 2,
+            strokeColor: "#FFF"
+          }
+        });
+      } else {
+        currentMarker.setPosition(currentPos2);
+      }
+      window.map.panTo(currentPos2);
       const nextStep = steps[stepIndex].end_location;
       const distance = google.maps.geometry.spherical.computeDistanceBetween(
-        new google.maps.LatLng(currentPos),
+        new google.maps.LatLng(currentPos2),
         nextStep
       );
-      if (distance < 30 && stepIndex < steps.length - 1) {
-        stepIndex++;
-        console.log("\u6B21\u306E\u30B9\u30C6\u30C3\u30D7\u3078\u9032\u307F\u307E\u3059:", steps[stepIndex].instructions);
+      if (distance < 30) {
+        if (stepIndex < steps.length - 1) {
+          stepIndex++;
+          console.log("\u6B21\u306E\u30B9\u30C6\u30C3\u30D7\u3078\u9032\u307F\u307E\u3059:", steps[stepIndex].instructions);
+        } else {
+          console.log("\u76EE\u7684\u5730\u306B\u5230\u7740\u3057\u307E\u3057\u305F\u3002\u30CA\u30D3\u3092\u7D42\u4E86\u3057\u307E\u3059\u3002");
+          stopNavigation();
+        }
       }
     },
     (err) => {
       console.error("\u4F4D\u7F6E\u60C5\u5831\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: ", err);
+      stopNavigation();
     },
     { enableHighAccuracy: true, maximumAge: 0, timeout: 5e3 }
   );
@@ -4089,20 +4111,22 @@ async function walkDrawRoute() {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
-  const currentPos3 = await fetchCurrentPos2();
+  const currentPos2 = await fetchCurrentPos2();
   const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer();
-  directionsRenderer.setMap(window.map);
+  if (!window.directionsRenderer) {
+    window.directionsRenderer = new google.maps.DirectionsRenderer();
+  }
+  window.directionsRenderer.setMap(window.map);
   directionsService.route(
     {
-      origin: window.routeStart || currentPos3,
+      origin: window.routeStart || currentPos2,
       destination: window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
     (response, status) => {
       if (status === "OK") {
-        directionsRenderer.setDirections(response);
+        window.directionsRenderer.setDirections(response);
         console.log("\u2605 directionsService OK", response);
         window.directionsResult = response;
         sessionStorage.setItem("directionsResult", JSON.stringify(response));
@@ -4129,7 +4153,7 @@ async function carDrawRoute() {
   await window.mapApiLoaded;
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
-  const currentPos3 = await new Promise((resolve) => {
+  const currentPos2 = await new Promise((resolve) => {
     if (window.currentPos) {
       resolve(window.currentPos);
     } else {
@@ -4147,7 +4171,7 @@ async function carDrawRoute() {
   if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos3,
+        origin: window.routeStart || currentPos2,
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       },
@@ -4187,7 +4211,7 @@ async function carDrawRoute() {
   } else if (window.routeDestination) {
     directionsService.route(
       {
-        origin: window.routeStart || currentPos3,
+        origin: window.routeStart || currentPos2,
         destination: window.routeDestination,
         travelMode: google.maps.TravelMode.DRIVING
       },
@@ -4294,9 +4318,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             console.log("afterEnter\u304C\u7D42\u308F\u308A\u307E\u3057\u305F");
           });
-          restoreDirections();
-          console.log("\u26A1\uFE0FafterEnter\u5185directionsResult \u5FA9\u5143:", window.directionsResult);
-          debugger;
         }
       }
     ]
@@ -4355,9 +4376,6 @@ window.mapApiLoaded.then(() => {
 });
 
 // app/javascript/application.js
-debugger;
-console.log("\u{1F6A9} application.js \u5B9F\u884C\u958B\u59CB", window.directionsResult);
-console.log("\u{1F6A9} [DEBUG] application.js \u5B9F\u884C\u30BF\u30A4\u30DF\u30F3\u30B0", performance.now());
 console.log("DOMContentLoaded\u8AAD\u307F\u8FBC\u307F\u76F4\u524D");
 await window.mapApiLoaded;
 console.log("await\u7D42\u4E86");

@@ -5,7 +5,7 @@ import { initMarkerEvents } from "./set_marker";
 import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
-import { startNavigation, restoreDirections } from "./navigation";
+import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
@@ -96,11 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log("afterEnterが終わりました");
           });
-          //directionsResultをsessionStorageから復元
-          restoreDirections();
-          console.log("⚡️afterEnter内directionsResult 復元:", window.directionsResult)
-
-          debugger;
         }
       }
     ]
