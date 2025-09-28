@@ -4036,14 +4036,22 @@ function stopNavigation() {
     currentMarker = null;
   }
 }
-function startNavigation() {
+async function startNavigation() {
   stopNavigation();
   stepIndex = 0;
   const storedDirections = sessionStorage.getItem("directionsResult");
-  debugger;
   if (!storedDirections) {
     alert("\u30EB\u30FC\u30C8\u304C\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u307E\u305B\u3093");
     return;
+  }
+  try {
+    const initialPos = await fetchCurrentPos2();
+    if (initialPos) {
+      window.map.panTo(initialPos);
+      window.map.setZoom(20);
+    }
+  } catch (error) {
+    console.error("\u521D\u671F\u4F4D\u7F6E\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
   }
   const directionsResult = JSON.parse(storedDirections);
   console.log("\u2605 startNavigation\u958B\u59CB:", directionsResult);
