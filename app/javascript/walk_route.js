@@ -27,8 +27,11 @@ export async function walkDrawRoute(){
     (response, status) => {
       if (status === "OK"){
         directionsRenderer.setDirections(response);
+        console.log("★ directionsService OK", response);
         // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
         window.directionsResult = response;
+        sessionStorage.setItem("directionsResult", JSON.stringify(response));
+        console.log("★ window.directionsResult set", window.directionsResult);
       } else {
         alert("ルートの取得に失敗しました: " + status);
       }

@@ -1,4 +1,7 @@
-console.log("application.jsを読み込みます");
+debugger;
+
+console.log("🚩 application.js 実行開始", window.directionsResult);
+console.log("🚩 [DEBUG] application.js 実行タイミング", performance.now());
 
 import Splide from "@splidejs/splide";
 import "./barba";

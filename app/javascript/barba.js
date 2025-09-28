@@ -5,7 +5,7 @@ import { initMarkerEvents } from "./set_marker";
 import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
-import { startNavigation } from "./navigation";
+import { startNavigation, restoreDirections } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log("barbaの途中経過1");
         },
         leave({ current }) {
+          console.log("directionsResultが消えないか確認: ", window.directionsResult);
           return new Promise(resolve => {
             document.body.style.backgroundColor = '#FDF8F4';
             current.container.style.transform = 'translateX(0)';
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
               current.container.style.opacity = '0';
             });
             setTimeout(resolve, 1000);
+            console.log("ページ切り替えました");
           });
         },
         enter({ next }) {
@@ -44,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         afterEnter({ next }) {
+          console.log("afterEnter前: directionsResult", window.directionsResult);
           console.log("afterEnterが呼ばれました", next.container);
 
           const el = next.container.querySelector('#splide');
@@ -65,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             console.log("mapDivチェック:", id, mapDiv);
             console.log("dataset.mapInitialized:", mapDiv?.dataset.mapInitialized);
+            console.log("directionsResult 復元:", window.directionsResult); 
             
             if (mapDiv && !mapDiv.dataset.mapInitialized) {
               initMap(mapDiv);
@@ -92,6 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log("afterEnterが終わりました");
           });
+          //directionsResultをsessionStorageから復元
+          restoreDirections();
+          console.log("⚡️afterEnter内directionsResult 復元:", window.directionsResult)
+
+          debugger;
         }
       }
     ]
