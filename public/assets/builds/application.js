@@ -3990,6 +3990,10 @@ function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
       console.warn(`\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093: ${buttonId}`);
       return;
     }
+    if (btn.dataset.eventAttached) {
+      return;
+    }
+    btn.dataset.eventAttached = "true";
     btn.addEventListener("click", async (e) => {
       console.log("\u30AF\u30EA\u30C3\u30AF\u30A4\u30D9\u30F3\u30C8\u767A\u706B:", e.target);
       try {

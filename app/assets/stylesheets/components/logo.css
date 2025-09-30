@@ -2,6 +2,7 @@
 
 @layer components {
   .logo {
-    @apply block h-32 w-auto ml-150;
+    @apply block h-32 w-auto ml-150; /* mt：margin-topの略、ml: margin-leftの略、block:上下に改行が入る（次の要素は必ず下に回る）、inline:テキストのように横に並ぶ */
   }
+
 }

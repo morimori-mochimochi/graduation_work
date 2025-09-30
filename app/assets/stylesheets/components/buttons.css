@@ -40,7 +40,7 @@
   .load_top {
     position: absolute; /* 絶対配置にする */
     top: 1rem; /* 上からの距離 */
-    right: 1rem; /* 右からの距離 */
+    right: 10rem; /* 右からの距離 */
     z-index: 1000; /* 他要素に被らないように優先度を上げる */
   }
 
@@ -50,9 +50,11 @@
   }
 
   .current_pos {
-    position: absolute;
-    top: 7rem;
-    right: 5rem;
-    z-index: 1000;
+    width: 4rem; /* ボタンの幅 */
+    height: 4rem; /* ボタンの高さ */
+  }
+
+  .current_pos img {
+    @apply h-full w-full object-contain; /* 画像をボタンのサイズいっぱいに広げる */
   }
 }
