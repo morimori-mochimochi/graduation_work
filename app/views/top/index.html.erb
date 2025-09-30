@@ -2,7 +2,7 @@
   <%= image_tag "/images/logo.png", alt: "Sketto", class: "logo" %>
 </h1>
 
-<div class="flex flex-col items-center mt-12 md:mt-20 space-y-6">
+<div class="flex flex-col items-center mt-80 md:mt-20 space-y-6">
   <%= link_to new_route_path do %>
     <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "top_button" %>
   <% end %>
@@ -11,13 +11,13 @@
   <%# end %>
 </div>
 
-  <div id="splide" class="splide relative mt-8 md:-mt-20 md:-translate-x-10">
-    <div class="splide__track">
-      <ul class="splide__list">
-        <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
-        <li class="splide__slide"><%= image_tag "intro_page2.png" %></li>
-        <li class="splide__slide"><%= image_tag "intro_page3.png" %></li>
-      </ul>
-    </div>
+<div id="splide" class="splide relative mt-30 md:-mt-20 md:-translate-x-10">
+  <div class="splide__track">
+    <ul class="splide__list">
+      <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
+      <li class="splide__slide"><%= image_tag "intro_page2.png" %></li>
+      <li class="splide__slide"><%= image_tag "intro_page3.png" %></li>
+    </ul>
   </div>
+</div>
 
