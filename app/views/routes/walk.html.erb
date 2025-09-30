@@ -1,13 +1,18 @@
 <body>
-  <h1>目的地の選択</h1>
-  <input type="text" id="address" placeholder="住所や施設名を入力">
-  <button id="searchBtn">検索</button>
+  <div class="flex  items-center space-x-4 mt-1"> 
+   <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
+    <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
+    <h1 class="cute-title">ルート作成</h1>
 
-  <button id="walkDrawRoute">ルート検索</button>
+    <input type="text" id="address" placeholder="住所や施設名を入力">
+    <button id="searchBtn">検索</button>
 
-  <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
-    <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
-  <% end %>
+    <button id="walkDrawRoute">ルート検索</button>
+
+    <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
+    <% end %>
+  </div>
 
   <div class="point-selector">
     <button id="startPoint">現在地</button>
