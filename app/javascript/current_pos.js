@@ -50,6 +50,12 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
       return;
     }
 
+    // ボタンに現在地取得が実行すみか確認して実行済み場合は何もしない
+    if (btn.dataset.eventAttached) {
+      return;
+    }
+    btn.dataset.eventAttached = "true";
+
     btn.addEventListener("click", async(e) => {
       console.log("クリックイベント発火:", e.target);
       try{

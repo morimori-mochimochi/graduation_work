@@ -1,6 +1,6 @@
 <body>
   <div class="flex  items-center space-x-4 mt-1"> 
-   <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
+    <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
     <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
     <h1 class="cute-title">ルート作成</h1>
 
@@ -8,6 +8,10 @@
     <button id="searchBtn">検索</button>
 
     <button id="walkDrawRoute">ルート検索</button>
+
+    <button id="currentPosBtn">
+      <%= image_tag "/images/currentPos.png", alt: "current_pos", class:"current_pos" %>
+    </button>
 
     <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
@@ -20,15 +24,11 @@
     <button id="destinationPoint">目的地</button>
   </div>
 
-  <div class="load_top">
+  <div class="load_top self-center -mr-8">
     <%= link_to root_path do %>
       <%= image_tag "/images/load_top.png", alt: "load_top"%>
     <% end %>
   </div>
-
-  <button id="currentPosBtn">
-    <%= image_tag "/images/currentPos.png", alt:"current_pos", class:"current_pos" %>
-  </button>
 
   <div id="map"></div>
 </body>

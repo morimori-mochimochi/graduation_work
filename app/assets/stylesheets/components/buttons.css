@@ -40,7 +40,7 @@
   .load_top {
     position: absolute; /* 絶対配置にする */
     top: 1rem; /* 上からの距離 */
-    right: 1rem; /* 右からの距離 */
+    right: 10rem; /* 右からの距離 */
     z-index: 1000; /* 他要素に被らないように優先度を上げる */
   }
 

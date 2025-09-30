@@ -62,8 +62,8 @@ function init() {
         walkRouteBtn();
         carRouteBtn();
         clearSearchMarkersOnRouteDraw() 
-        initCurrentPosBtn()
-      } else if (id === 'naviMap'){
+        initCurrentPosBtn();
+      }else if (id === 'naviMap'){
         fetchCurrentPos();
         startNavigation();
       } else if (id === 'carNaviMap') {
@@ -85,8 +85,3 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
-
-
-
-
-
