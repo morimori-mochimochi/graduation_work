@@ -11,6 +11,10 @@
 
     <button id="searchNearby">周辺の駐車場を探す</button>
 
+    <button id="currentPosBtnCar" class ="current_pos">
+    <%= image_tag "/images/currentPos.png", alt:"current_pos_car" %>
+    </button>
+
     <%= link_to car_navigation_routes_path do %>
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
     <% end %>
@@ -23,10 +27,6 @@
     <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
     <button id="destinationPoint">目的地</button>
   </div>
-
-  <button id="currentPosBtnCar">
-    <%= image_tag "/images/currentPos.png", alt:"current_pos", class:"current_pos" %>
-  </button>
 
   <div class="flex flex-col items-center mt-10 space-y-6">
     <%= link_to root_path do %>

@@ -50,9 +50,11 @@
   }
 
   .current_pos {
-    position: absolute;
-    top: 7rem;
-    right: 5rem;
-    z-index: 1000;
+    width: 4rem; /* ボタンの幅 */
+    height: 4rem; /* ボタンの高さ */
+  }
+
+  .current_pos img {
+    @apply h-full w-full object-contain; /* 画像をボタンのサイズいっぱいに広げる */
   }
 }
