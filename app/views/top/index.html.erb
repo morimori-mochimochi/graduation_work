@@ -1,23 +1,26 @@
-<h1 class="flex justify-center mt-16 md:mt-30 md:ml-10">
-  <%= image_tag "/images/logo.png", alt: "Sketto", class: "logo" %>
-</h1>
+<!-- 	justify-* → 並びの向き（メイン軸）で揃える,items-* → 並びの直交方向（交差軸）で揃える -->
+<div class="flex flex-col items-center justify-between min-h-screen">
+  <h1 class="mt-20">
+    <%# ロゴのサイズをTailwind CSSで直接指定します %>
+    <%= image_tag "/images/logo.png", alt: "Sketto", class: "w-48 md:w-64" %>
+  </h1>
 
-<div class="flex flex-col items-center mt-80 md:mt-20 space-y-6">
-  <%= link_to new_route_path do %>
-    <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "top_button" %>
-  <% end %>
-  <%#= link_to new_user_session_path do %>
-    <%#= image_tag "/images/top_button2.png", alt: "topButton2", class: "top_button" %>
-  <%# end %>
-</div>
+  <div id="splide" class="splide w-full max-w-md">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
+        <li class="splide__slide"><%= image_tag "intro_page2.png" %></li>
+        <li class="splide__slide"><%= image_tag "intro_page3.png" %></li>
+      </ul>
+    </div>
+  </div>
 
-<div id="splide" class="splide relative mt-30 md:-mt-20 md:-translate-x-10">
-  <div class="splide__track">
-    <ul class="splide__list">
-      <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
-      <li class="splide__slide"><%= image_tag "intro_page2.png" %></li>
-      <li class="splide__slide"><%= image_tag "intro_page3.png" %></li>
-    </ul>
+  <div class="flex flex-col items-center space-y-6 mb-20">
+    <%= link_to new_route_path do %>
+      <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
+    <% end %>
+    <%#= link_to new_user_session_path do %>
+      <%#= image_tag "/images/top_button2.png", alt: "topButton2", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
+    <%# end %>
   </div>
 </div>
-
