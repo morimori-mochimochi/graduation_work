@@ -10,6 +10,7 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    top: 10rem;
   }
 
   .how_to_go {
@@ -41,10 +42,15 @@
   }
 
   .current_pos {
-    @apply h-12 w-12; /* サイズを調整 */
+    @apply h-12 w-12;/* サイズを調整 */
+    background: transparent;
+    border: none;
+    padding: 0; 
+    cursor: pointer;
+    outline: none; 
   }
 
   .current_pos img {
-    @apply h-full w-full object-contain; /* 画像をボタンのサイズいっぱいに広げる */
+    @apply h-10 w-10 object-contain; /* 画像をボタンのサイズいっぱいに広げる */
   }
 }
