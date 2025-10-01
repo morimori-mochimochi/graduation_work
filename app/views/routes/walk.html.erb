@@ -1,33 +1,38 @@
 <body>
-  <div class="flex  items-center space-x-4 mt-1"> 
-    <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
-    <h1 class="cute-title">ルート作成</h1>
-    <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
-
-    <input type="text" id="address" placeholder="住所や施設名を入力">
-    <button id="searchBtn">検索</button>
-
-    <button id="walkDrawRoute">ルート検索</button>
-
-    <button id="currentPosBtn" class="current_pos">
-      <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
-    </button> 
-
-    <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
-      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
-    <% end %>
+  <!-- ヘッダー部分 -->
+  <div class="p-2 space-y-2">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
+        <h1 class="cute-title">ルート作成</h1>
+        <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
+      </div>
+      <div class="load_top">
+        <%= link_to root_path do %>
+          <%= image_tag "/images/load_top.png", alt: "load_top"%>
+        <% end %>
+      </div>
+    </div> 
+    <div class="flex items-center space-x-2 justify-center">
+      <input type="text" id="address" placeholder="住所や施設名を入力" class="w-1/2">
+      <button id="searchBtn" class="px-4 py-2 bg-white rounded-md shadow-md">検索</button>
+      <button id="walkDrawRoute" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md">ルート検索</button>
+    </div>
   </div>
 
+  <!-- フローティングボタン -->
+  <button id="currentPosBtn" class="current_pos">
+    <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
+  </button> 
+  <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
+    <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
+  <% end %>
+
+  <!-- メインコンテンツ -->
   <div class="point-selector">
     <button id="startPoint">現在地</button>
     <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
     <button id="destinationPoint">目的地</button>
-  </div>
-
-  <div class="load_top">
-    <%= link_to root_path do %>
-      <%= image_tag "/images/load_top.png", alt: "load_top"%>
-    <% end %>
   </div>
 
   <div id="map"></div>
