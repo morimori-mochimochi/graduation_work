@@ -37,17 +37,11 @@
   }
 
   .navi_btn {
-    top: 5rem;
-    right: 10rem;
+    @apply h-20 w-auto; /* サイズを調整 */
   }
 
   .current_pos {
-    position: absolute;
-    top: 7rem;
-    right: 5rem;
-    z-index: 1000;
-    width: 4rem; /* ボタンの幅 */
-    height: 4rem; /* ボタンの高さ */
+    @apply h-12 w-12; /* サイズを調整 */
   }
 
   .current_pos img {

@@ -15,20 +15,21 @@
     </div> 
     <div class="flex items-center space-x-2 justify-center">
       <input type="text" id="address" placeholder="住所や施設名を入力" class="w-1/2">
-      <button id="searchBtn" class="px-4 py-2 bg-white rounded-md shadow-md">検索</button>
-      <button id="walkDrawRoute" class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md">ルート検索</button>
+      <button id="searchBtn" class="px-2 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">検索</button>
+      <button id="walkDrawRoute" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold">ルート検索</button>
     </div>
   </div>
 
-  <!-- フローティングボタン -->
-  <button id="currentPosBtn" class="current_pos">
-    <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
-  </button> 
-  <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
-    <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
-  <% end %>
+  <!-- フローティングボタンをヘッダーの下に移動 -->
+  <div class="flex items-center justify-end mt-4">
+    <button id="currentPosBtn" class="current_pos">
+      <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
+    </button> 
+    <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
+    <% end %>
+  </div>
 
-  <!-- メインコンテンツ -->
   <div class="point-selector">
     <button id="startPoint">現在地</button>
     <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
