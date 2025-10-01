@@ -6,8 +6,8 @@
 
 .cute-title-layout {
   text-align: center; /* 横中央 */
-  margin-top: 2rem; /* 上余白 */
-  margin-bottom: 2rem; /* 下余白 */
+  margin-top: 14rem; /* 上余白 */
+  margin-bottom: 7rem; /* 下余白 */
   justify-content: center;
   align-items: center;
 }
