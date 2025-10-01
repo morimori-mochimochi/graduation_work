@@ -21,8 +21,8 @@
   </div>
 
   <!-- フローティングボタンをヘッダーの下に移動 -->
-  <div class="flex items-center justify-end mt-4">
-    <button id="currentPosBtn" class="current_pos">
+  <div class="absolute top-34 right-0 z-10 flex items-center">
+    <button id="currentPosBtn" class="current_pos appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
       <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
     </button> 
     <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
@@ -30,11 +30,13 @@
     <% end %>
   </div>
 
-  <div class="point-selector">
-    <button id="startPoint">現在地</button>
-    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
-    <button id="destinationPoint">目的地</button>
-  </div>
+  <div class="mt-20">
+    <div class="point-selector">
+      <button id="startPoint">現在地</button>
+      <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
+      <button id="destinationPoint">目的地</button>
+    </div>
 
-  <div id="map"></div>
+    <div id="map"></div>
+  </div>
 </body>
