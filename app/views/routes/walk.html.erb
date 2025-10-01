@@ -5,7 +5,9 @@
       <div class="flex items-center space-x-2">
         <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
         <h1 class="cute-title">ルート作成</h1>
-        <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
+        <%= link_to car_routes_path do %>
+          <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "h-20" %>
+        <% end %>
       </div>
       <div class="load_top">
         <%= link_to root_path do %>
