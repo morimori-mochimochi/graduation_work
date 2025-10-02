@@ -53,4 +53,12 @@
   .current_pos img {
     @apply h-10 w-10 object-contain; /* 画像をボタンのサイズいっぱいに広げる */
   }
+
+  .btn_effect {
+    @apply transition-transform duration-200;
+  }
+
+  .btn_effect:hover {
+    @apply scale-105;
+  }
 }

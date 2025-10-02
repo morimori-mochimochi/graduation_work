@@ -5,10 +5,10 @@
         <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
         <h1 class="cute-title">ルート作成</h1>
         <%= link_to walk_routes_path do %>
-          <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "h-20" %> 
+          <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %> 
         <% end %>
       </div>
-      <div class="load_top">
+      <div class="btn_effect load_top">
         <%= link_to root_path do %>
           <%= image_tag "/images/load_top.png", alt: "load_top"%>
         <% end %>
@@ -17,21 +17,21 @@
 
     <div class="flex items-center space-x-2 justify-center">
       <input type="text" id="address" placeholder="住所や施設名を入力" class="w-1/2">
-      <button id="searchBtn" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold">検索</button>
+      <button id="searchBtn" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold btn_effect">検索</button>
     </div>
 
     <div class="flex items-center space-x-2 justify-center  mt-2">            
-      <button id="carDrawRoute" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold">ルート検索</button>
-      <button id="searchNearby" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold">駐車場を探す</button>
+      <button id="carDrawRoute" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold btn_effect">ルート検索</button>
+      <button id="searchNearby" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold btn_effect">駐車場を探す</button>
     </div>
   </div>
 
   <div class="absolute top-48 right-0 z-10 flex items-center">     
-    <button id="currentPosBtnCar" class ="current_pos appearance-none bg-transparent border-none p-0m-0 mr-[-1rem]">
+    <button id="currentPosBtnCar" class ="btn_effect current_pos appearance-none bg-transparent border-none p-0m-0 mr-[-1rem]">
       <%= image_tag "/images/currentPos.png", alt:"current_pos_car" %>
     </button>
     <%= link_to car_navigation_routes_path do %>
-      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"navi_btn" %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"btn_effect navi_btn" %>
     <% end %>
   </div>
 
