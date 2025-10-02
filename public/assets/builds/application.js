@@ -4041,13 +4041,16 @@ function stopNavigation() {
   }
 }
 function showArrivalMessage() {
-  const arrivalMessage = document.getElementById("arrivalMessage");
-  if (arrivalMessage) {
-    arrivalMessage.classList.remove("hidden");
+  const ids2 = ["arrivalMessage", "arrivalMessageCar"];
+  ids2.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove("hidden");
     setTimeout(() => {
-      arrivalMessage.classList.add("opacity-100");
+      el.classList.add("opacity-100");
     }, 10);
-  }
+    console.log("\u5230\u7740\u30E1\u30C3\u30BB\u30FC\u30B8\u3092\u8868\u793A\u3057\u307E\u3057\u305F");
+  });
 }
 async function startNavigation() {
   stopNavigation();

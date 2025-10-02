@@ -29,15 +29,17 @@ export function stopNavigation() {
 }
 
 function showArrivalMessage() {
-  const arrivalMessage = document.getElementById('arrivalMessage');
-  if (arrivalMessage) {
-    // hiddenクラスを削除して表示を有効化
-    arrivalMessage.classList.remove('hidden');
-    // 少し遅延させてからopacityを1にすることで、CSSトランジションを確実に発火させる
+  const ids=["arrivalMessage", "arrivalMessageCar"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.classList.remove('hidden');
     setTimeout(() => {
-      arrivalMessage.classList.add('opacity-100');
+      el.classList.add('opacity-100');
     }, 10);
-  }
+    console.log("到着メッセージを表示しました");
+  })
 }
 
 export async function startNavigation() {
