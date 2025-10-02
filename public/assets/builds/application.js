@@ -4040,6 +4040,15 @@ function stopNavigation() {
     currentMarker = null;
   }
 }
+function showArrivalMessage() {
+  const arrivalMessage = document.getElementById("arrivalMessage");
+  if (arrivalMessage) {
+    arrivalMessage.classList.remove("hidden");
+    setTimeout(() => {
+      arrivalMessage.classList.add("opacity-100");
+    }, 10);
+  }
+}
 async function startNavigation() {
   stopNavigation();
   stepIndex = 0;
@@ -4061,8 +4070,7 @@ async function startNavigation() {
   console.log("\u2605 startNavigation\u958B\u59CB:", directionsResult);
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer({
-      suppressMarkers: true,
-      //ナビ中の始点、終点のマーカーを非表示にする
+      //suppressMarkers: true, //ナビ中の始点、終点のマーカーを非表示にする
       preserveViewport: true
       //ルート描画中に地図の表示領域を維持する
     });
@@ -4107,6 +4115,7 @@ async function startNavigation() {
         } else {
           console.log("\u76EE\u7684\u5730\u306B\u5230\u7740\u3057\u307E\u3057\u305F\u3002\u30CA\u30D3\u3092\u7D42\u4E86\u3057\u307E\u3059\u3002");
           stopNavigation();
+          showArrivalMessage();
         }
       }
     },

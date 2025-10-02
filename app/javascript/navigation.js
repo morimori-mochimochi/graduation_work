@@ -28,6 +28,18 @@ export function stopNavigation() {
   }
 }
 
+function showArrivalMessage() {
+  const arrivalMessage = document.getElementById('arrivalMessage');
+  if (arrivalMessage) {
+    // hiddenクラスを削除して表示を有効化
+    arrivalMessage.classList.remove('hidden');
+    // 少し遅延させてからopacityを1にすることで、CSSトランジションを確実に発火させる
+    setTimeout(() => {
+      arrivalMessage.classList.add('opacity-100');
+    }, 10);
+  }
+}
+
 export async function startNavigation() {
   //既存のナビがあれば停止
   stopNavigation();
@@ -60,7 +72,7 @@ export async function startNavigation() {
   // DirectionsRendererを初期化し、ルートを描画する
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer({
-      suppressMarkers: true, //ナビ中の始点、終点のマーカーを非表示にする
+      //suppressMarkers: true, //ナビ中の始点、終点のマーカーを非表示にする
       preserveViewport: true, //ルート描画中に地図の表示領域を維持する
     });
   }
@@ -117,6 +129,7 @@ export async function startNavigation() {
           //最終目的地に到着
           console.log("目的地に到着しました。ナビを終了します。");
           stopNavigation();
+          showArrivalMessage();
         }
       }
     },            
