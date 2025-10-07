@@ -1,4 +1,10 @@
 services: 
+  selenium:
+    image: seleniarm/standalone-chromium:latest
+    shm_size: 2g # メモリ不足を防ぐためのおまじない
+    ports:
+      - "4444:4444" # Selenium Gridのポート
+
   db:
     image: postgres:15
     volumes:
@@ -18,11 +24,14 @@ services:
     ports:
       - "3000:3000"
     depends_on:
+      - selenium
       - db
     environment:
       DATABASE_HOST: db
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: password
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-} # .envファイルからAPIキーを読み込む
+      SELENIUM_URL: http://selenium:4444/wd/hub # webコンテナからseleniumコンテナに接続するためのURL
 
 volumes:
   db-data:
