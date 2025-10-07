@@ -4131,7 +4131,7 @@ async function startNavigation() {
 }
 
 // app/javascript/walk_route.js
-async function walkDrawRoute() {
+async function walkDrawRoute(start, destination) {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
@@ -4143,8 +4143,8 @@ async function walkDrawRoute() {
   window.directionsRenderer.setMap(window.map);
   directionsService.route(
     {
-      origin: window.routeStart || currentPos2,
-      destination: window.routeDestination,
+      origin: start || window.routeStart || currentPos2,
+      destination: destination || window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
@@ -4171,6 +4171,7 @@ function walkRouteBtn() {
     console.warn("walkDrawRoute\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093");
   }
 }
+window.walkDrawRoute = walkDrawRoute;
 
 // app/javascript/car_route.js
 async function carDrawRoute() {

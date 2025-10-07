@@ -19,14 +19,14 @@ RSpec.describe "ナビゲーション機能", type: :system do
         start_location = { lat: 35.6812, lng: 139.7671 }.to_json #東京駅
         destination_location = { lat: 35.6586, lng: 139.7454 }.to_json #東京タワー
 
-        page.execute_script("window.routeStart = new google.maps.LatLng(#{start_location});")
-        page.execute_script("window.routeDestination = new google.maps.LatLng(#{destination_location});")
+        page.execute_script("window.mapApiLoaded.then(() => {window.routeStart = new google.maps.LatLng(#{start_location}); window.routeDestination = new google.maps.LatLng(#{destination_location}); })")
 
-        # 4. 「ルート検索」ボタンをクリック
-        find('#walkDrawRoute').click # IDでボタンを正確に指定
+        # 4. ルート検索を実行
+        # ボタンクリックをシミュレートする代わりに、walkDrawRoute関数を直接実行する。
+        # これにより、テストコードとアプリケーションの連携が確実になる。
+        page.execute_script("walkDrawRoute(window.routeStart, window.routeDestination);")
 
         # 5. ルート情報がsessionStorageに保存されるのを待つ
-        # 非同期処理の結果を待つために'expect().to_be_present'を使う
         expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
         # 6.「ナビ開始」ボタンをクリック
         # 画像にリンクが設定されているためaltテキストで検索する

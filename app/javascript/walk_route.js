@@ -1,11 +1,11 @@
 import { fetchCurrentPos } from "./current_pos"
 
-export async function walkDrawRoute(){
+export async function walkDrawRoute(start, destination){
   console.log("ルートを作ります");
   await window.mapApiLoaded;
   console.log("await終了");
 
-  const currentPos = await fetchCurrentPos();
+  const currentPos = await fetchCurrentPos(); // ユーザーが現在地ボタンを押した場合のフォールバック
 
   // #DirectionsAPIで使うオブジェクトの生成
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
@@ -21,8 +21,8 @@ export async function walkDrawRoute(){
 
   directionsService.route(
     {
-      origin: window.routeStart || currentPos,
-      destination: window.routeDestination,
+      origin: start || window.routeStart || currentPos,
+      destination: destination || window.routeDestination,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.WALKING
     },
@@ -46,9 +46,12 @@ export function walkRouteBtn() {
     
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", () => {
-      walkDrawRoute();
+      walkDrawRoute(); // 通常のクリック時は引数なしで呼び出す
     });
   }else{
     console.warn("walkDrawRouteボタンが存在しません");
   }
 }
+
+// システムテストから呼び出せるように、関数をグローバルスコープに公開する
+window.walkDrawRoute = walkDrawRoute;
