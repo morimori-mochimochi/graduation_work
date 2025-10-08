@@ -11,6 +11,35 @@
 # a separate helper file that requires the additional dependencies and performs
 # the additional setup, and require it from the spec files that actually need
 # it.
+
+require 'capybara/rspec'
+require 'selenium-webdriver'
+
+Capybara.register_driver :remote_chrome do |app|
+  logging_prefs = { browser: 'ALL' }
+  options = Selenium::WebDriver::Options.chrome(logging_prefs: logging_prefs)
+
+  options.add_argument('no-sandbox')
+  options.add_argument('headless')
+  options.add_argument('disable-gpu')
+  options.add_argument('disable-dev-shm-usage')
+  options.add_argument('window-size=1400,1400')
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :remote,
+    url: ENV.fetch('SELENIUM_URL'),
+    options: options
+  )
+end
+
+if ENV['SELENIUM_URL']
+  Capybara.javascript_driver = :remote_chrome
+else
+  Capybara.javascript_driver = :selenium_chrome_headless
+end
+
+
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -43,6 +72,17 @@ RSpec.configure do |config|
   # inherited by the metadata hash of host groups and examples, rather than
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
+
+  config.before(:each, type: :system) do
+    driven_by(:rack_test)
+  end
+
+  config.before(:each, type: :system, js: true) do
+    driven_by Capybara.javascript_driver
+    Capybara.server_host = IPSocket.getaddress(Socket.gethostname)
+    Capybara.server_port = 45678
+    Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
+  end
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

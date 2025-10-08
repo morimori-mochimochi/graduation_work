@@ -4135,31 +4135,35 @@ async function walkDrawRoute(start, destination) {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
-  const currentPos2 = await fetchCurrentPos2();
+  const currentPos2 = start ? null : await fetchCurrentPos2();
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
   }
   window.directionsRenderer.setMap(window.map);
-  directionsService.route(
-    {
-      origin: start || window.routeStart || currentPos2,
-      destination: destination || window.routeDestination,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.WALKING
-    },
-    (response, status) => {
-      if (status === "OK") {
-        window.directionsRenderer.setDirections(response);
-        console.log("\u2605 directionsService OK", response);
-        window.directionsResult = response;
-        sessionStorage.setItem("directionsResult", JSON.stringify(response));
-        console.log("\u2605 window.directionsResult set", window.directionsResult);
-      } else {
-        alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
+  return new Promise((resolve, reject2) => {
+    directionsService.route(
+      {
+        origin: start || window.routeStart || currentPos2,
+        destination: destination || window.routeDestination,
+        optimizeWaypoints: true,
+        travelMode: google.maps.TravelMode.WALKING
+      },
+      (response, status) => {
+        if (status === "OK") {
+          window.directionsRenderer.setDirections(response);
+          console.log("\u2605 directionsService OK", response);
+          window.directionsResult = response;
+          sessionStorage.setItem("directionsResult", JSON.stringify(response));
+          console.log("\u2605 window.directionsResult set", window.directionsResult);
+          resolve(status);
+        } else {
+          console.error("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
+          reject2(status);
+        }
       }
-    }
-  );
+    );
+  });
 }
 function walkRouteBtn() {
   const walkDrawRouteBtn = document.getElementById("walkDrawRoute");

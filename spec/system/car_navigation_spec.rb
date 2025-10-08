@@ -1,15 +1,15 @@
 require 'rails_helper'
 
-RSpec.describe "ナビゲーション機能", type: :system do
-    it "徒歩ルートを設定し、ナビゲーションを開始できること" do
+RSpec.describe "ナビゲーション機能", type: :system, js: true do
+    it "車ルートを設定し、ナビゲーションを開始できること" do
         # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
         visit root_path
         find("a[href='#{new_route_path}']").click
-        find("a[href='#{walk_routes_path}']").click
+        find("a[href='#{car_routes_path}']").click
 
-        # 2. walk.html.erbに遷移し、マップ表示を待つ
+        # 2. car.html.erbに遷移し、マップ表示を待つ
         # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
-        expect(page).to have_current_path(walk_routes_path,ignore_query: true)
+        expect(page).to have_current_path(car_routes_path,ignore_query: true)
         # マップ表示まで待機
         # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
         expect(page).to have_selector('#map')
@@ -19,12 +19,23 @@ RSpec.describe "ナビゲーション機能", type: :system do
         start_location = { lat: 35.6812, lng: 139.7671 }.to_json #東京駅
         destination_location = { lat: 35.6586, lng: 139.7454 }.to_json #東京タワー
 
-        page.execute_script("window.mapApiLoaded.then(() => {window.routeStart = new google.maps.LatLng(#{start_location}); window.routeDestination = new google.maps.LatLng(#{destination_location}); })")
+        # execute_async_scriptを使い、非同期処理の完了を待つ
+        # done.call()が呼ばれるまでテストは待機する
+        # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
+        page.evaluate_async_script(<<~JS, start_location, destination_location)
+            const start_location = JSON.parse(arguments[0]);
+            const destination_location = JSON.parse(arguments[1]);
+            const done = arguments[2];
 
-        # 4. ルート検索を実行
-        # ボタンクリックをシミュレートする代わりに、walkDrawRoute関数を直接実行する。
-        # これにより、テストコードとアプリケーションの連携が確実になる。
-        page.execute_script("walkDrawRoute(window.routeStart, window.routeDestination);")
+            window.mapApiLoaded.then(async () => {
+                const start = new google.maps.LatLng(start_location);
+                const destination = new google.maps.LatLng(destination_location);
+
+                // walkDrawRouteが完了するのを待ってからテストを再開する
+                await walkDrawRoute(start, destination);
+                done();
+            });
+        JS
 
         # 5. ルート情報がsessionStorageに保存されるのを待つ
         expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")

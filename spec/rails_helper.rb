@@ -32,6 +32,7 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
@@ -63,18 +64,11 @@ RSpec.configure do |config|
   # To enable this behaviour uncomment the line below.
   # config.infer_spec_type_from_file_location!
 
-  Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each{ |f| require f}
+  Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
-  config.before(:each, type: :system) do 
-    # Docker Composeで起動したSeleniumコンテナに接続する設定
-    driven_by :remote_chrome
-    Capybara.server_host = IPSocket.getaddress(Socket.gethostname)
-    Capybara.server_port = 45678
-    Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
-  end
 
   # テスト失敗時にブラウザのコンソールログを出力する設定
   config.after(:each, type: :system, js: true) do |example|
@@ -82,28 +76,16 @@ RSpec.configure do |config|
       logs = page.driver.browser.logs.get(:browser)
       if logs.present?
         puts "\n--- Browser Console Logs: ---"
-        puts logs.map(&:message).join("\n")
+        logs.each do |log|
+          # 深刻なエラーのみ赤色で表示
+          if log.level == 'SEVERE'
+            puts "\e[31m#{log.message}\e[0m"
+          else
+            puts log.message
+          end
+        end
         puts "---------------------------\n"
       end
     end
-  end
-  # リモートブラウザ用のドライバを登録
-  Capybara.register_driver :remote_chrome do |app|
-    # ブラウザのログを取得するための設定
-    logging_prefs = { browser: 'ALL' }
-    options = Selenium::WebDriver::Options.chrome(logging_prefs: logging_prefs)
-
-    options.add_argument('no-sandbox')
-    options.add_argument('headless')
-    options.add_argument('disable-gpu')
-    options.add_argument('disable-dev-shm-usage')
-    options.add_argument('window-size=1400,1400')
-
-    Capybara::Selenium::Driver.new(
-      app,
-      browser: :remote,
-      url: ENV.fetch('SELENIUM_URL'),
-      options: options
-    )
   end
 end

@@ -5,7 +5,8 @@ export async function walkDrawRoute(start, destination){
   await window.mapApiLoaded;
   console.log("await終了");
 
-  const currentPos = await fetchCurrentPos(); // ユーザーが現在地ボタンを押した場合のフォールバック
+  // 引数でstartが渡されていない場合のみ、現在地を取得する
+  const currentPos = start ? null : await fetchCurrentPos();
 
   // #DirectionsAPIで使うオブジェクトの生成
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
@@ -19,26 +20,30 @@ export async function walkDrawRoute(start, destination){
   // #どのマップにルートを描画するかを指定
   window.directionsRenderer.setMap(window.map);
 
-  directionsService.route(
-    {
-      origin: start || window.routeStart || currentPos,
-      destination: destination || window.routeDestination,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.WALKING
-    },
-    (response, status) => {
-      if (status === "OK"){
-        window.directionsRenderer.setDirections(response);
-        console.log("★ directionsService OK", response);
-        // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
-        window.directionsResult = response;
-        sessionStorage.setItem("directionsResult", JSON.stringify(response));
-        console.log("★ window.directionsResult set", window.directionsResult);
-      } else {
-        alert("ルートの取得に失敗しました: " + status);
+  return new Promise((resolve, reject) => {
+    directionsService.route(
+      {
+        origin: start || window.routeStart || currentPos,
+        destination: destination || window.routeDestination,
+        optimizeWaypoints: true,
+        travelMode: google.maps.TravelMode.WALKING
+      },
+      (response, status) => {
+        if (status === "OK"){
+          window.directionsRenderer.setDirections(response);
+          console.log("★ directionsService OK", response);
+          // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
+          window.directionsResult = response;
+          sessionStorage.setItem("directionsResult", JSON.stringify(response));
+          console.log("★ window.directionsResult set", window.directionsResult);
+          resolve(status);
+        } else {
+          console.error("ルートの取得に失敗しました: " + status);
+          reject(status);
+        }
       }
-    }
-  )
+    );
+  });
 };
 
 export function walkRouteBtn() {
