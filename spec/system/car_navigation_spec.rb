@@ -31,9 +31,20 @@ RSpec.describe "ナビゲーション機能", type: :system, js: true do
                 const start = new google.maps.LatLng(start_location);
                 const destination = new google.maps.LatLng(destination_location);
 
-                // walkDrawRouteが完了するのを待ってからテストを再開する
-                await walkDrawRoute(start, destination);
-                done();
+                try {
+                  console.log("About to call window.carDrawRoute");
+                  if (typeof window.carDrawRoute !== 'function'){
+                    // done()にエラーメッセージを渡すと、テストが即座に失敗し、メッセージが表示される
+                    done("Error: window.carDrawRoute is not a function");
+                    return;
+                  }
+                  await window.carDrawRoute(start, destination);
+                  console.log("window.carDrawRoute finished successfully.");
+                  done();
+                } catch (e) {
+                  console.error("Error during carDrawRoute execution:", e.message, e.stack);
+                  done("Error in carDrawRoute: " + e.message);
+                }
             });
         JS
 
@@ -44,7 +55,7 @@ RSpec.describe "ナビゲーション機能", type: :system, js: true do
         find("img[alt='startNavi']").click
 
         # 7. ナビゲーションページに遷移したことを確認
-        expect(page).to have_current_path(walk_navigation_routes_path)
+        expect(page).to have_current_path(car_navigation_routes_path)
         expect(page).to have_selector("img[alt='stopNavi']")
     end
 end
