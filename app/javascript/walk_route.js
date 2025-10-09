@@ -6,7 +6,8 @@ export async function walkDrawRoute(start, destination){
   console.log("await終了");
 
   // 引数でstartが渡されていない場合のみ、現在地を取得する
-  const currentPos = start ? null : await fetchCurrentPos();
+  const originPos = start || window.routeStart || await fetchCurrentPos();
+  const finalDestination = destination || window.routeDestination;
 
   // #DirectionsAPIで使うオブジェクトの生成
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
@@ -23,8 +24,8 @@ export async function walkDrawRoute(start, destination){
   return new Promise((resolve, reject) => {
     directionsService.route(
       {
-        origin: start || window.routeStart || currentPos,
-        destination: destination || window.routeDestination,
+        origin: originPos,
+        destination: finalDestination,
         optimizeWaypoints: true,
         travelMode: google.maps.TravelMode.WALKING
       },

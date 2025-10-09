@@ -4135,7 +4135,8 @@ async function walkDrawRoute(start, destination) {
   console.log("\u30EB\u30FC\u30C8\u3092\u4F5C\u308A\u307E\u3059");
   await window.mapApiLoaded;
   console.log("await\u7D42\u4E86");
-  const currentPos2 = start ? null : await fetchCurrentPos2();
+  const originPos = start || window.routeStart || await fetchCurrentPos2();
+  const finalDestination = destination || window.routeDestination;
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -4144,8 +4145,8 @@ async function walkDrawRoute(start, destination) {
   return new Promise((resolve, reject2) => {
     directionsService.route(
       {
-        origin: start || window.routeStart || currentPos2,
-        destination: destination || window.routeDestination,
+        origin: originPos,
+        destination: finalDestination,
         optimizeWaypoints: true,
         travelMode: google.maps.TravelMode.WALKING
       },
