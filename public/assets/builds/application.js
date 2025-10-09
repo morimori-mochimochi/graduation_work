@@ -4182,7 +4182,7 @@ async function carDrawRoute(start, destination) {
   await window.mapApiLoaded;
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
-  const currentPos2 = start ? null : await fetchCurrentPos2();
+  const originPos = start || window.routeStart || await fetchCurrentPos2();
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -4194,15 +4194,16 @@ async function carDrawRoute(start, destination) {
         if (status === "OK") {
           resolve(response);
         } else {
-          reject2(status);
+          reject2(`Directions request failed due to ${status}`);
         }
       });
     });
   };
-  if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && (destination || window.routeDestination)) {
+  const finalDestination = destination || window.routeDestination;
+  if (window.routeParking && typeof window.routeParking.lat === "function" && typeof window.routeParking.lng === "function" && finalDestination) {
     try {
       const response1 = await routePromise({
-        origin: start || window.routeStart || currentPos2,
+        origin: originPos,
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       });
@@ -4214,7 +4215,7 @@ async function carDrawRoute(start, destination) {
       console.log("\u5F92\u6B69\u30EB\u30FC\u30C8\u3092\u691C\u7D22\u3057\u307E\u3059");
       const response2 = await routePromise({
         origin: window.routeParking,
-        destination: destination || window.routeDestination,
+        destination: finalDestination,
         travelMode: google.maps.TravelMode.WALKING
       });
       const renderer2 = new google.maps.DirectionsRenderer({
@@ -4237,38 +4238,43 @@ async function carDrawRoute(start, destination) {
       alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F:" + error);
       throw error;
     }
-  } else if (destination || window.routeDestination) {
+  } else if (finalDestination) {
     try {
       const response = await routePromise({
-        origin: start || window.routeStart || currentPos2,
-        destination: destination || window.routeDestination,
+        origin: originPos,
+        destination: finalDestination,
         travelMode: google.maps.TravelMode.DRIVING
       });
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
       return "OK";
-    } catch (status) {
-      alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + status);
-      throw status;
+    } catch (error) {
+      alert("\u30EB\u30FC\u30C8\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error);
+      throw error;
     }
   } else {
-    alert("\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
-    throw "No destination";
+    const errorMessage = "\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044";
+    alert(errorMessage);
+    throw new Error(errorMessage);
   }
 }
 function carRouteBtn() {
   const carDrawRouteBtn = document.getElementById("carDrawRoute");
   if (carDrawRouteBtn) {
-    carDrawRouteBtn.addEventListener("click", () => {
-      carDrawRoute().catch((err) => console.error("carDrawRoute failed:", err));
-      console.log("sessionStorage:", sessionStorage);
+    carDrawRouteBtn.addEventListener("click", async () => {
+      try {
+        await carDrawRoute();
+      } catch (err) {
+        console.error("carDrawRoute faild:", err);
+      }
     });
   } else {
     console.warn("carDrawRoute\u30DC\u30BF\u30F3\u304C\u5B58\u5728\u3057\u307E\u305B\u3093");
   }
   ;
 }
+window.carDrawRoute = carDrawRoute;
 
 // app/javascript/barba.js
 document.addEventListener("DOMContentLoaded", () => {

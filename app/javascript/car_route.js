@@ -6,7 +6,7 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
 
-  const currentPos = start ? null : await fetchCurrentPos(); // startがなければ現在地を取得
+  const originPos = start || window.routeStart || await fetchCurrentPos();
 
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
@@ -14,30 +14,31 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
   }
   window.directionsRenderer.setMap(window.map);
 
-  // promiseベースでルート検索を行うヘルパー関数
   const routePromise = (request) => {
     return new Promise((resolve, reject) => {
       directionsService.route(request, (response, status) => {
         if (status === "OK") {
           resolve(response);
         } else {
-          reject(status);
+          reject(`Directions request failed due to ${status}`);
         }
       });
     });
   };
 
   // 駐車場経由ルート
+  const finalDestination = destination || window.routeDestination;
+
   if (
     window.routeParking &&
     typeof window.routeParking.lat === "function" &&
     typeof window.routeParking.lng === "function" &&
-    (destination || window.routeDestination)
+    finalDestination
   ) {
     try {
       // 1.出発点から駐車場(車)
       const response1 = await routePromise({
-        origin: start || window.routeStart || currentPos,
+        origin: originPos,
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       });
@@ -51,7 +52,7 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
       console.log("徒歩ルートを検索します");
       const response2 = await routePromise({
         origin: window.routeParking,
-        destination: destination || window.routeDestination,
+        destination: finalDestination,
         travelMode: google.maps.TravelMode.WALKING
       });
       const renderer2 = new google.maps.DirectionsRenderer({
@@ -78,24 +79,25 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
       throw error; // エラーを再スローして呼び出し元でcatchできるようにする
     }
   // 駐車場がない場合（通常の車ルート）
-  } else if (destination || window.routeDestination) {
+  } else if (finalDestination) {
     try {
       const response = await routePromise({
-        origin: start || window.routeStart || currentPos,
-        destination: destination || window.routeDestination,
+        origin: originPos,
+        destination: finalDestination,
         travelMode: google.maps.TravelMode.DRIVING
       });
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
       return "OK";
-    } catch (status) {
-      alert("ルートの取得に失敗しました: " + status);
-      throw status;
+    } catch (error) {
+      alert("ルートの取得に失敗しました: " + error);
+      throw error; //catch(error) { throw error; } は→「下の階で鳴った警報をそのまま上に伝える」（伝達）
     }
   } else {
-    alert("目的地を設定してください");
-    throw "No destination"; // エラーをスロー
+    const errorMessage ="目的地を設定してください"
+    alert(errorMessage);
+    throw new Error(errorMessage); //throw new Error(...) は→「自分で警報を鳴らす」（新しい警報）
   }
 };
 
@@ -103,11 +105,16 @@ export function carRouteBtn() {
   const carDrawRouteBtn = document.getElementById("carDrawRoute");
 
   if (carDrawRouteBtn) {
-    carDrawRouteBtn.addEventListener("click", () => {
-      carDrawRoute().catch(err => console.error("carDrawRoute failed:", err));
-      console.log("sessionStorage:", sessionStorage)
+    carDrawRouteBtn.addEventListener("click", async() => {
+      try {
+        await carDrawRoute();
+      } catch (err) {
+        console.error("carDrawRoute faild:", err); //コード中で発生したエラーをログに記録する
+      }
     });
   }else{
   console.warn("carDrawRouteボタンが存在しません");
   };
 }
+
+window.carDrawRoute = carDrawRoute;
