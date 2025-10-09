@@ -3,6 +3,10 @@ class RoutesController < ApplicationController
   end
 
   def create
+    respond_to do |format|
+      format.html
+      format.json { render json: {route: params[:route]} }
+    end
   end
 
   def show
