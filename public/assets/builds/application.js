@@ -3952,6 +3952,7 @@ async function searchParking() {
       }
     });
   }
+  window.searchParkingInitialized = true;
 }
 
 // app/javascript/current_pos.js

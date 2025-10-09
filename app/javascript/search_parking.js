@@ -119,4 +119,6 @@ export async function searchParking(){
       }
     });
   }
+  // テスト用に、初期化が完了したことを示すフラグを立てる
+  window.searchParkingInitialized = true;
 }
