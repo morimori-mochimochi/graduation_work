@@ -3,11 +3,13 @@ export async function searchParking(){
   console.log("searchParkingが呼ばれました")
 
   const btn = document.getElementById("searchNearby");
+  console.log("search_nearbyの実行テスト1");
 
   if (btn) {
     btn.addEventListener("click", async() => {
       const center = window.routeDestination;
       console.log("マーカーを取得しました");
+      console.log("window.routeDestinationの値確認: ", window.routeDestination);
         
       if (!center){
         alert("目的地を設定してください");
@@ -16,6 +18,7 @@ export async function searchParking(){
 
       // #JavaScript の try は 例外処理（エラー処理）ブロック を作るために使う
       // #try { ... } catch (error) { ... } で囲むことで、検索に失敗した場合に alert("駐車場の検索に失敗しました: " + error.message); と表示し、処理を安全に終了
+      console.log ("tryに移ります");
       try {
         // #Placesライブラリをロード
         const { Place } = await google.maps.importLibrary("places");
@@ -26,11 +29,17 @@ export async function searchParking(){
           fields: ["location", "displayName", "formattedAddress"]
         };
      
+        console.log("requestを定義しました");
+        
         const result = await Place.searchByText(request);
+        // APIの結果をコンソールに出力して確認
+        console.log("Parking search result:", result);
           
         if (!result.places || result.places.length === 0) {
           alert("周辺に駐車場が見つかりませんでした");
-          return;
+          // テストのためにコンソールにもログを残す
+          console.warn("No parking found near the destination.");
+          return; 
         }
         // #複数返ってくるので、一件ずつマーカー表示
         result.places.forEach(place => {
@@ -89,6 +98,7 @@ export async function searchParking(){
                 parkingBtn.addEventListener("click", () => {
                   //選択した駐車場の位置保存
                   window.routeParking = place.location;
+                  console.log("routeParkingの中身:", window.routeParking);
 
                   if (window.parkingMarkers) {
                     window.parkingMarkers.forEach(m => {
@@ -113,9 +123,13 @@ export async function searchParking(){
          // #マップを最初の駐車場に合わせてパン
         // #panToとは地図の中心をゆっくりと滑らせながら移動させるメソッド
         window.map.panTo(result.places[0].location);
+        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
+        window.parkingMarkersRendered = true;
 
       } catch (error) {
         alert("駐車場の検索に失敗しました: " + error.message);
+        // エラーが発生した場合、コンソールに詳細を出力
+        console.error("Failed to search for parking:", error);
       }
     });
   }

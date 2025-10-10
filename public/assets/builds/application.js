@@ -3862,14 +3862,17 @@ function clearSearchMarkersOnRouteDraw2() {
 async function searchParking() {
   console.log("searchParking\u304C\u547C\u3070\u308C\u307E\u3057\u305F");
   const btn = document.getElementById("searchNearby");
+  console.log("search_nearby\u306E\u5B9F\u884C\u30C6\u30B9\u30C81");
   if (btn) {
     btn.addEventListener("click", async () => {
       const center = window.routeDestination;
       console.log("\u30DE\u30FC\u30AB\u30FC\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F");
+      console.log("window.routeDestination\u306E\u5024\u78BA\u8A8D: ", window.routeDestination);
       if (!center) {
         alert("\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
         return;
       }
+      console.log("try\u306B\u79FB\u308A\u307E\u3059");
       try {
         const { Place } = await google.maps.importLibrary("places");
         const request = {
@@ -3877,9 +3880,12 @@ async function searchParking() {
           locationBias: { lat: center.lat(), lng: center.lng() },
           fields: ["location", "displayName", "formattedAddress"]
         };
+        console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
         const result = await Place.searchByText(request);
+        console.log("Parking search result:", result);
         if (!result.places || result.places.length === 0) {
           alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
+          console.warn("No parking found near the destination.");
           return;
         }
         result.places.forEach((place) => {
@@ -3928,6 +3934,7 @@ async function searchParking() {
               if (parkingBtn) {
                 parkingBtn.addEventListener("click", () => {
                   window.routeParking = place.location;
+                  console.log("routeParking\u306E\u4E2D\u8EAB:", window.routeParking);
                   if (window.parkingMarkers) {
                     window.parkingMarkers.forEach((m) => {
                       if (m !== marker) {
@@ -3947,8 +3954,10 @@ async function searchParking() {
           });
         });
         window.map.panTo(result.places[0].location);
+        window.parkingMarkersRendered = true;
       } catch (error) {
         alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
+        console.error("Failed to search for parking:", error);
       }
     });
   }
