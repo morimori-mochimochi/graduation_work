@@ -36,29 +36,44 @@ export async function searchParking(){
       console.log("Request object:", JSON.stringify(request, null, 2));
       
       try {
+        console.log("[LOG1] 駐車場検索のtryブロック開始");
         // タイムアウト処理を追加
         const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Parking search timed out after 8 seconds')), 8000)
         );
+        console.log("[LOG2] timeoutPromise 作成完了");
 
         // API呼び出しとタイムアウトを競わせる
         const result =  await Promise.race([
-          Place.searchByText(request),
-          timeoutPromise
+          (async () => {
+            console.log("[TRACE]Place.searchByText 呼び出し開始");
+            try {
+              const res = await Place.searchByText(request);
+              console.log("[TRACE] Place.searchByText 正常終了:", res);
+              return { ok: true, source: "api", data: res };
+            } catch (err) {
+              console.error("[TRACE] Place.searchByText 内部でエラー:", err);
+              return { ok: false, source: "api", error: err };
+            }
+          })(),
+          (async () => {
+            console.log("[TRACE] timeoutPromise 開始（8秒タイマー)");
+            try {
+              await new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("タイムアウト")), 8000)
+              );
+            } catch (err) {
+              console.warn ("[TRACE]timeoutPromise発火: ", err.message);
+              return { ok: false, source: "timeout", error: err };
+            }
+          })()
         ]);
-
-        console.log("駐車場検索が完了しました");
-
-        if (result.places) {
-          console.log("Found places:", result.places);
-        } else {
-          console.warn("No places found in the result.");
-        }
-        
+        console.log("[TRACE]Promise race 結果:", result)
+            
         // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
         window.parkingMarkersRendered = true;
           
-        if (!result.places || result.places.length === 0) {
+        if (!result.data.places || result.data.places.length === 0) {
           alert("周辺に駐車場が見つかりませんでした");
           // テストのためにコンソールにもログを残す
           console.warn("No parking found near the destination.");

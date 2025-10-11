@@ -3887,21 +3887,38 @@ async function searchParking() {
       console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
       console.log("Request object:", JSON.stringify(request, null, 2));
       try {
+        console.log("[LOG1] \u99D0\u8ECA\u5834\u691C\u7D22\u306Etry\u30D6\u30ED\u30C3\u30AF\u958B\u59CB");
         const timeoutPromise = new Promise(
           (_, reject2) => setTimeout(() => reject2(new Error("Parking search timed out after 8 seconds")), 8e3)
         );
+        console.log("[LOG2] timeoutPromise \u4F5C\u6210\u5B8C\u4E86");
         const result = await Promise.race([
-          Place.searchByText(request),
-          timeoutPromise
+          (async () => {
+            console.log("[TRACE]Place.searchByText \u547C\u3073\u51FA\u3057\u958B\u59CB");
+            try {
+              const res = await Place.searchByText(request);
+              console.log("[TRACE] Place.searchByText \u6B63\u5E38\u7D42\u4E86:", res);
+              return { ok: true, source: "api", data: res };
+            } catch (err) {
+              console.error("[TRACE] Place.searchByText \u5185\u90E8\u3067\u30A8\u30E9\u30FC:", err);
+              return { ok: false, source: "api", error: err };
+            }
+          })(),
+          (async () => {
+            console.log("[TRACE] timeoutPromise \u958B\u59CB\uFF088\u79D2\u30BF\u30A4\u30DE\u30FC)");
+            try {
+              await new Promise(
+                (_, reject2) => setTimeout(() => reject2(new Error("\u30BF\u30A4\u30E0\u30A2\u30A6\u30C8")), 8e3)
+              );
+            } catch (err) {
+              console.warn("[TRACE]timeoutPromise\u767A\u706B: ", err.message);
+              return { ok: false, source: "timeout", error: err };
+            }
+          })()
         ]);
-        console.log("\u99D0\u8ECA\u5834\u691C\u7D22\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F");
-        if (result.places) {
-          console.log("Found places:", result.places);
-        } else {
-          console.warn("No places found in the result.");
-        }
+        console.log("[TRACE]Promise race \u7D50\u679C:", result);
         window.parkingMarkersRendered = true;
-        if (!result.places || result.places.length === 0) {
+        if (!result.data.places || result.data.places.length === 0) {
           alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
           console.warn("No parking found near the destination.");
           return;
