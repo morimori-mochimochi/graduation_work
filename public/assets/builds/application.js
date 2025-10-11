@@ -3881,8 +3881,10 @@ async function searchParking() {
           fields: ["location", "displayName", "formattedAddress"]
         };
         console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
+        console.log("Request object:", JSON.stringify(request, null, 2));
         const result = await Place.searchByText(request);
         console.log("Parking search result:", result);
+        window.parkingMarkersRendered = true;
         if (!result.places || result.places.length === 0) {
           alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
           console.warn("No parking found near the destination.");
@@ -3954,10 +3956,10 @@ async function searchParking() {
           });
         });
         window.map.panTo(result.places[0].location);
-        window.parkingMarkersRendered = true;
       } catch (error) {
         alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
-        console.error("Failed to search for parking:", error);
+        console.error("Failed to search for parking:", error.message);
+        console.error("Error details:", error);
       }
     });
   }

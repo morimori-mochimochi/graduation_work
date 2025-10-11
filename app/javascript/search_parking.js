@@ -30,10 +30,15 @@ export async function searchParking(){
         };
      
         console.log("requestを定義しました");
+        console.log("Request object:", JSON.stringify(request, null, 2));
         
         const result = await Place.searchByText(request);
         // APIの結果をコンソールに出力して確認
         console.log("Parking search result:", result);
+        
+        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
+        // この位置に移動することで、API成功後にフラグが立つことを保証
+        window.parkingMarkersRendered = true;
           
         if (!result.places || result.places.length === 0) {
           alert("周辺に駐車場が見つかりませんでした");
@@ -123,13 +128,12 @@ export async function searchParking(){
          // #マップを最初の駐車場に合わせてパン
         // #panToとは地図の中心をゆっくりと滑らせながら移動させるメソッド
         window.map.panTo(result.places[0].location);
-        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
-        window.parkingMarkersRendered = true;
 
       } catch (error) {
         alert("駐車場の検索に失敗しました: " + error.message);
         // エラーが発生した場合、コンソールに詳細を出力
-        console.error("Failed to search for parking:", error);
+        console.error("Failed to search for parking:", error.message);
+        console.error("Error details:", error);
       }
     });
   }
