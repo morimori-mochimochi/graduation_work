@@ -3862,114 +3862,123 @@ function clearSearchMarkersOnRouteDraw2() {
 async function searchParking() {
   console.log("searchParking\u304C\u547C\u3070\u308C\u307E\u3057\u305F");
   const btn = document.getElementById("searchNearby");
-  console.log("search_nearby\u306E\u5B9F\u884C\u30C6\u30B9\u30C81");
   if (btn) {
     btn.addEventListener("click", async () => {
       const center = window.routeDestination;
-      console.log("\u30DE\u30FC\u30AB\u30FC\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F");
-      console.log("window.routeDestination\u306E\u5024\u78BA\u8A8D: ", window.routeDestination);
       if (!center) {
         alert("\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
         return;
       }
       console.log("try\u306B\u79FB\u308A\u307E\u3059");
+      let Place;
       try {
-        const { Place } = await google.maps.importLibrary("places");
-        const request = {
-          textQuery: "parking",
-          locationBias: { lat: center.lat(), lng: center.lng() },
-          fields: ["location", "displayName", "formattedAddress"]
-        };
-        console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
-        console.log("Request object:", JSON.stringify(request, null, 2));
-        console.log("Calling Place.searchByText...");
-        Place.searchByText(request).then((result) => {
-          console.log("Parking search result:", result);
-          window.parkingMarkersRendered = true;
-          if (!result.places || result.places.length === 0) {
-            alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
-            console.warn("No parking found near the destination.");
-            return;
+        ({ Place } = await google.maps.importLibrary("places"));
+        console.log("places\u30E9\u30A4\u30D6\u30E9\u30EA\u306E\u8AAD\u307F\u8FBC\u307F\u6210\u529F");
+      } catch (error) {
+        console.error("Places\u30E9\u30A4\u30D6\u30E9\u30EA\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
+        alert("\u5730\u56F3\u6A5F\u80FD\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F\u3002\u30DA\u30FC\u30B8\u3092\u518D\u8AAD\u307F\u8FBC\u307F\u3057\u3066\u304F\u3060\u3055\u3044");
+        return;
+      }
+      const request = {
+        textQuery: "parking",
+        locationBias: { lat: center.lat(), lng: center.lng() },
+        fields: ["location", "displayName", "formattedAddress"]
+      };
+      console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
+      console.log("Request object:", JSON.stringify(request, null, 2));
+      try {
+        const timeoutPromise = new Promise(
+          (_, reject2) => setTimeout(() => reject2(new Error("Parking search timed out after 8 seconds")), 8e3)
+        );
+        const result = await Promise.race([
+          Place.searchByText(request),
+          timeoutPromise
+        ]);
+        console.log("\u99D0\u8ECA\u5834\u691C\u7D22\u304C\u5B8C\u4E86\u3057\u307E\u3057\u305F");
+        if (result.places) {
+          console.log("Found places:", result.places);
+        } else {
+          console.warn("No places found in the result.");
+        }
+        window.parkingMarkersRendered = true;
+        if (!result.places || result.places.length === 0) {
+          alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
+          console.warn("No parking found near the destination.");
+          return;
+        }
+        result.places.forEach((place) => {
+          const marker = new google.maps.marker.AdvancedMarkerElement({
+            map: window.map,
+            position: place.location,
+            content: (() => {
+              const div = document.createElement("div");
+              div.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="green">
+                  <path d="M18.92 6.01C18.72 5.42 18.15 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 
+                  .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 
+                  .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 
+                  16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 
+                  13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 
+                  0c-.83 0-1.5-.67-1.5-1.5S16.67 13 17.5 
+                  13s1.5.67 1.5 1.5S18.33 16 17.5 16zM5 11l1.5-4.5h11L19 
+                  11H5z"/>
+                </svg>
+              `;
+              return div;
+            })()
+          });
+          if (!window.parkingMarkers) {
+            window.parkingMarkers = [];
           }
-          result.places.forEach((place) => {
-            const marker = new google.maps.marker.AdvancedMarkerElement({
-              map: window.map,
-              position: place.location,
-              content: (() => {
-                const div = document.createElement("div");
-                div.innerHTML = `
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="green">
-                    <path d="M18.92 6.01C18.72 5.42 18.15 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 
-                    .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 
-                    .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 
-                    16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 
-                    13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 
-                    0c-.83 0-1.5-.67-1.5-1.5S16.67 13 17.5 
-                    13s1.5.67 1.5 1.5S18.33 16 17.5 16zM5 11l1.5-4.5h11L19 
-                    11H5z"/>
-                  </svg>
-                `;
-                return div;
-              })()
-            });
-            if (!window.parkingMarkers) {
-              window.parkingMarkers = [];
+          window.parkingMarkers.push(marker);
+          marker.addListener("click", () => {
+            if (window.activeInfoWindow) {
+              window.activeInfoWindow.close();
             }
-            window.parkingMarkers.push(marker);
-            marker.addListener("click", () => {
-              if (window.activeInfoWindow) {
-                window.activeInfoWindow.close();
-              }
-              const infoWindow = new google.maps.InfoWindow({
-                content: `
-                  <div style="min-width:200px">
-                    <div style="font-size:0.95em;color:#555;">
-                      ${place.formattedAddress || "\u4F4F\u6240\u60C5\u5831\u306A\u3057"}
-                    </div>
-                    <button id="setParking" style="marin-right:8px;">\u3053\u3053\u306B\u99D0\u8ECA\u3059\u308B</button>
+            const infoWindow = new google.maps.InfoWindow({
+              content: `
+                <div style="min-width:200px">
+                  <div style="font-size:0.95em;color:#555;">
+                    ${place.formattedAddress || "\u4F4F\u6240\u60C5\u5831\u306A\u3057"}
                   </div>
-                `
-              });
-              infoWindow.open(window.map, marker);
-              window.activeInfoWindow = infoWindow;
-              google.maps.event.addListenerOnce(infoWindow, "domready", () => {
-                const parkingBtn = document.getElementById("setParking");
-                if (parkingBtn) {
-                  parkingBtn.addEventListener("click", () => {
-                    window.routeParking = place.location;
-                    console.log("routeParking\u306E\u4E2D\u8EAB:", window.routeParking);
-                    if (window.parkingMarkers) {
-                      window.parkingMarkers.forEach((m) => {
-                        if (m !== marker) {
-                          m.map = null;
-                        }
-                      });
-                    }
-                    const routeParkingBtn = document.getElementById("routeParking");
-                    if (routeParkingBtn) {
-                      routeParkingBtn.textContent = place.formattedAddress || "\u99D0\u8ECA\u5834";
-                      routeParkingBtn.style.display = "inline-block";
-                    }
-                    infoWindow.close();
-                  });
-                }
-              });
+                  <button id="setParking" style="marin-right:8px;">\u3053\u3053\u306B\u99D0\u8ECA\u3059\u308B</button>
+                </div>
+              `
+            });
+            infoWindow.open(window.map, marker);
+            window.activeInfoWindow = infoWindow;
+            google.maps.event.addListenerOnce(infoWindow, "domready", () => {
+              const parkingBtn = document.getElementById("setParking");
+              if (parkingBtn) {
+                parkingBtn.addEventListener("click", () => {
+                  window.routeParking = place.location;
+                  console.log("routeParking\u306E\u4E2D\u8EAB:", window.routeParking);
+                  if (window.parkingMarkers) {
+                    window.parkingMarkers.forEach((m) => {
+                      if (m !== marker) {
+                        m.map = null;
+                      }
+                    });
+                  }
+                  const routeParkingBtn = document.getElementById("routeParking");
+                  if (routeParkingBtn) {
+                    routeParkingBtn.textContent = place.formattedAddress || "\u99D0\u8ECA\u5834";
+                    routeParkingBtn.style.display = "inline-block";
+                  }
+                  infoWindow.close();
+                });
+              }
             });
           });
-          window.map.panTo(result.places[0].location);
-        }).catch((error) => {
-          alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
-          console.error("Failed to search for parking (in .catch):", error.message);
-          console.error("Error details (in .catch):", error);
         });
+        window.searchParkingInitialized = true;
+        window.map.panTo(result.places[0].location);
       } catch (error) {
         alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
-        console.error("Failed to search for parking:", error.message);
-        console.error("Error details:", error);
+        console.error("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
       }
     });
   }
-  window.searchParkingInitialized = true;
 }
 
 // app/javascript/current_pos.js
