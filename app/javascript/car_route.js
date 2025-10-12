@@ -8,6 +8,12 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
 
   const originPos = start || window.routeStart || await fetchCurrentPos();
 
+  // 既存のルート描画をクリア
+  if (window.drivingRouteRenderer) window.drivingRouteRenderer.setMap(null);
+  if (window.walkingRouteRenderer) window.walkingRouteRenderer.setMap(null);
+  if (window.directionsRenderer) window.directionsRenderer.setMap(null);
+
+
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -42,11 +48,11 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       });
-      const renderer1 = new google.maps.DirectionsRenderer({
+      window.drivingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "green" }
       });
-      renderer1.setDirections(response1);
+      window.drivingRouteRenderer.setDirections(response1);
 
       // 2.駐車場→目的地(徒歩)
       console.log("徒歩ルートを検索します");
@@ -55,11 +61,11 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
         destination: finalDestination,
         travelMode: google.maps.TravelMode.WALKING
       });
-      const renderer2 = new google.maps.DirectionsRenderer({
+      window.walkingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "blue" } //徒歩ルートは青
       });
-      renderer2.setDirections(response2);
+      window.walkingRouteRenderer.setDirections(response2);
 
       // 3. 2つのルート結果を一つに結合する
       const combinedResponse = response1;
@@ -69,10 +75,13 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
       carLeg.distance.value += walkLeg.distance.value; // 距離と時間を合算
       carLeg.duration.value += walkLeg.duration.value;
 
-      // 結合したルートを保存
+      // ナビゲーション用に結合したルートを保存
       window.directionsResult = combinedResponse;
       sessionStorage.setItem("directionsResult", JSON.stringify(combinedResponse));
       console.log("結合されたルート:", combinedResponse);
+
+      // 駐車場までのルートをナビゲーションのメインルートとして保存
+      // sessionStorage.setItem("directionsResult", JSON.stringify(response1));
       return "OK"; // 成功したことを示す
     } catch (error) {
       alert("ルートの取得に失敗しました:" + error);
@@ -86,6 +95,9 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
         destination: finalDestination,
         travelMode: google.maps.TravelMode.DRIVING
       });
+      if (!window.directionsRenderer) {
+        window.directionsRenderer = new google.maps.DirectionsRenderer();
+      }
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));

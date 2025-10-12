@@ -79,6 +79,15 @@ function init() {
   if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
     initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
   }
+
+  // --- テスト用の設定 ---
+  // テスト環境でのみ、関数をwindowオブジェクトに公開して上書きできるようにする
+  if (process.env.NODE_ENV === 'test') {
+    window.testHooks = {
+      searchParking,
+      initMarkerEvents
+    };
+  }
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);

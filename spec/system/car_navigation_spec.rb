@@ -19,7 +19,7 @@ RSpec.describe "ナビゲーション機能", type: :system, js: true do
         start_location = { lat: 35.6812, lng: 139.7671 }.to_json #東京駅
         destination_location = { lat: 35.6586, lng: 139.7454 }.to_json #東京タワー
 
-        # execute_async_scriptを使い、非同期処理の完了を待つ
+        # evaluate_async_scriptを使い、非同期処理の完了を待つ
         # done.call()が呼ばれるまでテストは待機する
         # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
         page.evaluate_async_script(<<~JS, start_location, destination_location)
@@ -32,14 +32,12 @@ RSpec.describe "ナビゲーション機能", type: :system, js: true do
                 const destination = new google.maps.LatLng(destination_location);
 
                 try {
-                  console.log("About to call window.carDrawRoute");
                   if (typeof window.carDrawRoute !== 'function'){
                     // done()にエラーメッセージを渡すと、テストが即座に失敗し、メッセージが表示される
                     done("Error: window.carDrawRoute is not a function");
                     return;
                   }
                   await window.carDrawRoute(start, destination);
-                  console.log("window.carDrawRoute finished successfully.");
                   done();
                 } catch (e) {
                   console.error("Error during carDrawRoute execution:", e.message, e.stack);

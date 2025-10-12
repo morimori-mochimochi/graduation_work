@@ -3865,21 +3865,32 @@ async function searchParking() {
   if (btn) {
     btn.addEventListener("click", async () => {
       const center = window.routeDestination;
-      console.log("\u30DE\u30FC\u30AB\u30FC\u3092\u53D6\u5F97\u3057\u307E\u3057\u305F");
       if (!center) {
         alert("\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
         return;
       }
+      let Place;
       try {
-        const { Place } = await google.maps.importLibrary("places");
-        const request = {
-          textQuery: "parking",
-          locationBias: { lat: center.lat(), lng: center.lng() },
-          fields: ["location", "displayName", "formattedAddress"]
-        };
+        console.log("try\u306B\u79FB\u308A\u307E\u3059");
+        ({ Place } = await google.maps.importLibrary("places"));
+        console.log("places\u30E9\u30A4\u30D6\u30E9\u30EA\u306E\u8AAD\u307F\u8FBC\u307F\u6210\u529F");
+      } catch (error) {
+        console.error("Places\u30E9\u30A4\u30D6\u30E9\u30EA\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
+        alert("\u5730\u56F3\u6A5F\u80FD\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F\u3002\u30DA\u30FC\u30B8\u3092\u518D\u8AAD\u307F\u8FBC\u307F\u3057\u3066\u304F\u3060\u3055\u3044");
+        return;
+      }
+      const request = {
+        textQuery: "parking",
+        locationBias: { lat: center.lat(), lng: center.lng() },
+        fields: ["location", "displayName", "formattedAddress"]
+      };
+      console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
+      console.log("Request object:", JSON.stringify(request, null, 2));
+      try {
         const result = await Place.searchByText(request);
         if (!result.places || result.places.length === 0) {
           alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
+          console.warn("No parking found near the destination.");
           return;
         }
         result.places.forEach((place) => {
@@ -3947,8 +3958,10 @@ async function searchParking() {
           });
         });
         window.map.panTo(result.places[0].location);
+        window.parkingMarkersRendered = true;
       } catch (error) {
         alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
+        console.error("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
       }
     });
   }
@@ -4184,6 +4197,9 @@ async function carDrawRoute(start, destination) {
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
   const originPos = start || window.routeStart || await fetchCurrentPos2();
+  if (window.drivingRouteRenderer) window.drivingRouteRenderer.setMap(null);
+  if (window.walkingRouteRenderer) window.walkingRouteRenderer.setMap(null);
+  if (window.directionsRenderer) window.directionsRenderer.setMap(null);
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -4208,23 +4224,23 @@ async function carDrawRoute(start, destination) {
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       });
-      const renderer1 = new google.maps.DirectionsRenderer({
+      window.drivingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "green" }
       });
-      renderer1.setDirections(response1);
+      window.drivingRouteRenderer.setDirections(response1);
       console.log("\u5F92\u6B69\u30EB\u30FC\u30C8\u3092\u691C\u7D22\u3057\u307E\u3059");
       const response2 = await routePromise({
         origin: window.routeParking,
         destination: finalDestination,
         travelMode: google.maps.TravelMode.WALKING
       });
-      const renderer2 = new google.maps.DirectionsRenderer({
+      window.walkingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "blue" }
         //徒歩ルートは青
       });
-      renderer2.setDirections(response2);
+      window.walkingRouteRenderer.setDirections(response2);
       const combinedResponse = response1;
       const carLeg = response1.routes[0].legs[0];
       const walkLeg = response2.routes[0].legs[0];
@@ -4246,6 +4262,9 @@ async function carDrawRoute(start, destination) {
         destination: finalDestination,
         travelMode: google.maps.TravelMode.DRIVING
       });
+      if (!window.directionsRenderer) {
+        window.directionsRenderer = new google.maps.DirectionsRenderer();
+      }
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
@@ -4468,6 +4487,12 @@ function init() {
   console.log("\u73FE\u5728\u5730\u30DC\u30BF\u30F3\u521D\u671F\u5316\u30C1\u30A7\u30C3\u30AF");
   if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
     initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
+  }
+  if (false) {
+    window.testHooks = {
+      searchParking,
+      initMarkerEvents
+    };
   }
 }
 if (document.readyState === "loading") {

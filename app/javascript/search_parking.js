@@ -1,14 +1,12 @@
-export async function searchParking(){
-  // #set_markerで保存してある"最後においたマーカーの座標"
-  console.log("searchParkingが呼ばれました")
+// app/javascript/search_parking.js
+export async function searchParking() {
+  console.log("searchParkingが呼ばれました");
 
   const btn = document.getElementById("searchNearby");
 
   if (btn) {
-    btn.addEventListener("click", async() => {
+    btn.addEventListener("click", async () => {
       const center = window.routeDestination;
-      console.log("マーカーを取得しました");
-        
       if (!center){
         alert("目的地を設定してください");
         return;
@@ -16,20 +14,34 @@ export async function searchParking(){
 
       // #JavaScript の try は 例外処理（エラー処理）ブロック を作るために使う
       // #try { ... } catch (error) { ... } で囲むことで、検索に失敗した場合に alert("駐車場の検索に失敗しました: " + error.message); と表示し、処理を安全に終了
+      let Place;
       try {
+        console.log("tryに移ります");
         // #Placesライブラリをロード
-        const { Place } = await google.maps.importLibrary("places");
-        // #新APIではlocationBiasに{lat,lng}を渡す（radiusは使えない）
-        const request = {
-          textQuery: "parking",
-          locationBias: { lat: center.lat(), lng: center.lng() },
-          fields: ["location", "displayName", "formattedAddress"]
-        };
-     
+        ({ Place } = await google.maps.importLibrary("places"));
+        console.log ("placesライブラリの読み込み成功");
+      } catch(error) {
+        // console.errorはコンソールに赤文字でエラー内容を表示
+        console.error("Placesライブラリの読み込みに失敗しました:", error);
+        alert("地図機能の読み込みに失敗しました。ページを再読み込みしてください");
+        return;
+      }
+
+      const request = {
+        textQuery: "parking",
+        locationBias: { lat: center.lat(), lng: center.lng() },
+        fields: ["location", "displayName", "formattedAddress"]
+      };
+
+      console.log("requestを定義しました");
+      console.log("Request object:", JSON.stringify(request, null, 2));
+
+      try {
         const result = await Place.searchByText(request);
-          
+
         if (!result.places || result.places.length === 0) {
           alert("周辺に駐車場が見つかりませんでした");
+          console.warn("No parking found near the destination.");
           return;
         }
         // #複数返ってくるので、一件ずつマーカー表示
@@ -56,12 +68,10 @@ export async function searchParking(){
           });
 
           //駐車場マーカーの配列をグローバルに初期化
-          if (!window. parkingMarkers) {
+          if (!window.parkingMarkers) {
            window.parkingMarkers = [];
           }
           window.parkingMarkers.push(marker);
-
-
           // infoWindowを表示する処理
           marker.addListener("click", () => {
             if (window.activeInfoWindow) {
@@ -110,12 +120,14 @@ export async function searchParking(){
             });
           });
         });
-         // #マップを最初の駐車場に合わせてパン
-        // #panToとは地図の中心をゆっくりと滑らせながら移動させるメソッド
+
         window.map.panTo(result.places[0].location);
+        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
+        window.parkingMarkersRendered = true;
 
       } catch (error) {
         alert("駐車場の検索に失敗しました: " + error.message);
+        console.error("駐車場の検索に失敗しました:", error);
       }
     });
   }
