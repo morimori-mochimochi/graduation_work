@@ -1,10 +1,11 @@
-export async function searchParking(){
-  console.log("searchParkingが呼ばれました")
+// app/javascript/search_parking.js
+export async function searchParking() {
+  console.log("searchParkingが呼ばれました");
 
   const btn = document.getElementById("searchNearby");
 
   if (btn) {
-    btn.addEventListener("click", async() => {
+    btn.addEventListener("click", async () => {
       const center = window.routeDestination;
       if (!center){
         alert("目的地を設定してください");
@@ -13,9 +14,9 @@ export async function searchParking(){
 
       // #JavaScript の try は 例外処理（エラー処理）ブロック を作るために使う
       // #try { ... } catch (error) { ... } で囲むことで、検索に失敗した場合に alert("駐車場の検索に失敗しました: " + error.message); と表示し、処理を安全に終了
-      console.log ("tryに移ります");
       let Place;
       try {
+        console.log("tryに移ります");
         // #Placesライブラリをロード
         ({ Place } = await google.maps.importLibrary("places"));
         console.log ("placesライブラリの読み込み成功");
@@ -25,59 +26,23 @@ export async function searchParking(){
         alert("地図機能の読み込みに失敗しました。ページを再読み込みしてください");
         return;
       }
-        // #新APIではlocationBiasに{lat,lng}を渡す（radiusは使えない）
+
       const request = {
         textQuery: "parking",
         locationBias: { lat: center.lat(), lng: center.lng() },
         fields: ["location", "displayName", "formattedAddress"]
       };
-     
+
       console.log("requestを定義しました");
       console.log("Request object:", JSON.stringify(request, null, 2));
-      
-      try {
-        console.log("[LOG1] 駐車場検索のtryブロック開始");
-        // タイムアウト処理を追加
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Parking search timed out after 8 seconds')), 8000)
-        );
-        console.log("[LOG2] timeoutPromise 作成完了");
 
-        // API呼び出しとタイムアウトを競わせる
-        const result =  await Promise.race([
-          (async () => {
-            console.log("[TRACE]Place.searchByText 呼び出し開始");
-            try {
-              const res = await Place.searchByText(request);
-              console.log("[TRACE] Place.searchByText 正常終了:", res);
-              return { ok: true, source: "api", data: res };
-            } catch (err) {
-              console.error("[TRACE] Place.searchByText 内部でエラー:", err);
-              return { ok: false, source: "api", error: err };
-            }
-          })(),
-          (async () => {
-            console.log("[TRACE] timeoutPromise 開始（8秒タイマー)");
-            try {
-              await new Promise((_, reject) => 
-                setTimeout(() => reject(new Error("タイムアウト")), 8000)
-              );
-            } catch (err) {
-              console.warn ("[TRACE]timeoutPromise発火: ", err.message);
-              return { ok: false, source: "timeout", error: err };
-            }
-          })()
-        ]);
-        console.log("[TRACE]Promise race 結果:", result)
-            
-        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
-        window.parkingMarkersRendered = true;
-          
-        if (!result.data.places || result.data.places.length === 0) {
+      try {
+        const result = await Place.searchByText(request);
+
+        if (!result.places || result.places.length === 0) {
           alert("周辺に駐車場が見つかりませんでした");
-          // テストのためにコンソールにもログを残す
           console.warn("No parking found near the destination.");
-          return; 
+          return;
         }
         // #複数返ってくるので、一件ずつマーカー表示
         result.places.forEach(place => {
@@ -107,7 +72,6 @@ export async function searchParking(){
            window.parkingMarkers = [];
           }
           window.parkingMarkers.push(marker);
-
           // infoWindowを表示する処理
           marker.addListener("click", () => {
             if (window.activeInfoWindow) {
@@ -135,7 +99,6 @@ export async function searchParking(){
                 parkingBtn.addEventListener("click", () => {
                   //選択した駐車場の位置保存
                   window.routeParking = place.location;
-                  console.log("routeParkingの中身:", window.routeParking);
 
                   if (window.parkingMarkers) {
                     window.parkingMarkers.forEach(m => {
@@ -157,11 +120,10 @@ export async function searchParking(){
             });
           });
         });
-        // テスト用に、初期化が完了したことを示すフラグを立てる
-        window.searchParkingInitialized = true;
-        // #マップを最初の駐車場に合わせてパン
-        // #panToとは地図の中心をゆっくりと滑らせながら移動させるメソッド
+
         window.map.panTo(result.places[0].location);
+        // テスト用に、マーカーの描画が完了したことを示すフラグを立てる
+        window.parkingMarkersRendered = true;
 
       } catch (error) {
         alert("駐車場の検索に失敗しました: " + error.message);

@@ -3869,9 +3869,9 @@ async function searchParking() {
         alert("\u76EE\u7684\u5730\u3092\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044");
         return;
       }
-      console.log("try\u306B\u79FB\u308A\u307E\u3059");
       let Place;
       try {
+        console.log("try\u306B\u79FB\u308A\u307E\u3059");
         ({ Place } = await google.maps.importLibrary("places"));
         console.log("places\u30E9\u30A4\u30D6\u30E9\u30EA\u306E\u8AAD\u307F\u8FBC\u307F\u6210\u529F");
       } catch (error) {
@@ -3887,38 +3887,8 @@ async function searchParking() {
       console.log("request\u3092\u5B9A\u7FA9\u3057\u307E\u3057\u305F");
       console.log("Request object:", JSON.stringify(request, null, 2));
       try {
-        console.log("[LOG1] \u99D0\u8ECA\u5834\u691C\u7D22\u306Etry\u30D6\u30ED\u30C3\u30AF\u958B\u59CB");
-        const timeoutPromise = new Promise(
-          (_, reject2) => setTimeout(() => reject2(new Error("Parking search timed out after 8 seconds")), 8e3)
-        );
-        console.log("[LOG2] timeoutPromise \u4F5C\u6210\u5B8C\u4E86");
-        const result = await Promise.race([
-          (async () => {
-            console.log("[TRACE]Place.searchByText \u547C\u3073\u51FA\u3057\u958B\u59CB");
-            try {
-              const res = await Place.searchByText(request);
-              console.log("[TRACE] Place.searchByText \u6B63\u5E38\u7D42\u4E86:", res);
-              return { ok: true, source: "api", data: res };
-            } catch (err) {
-              console.error("[TRACE] Place.searchByText \u5185\u90E8\u3067\u30A8\u30E9\u30FC:", err);
-              return { ok: false, source: "api", error: err };
-            }
-          })(),
-          (async () => {
-            console.log("[TRACE] timeoutPromise \u958B\u59CB\uFF088\u79D2\u30BF\u30A4\u30DE\u30FC)");
-            try {
-              await new Promise(
-                (_, reject2) => setTimeout(() => reject2(new Error("\u30BF\u30A4\u30E0\u30A2\u30A6\u30C8")), 8e3)
-              );
-            } catch (err) {
-              console.warn("[TRACE]timeoutPromise\u767A\u706B: ", err.message);
-              return { ok: false, source: "timeout", error: err };
-            }
-          })()
-        ]);
-        console.log("[TRACE]Promise race \u7D50\u679C:", result);
-        window.parkingMarkersRendered = true;
-        if (!result.data.places || result.data.places.length === 0) {
+        const result = await Place.searchByText(request);
+        if (!result.places || result.places.length === 0) {
           alert("\u5468\u8FBA\u306B\u99D0\u8ECA\u5834\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F");
           console.warn("No parking found near the destination.");
           return;
@@ -3969,7 +3939,6 @@ async function searchParking() {
               if (parkingBtn) {
                 parkingBtn.addEventListener("click", () => {
                   window.routeParking = place.location;
-                  console.log("routeParking\u306E\u4E2D\u8EAB:", window.routeParking);
                   if (window.parkingMarkers) {
                     window.parkingMarkers.forEach((m) => {
                       if (m !== marker) {
@@ -3988,8 +3957,8 @@ async function searchParking() {
             });
           });
         });
-        window.searchParkingInitialized = true;
         window.map.panTo(result.places[0].location);
+        window.parkingMarkersRendered = true;
       } catch (error) {
         alert("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F: " + error.message);
         console.error("\u99D0\u8ECA\u5834\u306E\u691C\u7D22\u306B\u5931\u6557\u3057\u307E\u3057\u305F:", error);
