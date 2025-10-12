@@ -4197,6 +4197,9 @@ async function carDrawRoute(start, destination) {
   console.log("routeDestination:", window.routeDestination);
   console.log("routeParking:", window.routeParking);
   const originPos = start || window.routeStart || await fetchCurrentPos2();
+  if (window.drivingRouteRenderer) window.drivingRouteRenderer.setMap(null);
+  if (window.walkingRouteRenderer) window.walkingRouteRenderer.setMap(null);
+  if (window.directionsRenderer) window.directionsRenderer.setMap(null);
   const directionsService = new google.maps.DirectionsService();
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -4221,23 +4224,23 @@ async function carDrawRoute(start, destination) {
         destination: window.routeParking,
         travelMode: google.maps.TravelMode.DRIVING
       });
-      const renderer1 = new google.maps.DirectionsRenderer({
+      window.drivingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "green" }
       });
-      renderer1.setDirections(response1);
+      window.drivingRouteRenderer.setDirections(response1);
       console.log("\u5F92\u6B69\u30EB\u30FC\u30C8\u3092\u691C\u7D22\u3057\u307E\u3059");
       const response2 = await routePromise({
         origin: window.routeParking,
         destination: finalDestination,
         travelMode: google.maps.TravelMode.WALKING
       });
-      const renderer2 = new google.maps.DirectionsRenderer({
+      window.walkingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "blue" }
         //徒歩ルートは青
       });
-      renderer2.setDirections(response2);
+      window.walkingRouteRenderer.setDirections(response2);
       const combinedResponse = response1;
       const carLeg = response1.routes[0].legs[0];
       const walkLeg = response2.routes[0].legs[0];
@@ -4259,6 +4262,9 @@ async function carDrawRoute(start, destination) {
         destination: finalDestination,
         travelMode: google.maps.TravelMode.DRIVING
       });
+      if (!window.directionsRenderer) {
+        window.directionsRenderer = new google.maps.DirectionsRenderer();
+      }
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
@@ -4481,6 +4487,12 @@ function init() {
   console.log("\u73FE\u5728\u5730\u30DC\u30BF\u30F3\u521D\u671F\u5316\u30C1\u30A7\u30C3\u30AF");
   if (document.getElementById("currentPosBtn") || document.getElementById("currentPosBtnCar")) {
     initCurrentPosBtn(["currentPosBtn", "currentPosBtnCar"]);
+  }
+  if (false) {
+    window.testHooks = {
+      searchParking,
+      initMarkerEvents
+    };
   }
 }
 if (document.readyState === "loading") {
