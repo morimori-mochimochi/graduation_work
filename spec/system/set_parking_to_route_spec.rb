@@ -3,73 +3,6 @@ require 'rails_helper'
 RSpec.describe "駐車場を含めたルートを作成する", type: :system, js: true do
   it "車で移動する際、目的地周辺の駐車場を検索し、駐車場までは車のルート、駐車場から目的地までは徒歩のルートを提案する" do
     #1. トップページにアクセスし、車ルート作成ページに移動
-    page.evaluate_script(<<~JS)
-      //未定義の場合に「未定義エラー」にならないように新たに作って空のオブジェクト{}を代入する
-      window.google = window.google || {};
-      window.google.maps = window.google.maps || {};
-
-      // LatLngクラスをテスト環境で「代替的に定義」
-      if (!window.google.maps.LatLng) {
-        window.google.maps.LatLng = function(obj) {
-          return { 
-            lat: function() { return (typeof obj.lat === 'function') ? obj.lat() : obj.lat; },
-            lng: function() { return (typeof obj.lng === 'function') ? obj.lng() : obj.lng;}
-          };
-        };  
-      }
-      
-      // mapオブジェクトの代替
-      window.map = {};
-
-      // AdvancedMarkerElementのモック
-      window.google.maps.marker = {
-        AdvancedMarkerElement: function(opts) {
-          return {
-            map: opts.map,
-            position: opts.position,
-            content: opts.content,
-            addListener: (event, callback) => {},
-          };
-        }
-      };
-      
-      window.google.maps.importLibrary = async function(lib) {
-        if (lib === 'places'){
-          return {
-            Place: {
-              searchByText: async function(request) {
-                console.info('[MOCK]Place.searchByText called with', request);
-                return {
-                  data: {
-                    places: [
-                      {
-                        location: { lat: request.locationBias.lat, lng: request.locationBias.lng },
-                        formattedAddress: 'モック駐車場1',
-                        displayName: 'Mock Parking 1'
-                      }
-                    ]
-                  }
-                };
-              }
-            }
-          };
-        }
-        return{};
-      };
-
-      console.log("[DEBUG] importLibrary after mock:", window.google.maps.importLibrary);
-      console.log("[DEBUG] importLibrary source:", window.google.maps.importLibrary.toString());
-
-      window.originalImportLibrary = window.google.maps.importLibrary;
-      window.google.maps.importLibrary = async function(lib) {
-        console.warn('[MOCK] Forcing mock importLibrary for:', lib);
-        return await window.originalImportLibrary(lib).catch(e => {
-          console.warn('[MOCK] Prevented real API call:', e);
-          return {};
-        });
-      };
-    JS
-
     visit root_path
 
     find("a[href='#{new_route_path}']").click
@@ -78,7 +11,56 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
 
-    # 3. 目的地周辺の駐車場を検索し、最初の駐車場を選択する (リファクタリング後)
+    # 2. Google Maps APIの主要な機能をモックする
+    # 実際のAPIコールを防ぎ、テストを安定させる
+    page.evaluate_script(<<~JS)
+      window.google = window.google || {};
+      window.google.maps = window.google.maps || {};
+      window.google.maps.LatLng = function(obj) {
+        const lat = (typeof obj.lat === 'function') ? obj.lat() : obj.lat;
+        const lng = (typeof obj.lng === 'function') ? obj.lng() : obj.lng;
+        return { lat: () => lat, lng: () => lng };
+      };
+      window.google.maps.marker = {
+        AdvancedMarkerElement: function(opts) {
+          return {
+            map: opts.map,
+            position: opts.position,
+            content: opts.content,
+            addListener: (event, callback) => {},
+            setMap: (map) => {}
+          };
+        }
+      };
+      window.google.maps.InfoWindow = function() {
+        return {
+          open: () => {},
+          close: () => {},
+          setContent: () => {},
+          addListenerOnce: (event, callback) => {
+            if (event === 'domready') {
+              // InfoWindow内のボタンがクリック可能になるように、即座にコールバックを実行
+              callback();
+            }
+          }
+        };
+      };
+      window.google.maps.event = {
+        trigger: (instance, eventName, ...args) => {
+          // マーカークリックをシミュレートするために、リスナーを直接呼び出す
+          if (instance && instance.listeners && instance.listeners[eventName]) {
+            instance.listeners[eventName](...args);
+          }
+        },
+        addListenerOnce: (instance, eventName, callback) => {
+          if (instance && instance.addListenerOnce) {
+            instance.addListenerOnce(eventName, callback);
+          }
+        }
+      };
+    JS
+
+    # 3. 目的地周辺の駐車場を検索し、最初の駐車場を選択する
     # 3-1. JSで出発地・目的地を設定
     page.execute_script(<<~JS)
       window.routeStart = new google.maps.LatLng({ lat: 35.6812, lng: 139.7671 }); 
@@ -86,18 +68,51 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
     JS
 
     # 3-2. 「駐車場を探す」ボタンをクリック
+    # このクリックにより search_parking.js 内のイベントリスナーが発火する
     find("#searchNearby").click
 
-    # 3-3. 駐車場マーカーがJS内で生成されるのを待つ (Capybaraの待機機能を利用)
-    # Google Maps APIのレスポンスに時間がかかる場合があるため、wait時間を長めに設定
-    expect(page).to have_javascript("window.parkingMarkers && window.parkingMarkers.length > 0", wait: 10)
-    # window.parkingMarkersRendered は search_parking.js 内でマーカー描画後に true になる
-    expect(page).to have_javascript("window.parkingMarkersRendered", wait: 10)
+    # 3-3. Place.searchByText をモックし、非同期処理の完了を待つ
+    # evaluate_async_script を使い、テストがブラウザのJS実行完了を待つようにする
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      // search_parking.js が google.maps.importLibrary を呼び出すのを乗っ取る
+      window.google.maps.importLibrary = async (lib) => {
+        if (lib === 'places') {
+          console.log('[MOCK] Intercepted importLibrary("places")');
+          return {
+            Place: {
+              searchByText: async (request) => {
+                console.log('[MOCK] Place.searchByText called with:', request);
+                // 実際のAPIのレスポンス形式に合わせたモックデータを返す
+                return {
+                  places: [{
+                    location: new google.maps.LatLng(request.locationBias),
+                    formattedAddress: 'モック駐車場1',
+                    displayName: 'Mock Parking 1'
+                  }]
+                };
+              }
+            }
+          };
+        }
+        // 他のライブラリは空のオブジェクトを返す
+        return {};
+      };
+      // search_parking.js内のマーカー描画が完了したことを示すフラグを待つ
+      // これにより、非同期処理が完了したことを確実に捕捉できる
+      const interval = setInterval(() => {
+        if (window.parkingMarkersRendered) {
+          clearInterval(interval);
+          done(); // Capybaraに処理完了を通知
+        }
+      }, 100);
+    JS
 
     # 3-4. 最初の駐車場マーカーをクリックする (マーカーはDOM要素ではないためJSで実行)
     page.execute_script(<<~JS)
       if (window.parkingMarkers && window.parkingMarkers.length > 0) {
-        google.maps.event.trigger(window.parkingMarkers[0], 'click');
+        // マーカーのクリックイベントリスナーを直接実行
+        window.parkingMarkers[0].listeners['click']();
       }
     JS
 
@@ -112,7 +127,7 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
     expect(page).not_to have_button("ここに駐車する")
 
     # 4.駐車場が設定された後、ルート描画ボタンをクリック
-    find("#carDrawRoute").click
+    find("#carDrawRoute").click # このクリックで carDrawRoute が呼ばれる
 
     # 5.ルート情報がsessionStorageに保存されるのを待つ
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
