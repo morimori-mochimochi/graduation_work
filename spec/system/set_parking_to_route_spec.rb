@@ -10,18 +10,50 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
 
-    #2. 出発地と目的地を擬似的に設定
-    start_location = { lat: 35.6812, lng: 139.7671 }.to_json
-    destination_location = { lat: 35.6586, lng: 139.7454 }.to_json
+    page.evaluate_script(<<~JS)
+      //未定義の場合に「未定義エラー」にならないように新たに作って空のオブジェクト{}を代入する
+      window.google = window.google || {};
+      window.google.maps = window.google.maps || {};
+
+      // LatLngクラスをテスト環境で「代替的に定義」
+      if (!window.google.maps.LatLng) {
+        window.google.maps.LatLng = function(obj) {
+          return { 
+            lat: function() { return (typeof obj.lat === 'function') ? obj.lat() : obj.lat; },
+            lng: function() { return (typeof obj.lng === 'function') ? obj.lng() : obj.lng;}
+          };
+        };  
+      }
+      
+      window.google.maps.importLibrary = async function(lib) {
+        if (lib === 'places'){
+          return {
+            Place: {
+              searchByText: async function(request) {
+                console.info('[MOCK]Place.searchByText called with', request);
+                return {
+                  places: [
+                    {
+                      location: { lat: request.locationBias.lat, lng: request.locationBias.lng },
+                      formattedAddress: 'モック駐車場1',
+                      displayName: 'Mock Parking 1'
+                    }
+                  ]
+                };
+              }
+            }
+          };
+        }
+        return{};
+      };
+    JS
 
     # 3. 目的地周辺の駐車場を検索し、最初の駐車場を選択する (リファクタリング後)
     # 3-1. JSで出発地・目的地を設定
-    page.execute_script(
-      "window.routeStart = new google.maps.LatLng(JSON.parse(arguments[0]));" \
-      "window.routeDestination = new google.maps.LatLng(JSON.parse(arguments[1]));",
-      start_location,
-      destination_location
-    )
+    page.execute_script(<<~JS)
+      window.routeStart = new google.maps.LatLng({ lat: 35.6812, lng: 139.7671 }); 
+      window.routeDestination = new google.maps.LatLng({ lat: 35.6586, lng: 139.7454 });
+    JS
 
     # 3-2. 「駐車場を探す」ボタンをクリック
     find("#searchNearby").click
