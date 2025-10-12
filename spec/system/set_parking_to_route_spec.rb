@@ -3,13 +3,6 @@ require 'rails_helper'
 RSpec.describe "駐車場を含めたルートを作成する", type: :system, js: true do
   it "車で移動する際、目的地周辺の駐車場を検索し、駐車場までは車のルート、駐車場から目的地までは徒歩のルートを提案する" do
     #1. トップページにアクセスし、車ルート作成ページに移動
-    visit root_path
-    find("a[href='#{new_route_path}']").click
-    find("a[href='#{car_routes_path}']").click
-
-    expect(page).to have_current_path(car_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')
-
     page.evaluate_script(<<~JS)
       //未定義の場合に「未定義エラー」にならないように新たに作って空のオブジェクト{}を代入する
       window.google = window.google || {};
@@ -25,6 +18,21 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
         };  
       }
       
+      // mapオブジェクトの代替
+      window.map = {};
+
+      // AdvancedMarkerElementのモック
+      window.google.maps.marker = {
+        AdvancedMarkerElement: function(opts) {
+          return {
+            map: opts.map,
+            position: opts.position,
+            content: opts.content,
+            addListener: (event, callback) => {},
+          };
+        }
+      };
+      
       window.google.maps.importLibrary = async function(lib) {
         if (lib === 'places'){
           return {
@@ -32,13 +40,15 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
               searchByText: async function(request) {
                 console.info('[MOCK]Place.searchByText called with', request);
                 return {
-                  places: [
-                    {
-                      location: { lat: request.locationBias.lat, lng: request.locationBias.lng },
-                      formattedAddress: 'モック駐車場1',
-                      displayName: 'Mock Parking 1'
-                    }
-                  ]
+                  data: {
+                    places: [
+                      {
+                        location: { lat: request.locationBias.lat, lng: request.locationBias.lng },
+                        formattedAddress: 'モック駐車場1',
+                        displayName: 'Mock Parking 1'
+                      }
+                    ]
+                  }
                 };
               }
             }
@@ -46,7 +56,27 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
         }
         return{};
       };
+
+      console.log("[DEBUG] importLibrary after mock:", window.google.maps.importLibrary);
+      console.log("[DEBUG] importLibrary source:", window.google.maps.importLibrary.toString());
+
+      window.originalImportLibrary = window.google.maps.importLibrary;
+      window.google.maps.importLibrary = async function(lib) {
+        console.warn('[MOCK] Forcing mock importLibrary for:', lib);
+        return await window.originalImportLibrary(lib).catch(e => {
+          console.warn('[MOCK] Prevented real API call:', e);
+          return {};
+        });
+      };
     JS
+
+    visit root_path
+
+    find("a[href='#{new_route_path}']").click
+    find("a[href='#{car_routes_path}']").click
+
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
+    expect(page).to have_selector('#map')
 
     # 3. 目的地周辺の駐車場を検索し、最初の駐車場を選択する (リファクタリング後)
     # 3-1. JSで出発地・目的地を設定
@@ -65,7 +95,11 @@ RSpec.describe "駐車場を含めたルートを作成する", type: :system, j
     expect(page).to have_javascript("window.parkingMarkersRendered", wait: 10)
 
     # 3-4. 最初の駐車場マーカーをクリックする (マーカーはDOM要素ではないためJSで実行)
-    page.execute_script("google.maps.event.trigger(window.parkingMarkers[0], 'click');")
+    page.execute_script(<<~JS)
+      if (window.parkingMarkers && window.parkingMarkers.length > 0) {
+        google.maps.event.trigger(window.parkingMarkers[0], 'click');
+      }
+    JS
 
     # 3-5. InfoWindow内の「ここに駐車する」ボタンをクリック
     # find_buttonはボタンが表示されるまで自動で待機してくれる
