@@ -32,7 +32,7 @@
 
   .load_top {
     position: absolute; /* 絶対配置にする */
-    top: 1rem; /* 上からの距離 */
+    top: 4.5rem; /* 上からの距離 */
     right: 1rem; /* 右からの距離を小さくします */
     z-index: 1000; /* 他要素に被らないように優先度を上げる */
   }
@@ -42,7 +42,7 @@
   }
 
   .current_pos {
-    @apply h-12 w-12;/* サイズを調整 */
+    @apply h-12 w-12 mt-10;/* サイズを調整 */
     background: transparent;
     border: none;
     padding: 0; 
