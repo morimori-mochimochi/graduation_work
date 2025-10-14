@@ -1,13 +1,21 @@
 <body>
-  <div class ="flex items-center justify-between mt-2">
-    <%= image_tag "/images/sketto_man.png", alt: "sketto_man", class: "h-10" %>
-    <h1 class="cute-title text-left"><%= "#{current_user.last_name} #{current_user.first_name} さん" %></h1>
-    <%= button_to destroy_user_session_path, 
-      method: :delete, 
-      data: { confirm: "ログアウトしますか？" },
-      class: "bg-transparent border-none p-0" do %>
-      <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-10 cursor-poniter" %>
-    <% end %>
+  <div class ="flex items-center mt-2 ml-2">
+    <div class="flex items-center space-x-2">
+      <%= image_tag "/images/sketto_man.png", alt: "sketto_man", class: "h-10" %>
+      <% name_length = (current_user.last_name + current_user.first_name).length %> 
+      <h1 class="cute-title text-left <%= name_length >=8 ? 'text-base' : 'text-xl' %>">
+        <%= "#{current_user.last_name} #{current_user.first_name} さん" %>
+      </h1>
+    </div>
+
+    <div class="ml-auto">
+      <%= button_to destroy_user_session_path, 
+        method: :delete, 
+        data: { confirm: "ログアウトしますか？" },
+        class: "bg-transparent border-none p-0" do %>
+        <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-10 cursor-poniter" %>
+      <% end %>
+    </div>
   </div>
   <!-- padding: 内側余白、space-y-*: 子要素の間に縦方向(y軸)の間隔 -->
   <div class="space-y-1 -mt-5">
