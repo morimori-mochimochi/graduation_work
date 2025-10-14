@@ -19,8 +19,10 @@
     <%= link_to new_route_path do %>
       <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
     <% end %>
-    <%= link_to new_user_session_path do %>
-      <%= image_tag "/images/top_button2.png", alt: "topButton2", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
+    <% unless user_signed_in? %>
+      <%= link_to new_user_session_path do %>
+        <%= image_tag "/images/top_button2.png", alt: "topButton2", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
+      <% end %>
     <% end %>
   </div>
 </div>
