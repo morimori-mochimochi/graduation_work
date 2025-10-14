@@ -1,5 +1,25 @@
 <body>
-  <div class="p-2 space-y-2">
+  <div class ="flex items-center mt-2 ml-2">
+    <div class="flex items-center space-x-2">
+      <%= image_tag "/images/sketto_man.png", alt: "sketto_man", class: "h-10" %>
+      <% name_length = (current_user.last_name + current_user.first_name).length %> 
+      <h1 class="cute-title text-left <%= name_length >=8 ? 'text-base' : 'text-xl' %>">
+        <%= "#{current_user.last_name} #{current_user.first_name} さん" %>
+      </h1>
+    </div>
+
+    <div class="ml-auto">
+      <%= button_to destroy_user_session_path, 
+        method: :delete, 
+        data: { confirm: "ログアウトしますか？" },
+        class: "bg-transparent border-none p-0" do %>
+        <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-10 cursor-poniter" %>
+      <% end %>
+    </div>
+  </div>
+  <!-- padding: 内側余白、space-y-*: 子要素の間に縦方向(y軸)の間隔 -->
+  <div class="space-y-1 -mt-5">
+    <!-- flex: 子要素が横並びになる、items-center: 上下中央寄せ、justify-between: 最初の要素は左端、最後の要素は右端に寄せられる -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2">
         <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
@@ -22,7 +42,7 @@
   </div>
 
   <!-- フローティングボタンをヘッダーの下に移動 -->
-  <div class="absolute top-34 right-0 z-10 flex items-center">
+  <div class="absolute top-45 right-0 z-10 flex items-center">
     <button id="currentPosBtn" class="btn_effect current_pos appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
       <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
     </button> 
@@ -30,8 +50,7 @@
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"btn_effect navi_btn" %>
     <% end %>
   </div>
-
-  <div class="mt-20">
+  <div class="mt-15">
     <div class="point-selector">
       <button id="startPoint">現在地</button>
       <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
