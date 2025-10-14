@@ -6,16 +6,10 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module App
+module ShortestRouteApp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
-
-    # Zeitwerkがオートロードするパスから不要なパスを削除し、正しいパスを追加
-    # Renderでのデプロイ時に /app/app となる問題への対処
-    config.autoload_paths.delete_if { |path| path.end_with?('/app') }
-    config.autoload_paths << "#{config.root}/app"
-
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
