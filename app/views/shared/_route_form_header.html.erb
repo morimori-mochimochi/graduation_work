@@ -26,14 +26,19 @@
     <div class="flex items-center space-x-2">
       <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
       <h1 class="cute-title">ルート作成</h1>
-      <%= link_to car_routes_path do %>
-        <% image_tag(
-          action_name == "car" ? "/images/go_to_car.png" : "images/go_walk.png",
-          alt: "go_walk",
-          class: "btn_effect h-20"
-        )%>
+
+      <%# 'mode'ローカル変数に応じて表示を切り替える %>
+      <% if defined?(mode) && mode == :walk %>
+        <%= link_to car_routes_path do %>
+          <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "btn_effect h-20" %>
+        <% end %>
+      <% else %>
+        <%= link_to walk_routes_path do %>
+          <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %>
+        <% end %>
       <% end %>
     </div>
+
     <div class="btn_effect load_top">
       <%= link_to root_path do %>
         <%= image_tag "/images/load_top.png", alt: "load_top"%>
