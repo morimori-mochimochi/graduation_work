@@ -1,11 +1,11 @@
 <!-- 	justify-* → 並びの向き（メイン軸）で揃える,items-* → 並びの直交方向（交差軸）で揃える -->
 <div class="flex flex-col items-center justify-between min-h-screen">
-  <h1 class="mt-20">
+  <h1 class="mt-5">
     <%# ロゴのサイズをTailwind CSSで直接指定します %>
-    <%= image_tag "/images/logo.png", alt: "Sketto", class: "w-48 md:w-64" %>
+    <%= image_tag "/images/logo.png", alt: "Sketto", class: "w-64 md:w-80" %>
   </h1>
 
-  <div id="splide" class="splide w-full max-w-md">
+  <div id="splide" class="splide w-full max-w-md -mt-10">
     <div class="splide__track">
       <ul class="splide__list">
         <li class="splide__slide"><%= image_tag "intro_page1.png" %></li>
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="flex flex-col items-center space-y-6 mb-15">
+  <div class="flex flex-col items-center space-y-6 mb-10">
     <%= link_to new_route_path do %>
       <%= image_tag "/images/top_button1.png", alt: "topButton1", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
     <% end %>
