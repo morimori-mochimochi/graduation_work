@@ -1,16 +1,25 @@
-<h2>Forgot your password?</h2>
+<div class="flex flex-col items-center justify-center min-h-screen -m-8">  
+  <h1 class ="-mt-5">
+    <%= image_tag "/images/logo.png",alt: "Sketto", class:"w-64 md:w-80" %>
+  </h1>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <div>パスワード再設定用のメールを送信します。<br /></div>
+  <div>登録済みのメールアドレスを入力してください。</div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
-  </div>
-<% end %>
+    <div class="field mt-20">
+      <%= f.label :email %><br />
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+    </div>
 
-<%= render "devise/shared/links" %>
+    <div class="actions mt-10">
+      <%= f.submit nil, style: "display:none;" %>
+      <%= image_tag "send_mail.png",
+        alt: "メール送信",
+        class:  "w-64 md:w-72 cursor-pointer transition-transform duration-300 hover:scale-110",
+        onclick: "this.closest('form').submit();" %>
+    </div>
+  <% end %>
+</div>
