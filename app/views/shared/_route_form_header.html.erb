@@ -3,7 +3,7 @@
     <div class="flex items-center space-x-2">
       <%= image_tag "/images/sketto_man.png", alt: "sketto_man", class: "h-10" %>
       <% name_length = (current_user.last_name + current_user.first_name).length %> 
-      <h1 class="cute-title text-left <%= name_length >=8 ? 'text-base' : 'text-xl' %>">
+      <h1 class="cute-title text-left <%= name_length >=8 ? 'text-sm' : 'text-base' %>">
         <%= "#{current_user.last_name} #{current_user.first_name} さん" %>
       </h1>
     </div>
@@ -20,29 +20,28 @@
 <% end %>
 
 <!-- padding: 内側余白、space-y-*: 子要素の間に縦方向(y軸)の間隔 -->
-<div class="space-y-1 -mt-5">
+<div class="flex space-y-1 -mt-2">
   <!-- flex: 子要素が横並びになる、items-center: 上下中央寄せ、justify-between: 最初の要素は左端、最後の要素は右端に寄せられる -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center space-x-2">
-      <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
-      <h1 class="cute-title">ルート作成</h1>
 
-      <%# 'mode'ローカル変数に応じて表示を切り替える %>
-      <% if defined?(mode) && mode == :walk %>
-        <%= link_to car_routes_path do %>
-          <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "btn_effect h-20" %>
-        <% end %>
-      <% else %>
-        <%= link_to walk_routes_path do %>
-          <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %>
-        <% end %>
-      <% end %>
-    </div>
+  <div class="flex items-center">
+    <%= image_tag "/images/route_logo.png",alt: "route_logo", class: "h-10" %> 
+    <h1 class="cute-title" style="font-size: 2rem;">ルート作成</h1>
 
-    <div class="btn_effect load_top">
-      <%= link_to root_path do %>
-        <%= image_tag "/images/load_top.png", alt: "load_top"%>
+    <%# 'mode'ローカル変数に応じて表示を切り替える %>
+    <% if defined?(mode) && mode == :walk %>
+      <%= link_to car_routes_path do %>
+        <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "btn_effect h-20" %>
       <% end %>
-    </div>
+    <% else %>
+      <%= link_to walk_routes_path do %>
+        <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="btn_effect load_top">
+    <%= link_to root_path do %>
+      <%= image_tag "/images/load_top.png", alt: "load_top"%>
+    <% end %>
   </div>
 </div> 
