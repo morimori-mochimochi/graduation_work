@@ -1,39 +1,49 @@
-<h2>Sign up</h2>
+<div class="flex flex-col items-center justify-center min-h-screen -m-8">  
+  <h1>
+    <%= image_tag "/images/logo.png",alt: "Sketto", class:"w-64 md:w-80" %>
+  </h1>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <div class="cute-title">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div class="space-y-7">
+        <div class="field">
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        </div>
+
+        <div class="field">
+          <%= f.label :"姓" %><br />
+          <%= f.text_field :last_name, autofocus: true, class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        </div>
+
+        <div class="field">
+          <%= f.label :"名" %><br />
+          <%= f.text_field :first_name, autofocus: true, class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        </div>
+
+        <div class="field">
+          <%= f.label :"パスワード" %>
+          <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> 文字以上)</em>
+          <% end %><br />
+          <%= f.password_field :password, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        </div>
+
+        <div class="field">
+          <%= f.label :"パスワード（確認用）" %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        </div>
+
+        <div class="actions" style="space-y-3;">
+          <%= f.submit nil, style: "display:none;" %>
+          <%= image_tag "sign_up_button.png",
+            alt: "登録",
+            class: "w-64 md:w-72 cursor-pointer transition-transform duration-300 hover:scale-110",
+            onclick: "this.closest('form').submit();" %>
+        </div>
+      </div>
+    <% end %>
   </div>
-
-  <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, autofocus: true %>
-  </div>
-
-  <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, autofocus: true %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
