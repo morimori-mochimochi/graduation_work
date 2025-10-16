@@ -92,7 +92,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     port: 587,
     domain: 'graduation-work-t4e9.onrender.com',
-    address: "smtp.gmail.com"
+    address: "smtp.gmail.com",
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"],
     authentication: :plain,
