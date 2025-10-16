@@ -1,25 +1,33 @@
-<h2>Change your password</h2>
+<div class="flex flex-col items-center justify-center min-h-screen -m-8">  
+  <h1 class ="-mt-5">
+    <%= image_tag "/images/logo.png",alt: "Sketto", class:"w-64 md:w-80" %>
+  </h1>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
-  </div>
+    <div class="cute-title">
+      <div class="field">
+        <%= f.label :"新しいパスワード" %><br />
+        <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> 文字以上)</em><br />
+        <% end %><br />
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+      </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+      <div class="field mt-10">
+        <%= f.label :"パスワード確認用"%><br />
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+      </div>
+    </div>
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+    <div class="actions mt-10">
+      <button type="submit" class="cursor-pointer transition-transform duration-300 hover:scale-110 appearance-none bg-transparent border-none" >
+        <%= image_tag "reset_password.png",
+          alt: "パスワード再設定",
+          class: "w-64 md:w-72" %>
+      </button>
+    </div>
+  <% end %>
+</div>
