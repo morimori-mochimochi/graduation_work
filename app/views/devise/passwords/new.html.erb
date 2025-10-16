@@ -3,8 +3,10 @@
     <%= image_tag "/images/logo.png",alt: "Sketto", class:"w-64 md:w-80" %>
   </h1>
 
-  <div>パスワード再設定用のメールを送信します。<br /></div>
-  <div>登録済みのメールアドレスを入力してください。</div>
+  <div class="cute-title">
+    <div>パスワード再設定用のメールを送信します。<br /></div>
+    <div>登録済みのメールアドレスを入力してください。</div>
+  </div>
 
   <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
@@ -15,11 +17,11 @@
     </div>
 
     <div class="actions mt-10">
-      <%= f.submit nil, style: "display:none;" %>
-      <%= image_tag "send_mail.png",
-        alt: "メール送信",
-        class:  "w-64 md:w-72 cursor-pointer transition-transform duration-300 hover:scale-110",
-        onclick: "this.closest('form').submit();" %>
+      <button type="submit" class="cursor-pointer transition-transform duration-300 hover:scale-110 appearance-none bg-transparent border-none">
+        <%= image_tag "send_mail.png",
+          alt: "メール送信",
+          class:  "w-64 md:w-72" %>
+      </button>
     </div>
   <% end %>
 </div>
