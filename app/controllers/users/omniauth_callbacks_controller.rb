@@ -1,30 +1,63 @@
 # frozen_string_literal: true
+# このコントローラはDivise（認証ライブラリ）＋Omniauth（外部ログイン連携)の仕組みを使って「LINEでログイン」する処置を担当
+# ユーザーがログインした時に送られてくる認証情報を受け取ってアプリ内のUserモデルと結びつける役割を担う
+module Users
+  class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+    skip_before_action :verify_authenticity_token, only: :line # LINEからのリクエストは外部サイトから来るためCSFRトークン検証をスキップ
 
-class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  # You should configure your model like this:
-  # devise :omniauthable, omniauth_providers: [:twitter]
+    def line
+      @user = User.from_omniauth(request.env['omniauth.auth'], current_user) # LINEから帰ってきた情報はrequest.env['omniauth.auth']に入っている
+                                                                             # User.from_omniauthはUserモデルで定義されたクラスメソッド。このメソッドが「LINEの認証情報を元に、既存のユーザーを探したり、新規作成」したりする
+      notify_line_already_linked and return if current_user && @user.nil?  #もし他ユーザーがすでにそのアカウントでLINE連携済みなら警告を出して中断する。
 
-  # You should also create an action method in this controller like this:
-  # def twitter
-  # end
+      if @user.persisted? #「persisted?」は「DBに保存されているか」を表す
+        complete_line_login  #保存済みならログイン成功、未保存なら失敗処理へ進む
+      else
+        fail_line_login
+      end
+    end
 
-  # More info at:
-  # https://github.com/heartcombo/devise#omniauth
+    private
 
-  # GET|POST /resource/auth/twitter
-  # def passthru
-  #   super
-  # end
+    def notify_line_already_linked
+      redirect_to user_setting_path
+      set_flash_message(:alert, :failure, kind: 'LINE', reason: '他アカウントでLINE連携済みです')
+    end
 
-  # GET|POST /users/auth/twitter/callback
-  # def failure
-  #   super
-  # end
+    def complete_line_login
+      sign_in_and_redirect @user, event: :authentication
+      set_flash_message(:notice, :success, kind: 'LINE')
+    end
 
-  # protected
+    def fail_line_login
+      auth_info = request.env['omniauth.auth'].slice(:provider, :uid, :info) #	request.env['omniauth.auth']は、LINEがRailsに渡してくれた情報全て。その中から必要なものだけを抜き出すのがslice(:provider, :uid, :info)
+      session['devise.line_data'] = auth_info #devise.line_dataという名前でauth_infoに抜き出したデータをsessionに一時保管
+      redirect_to new_user_line_registration_path #LINE認証後の専用メールアドレス入力画面にリダイレクトする
+    end
+  end
+    # You should configure your model like this:
+    # devise :omniauthable, omniauth_providers: [:twitter]
 
-  # The path used when OmniAuth fails
-  # def after_omniauth_failure_path_for(scope)
-  #   super(scope)
-  # end
-end
+    # You should also create an action method in this controller like this:
+    # def twitter
+    # end
+
+    # More info at:
+    # https://github.com/heartcombo/devise#omniauth
+
+    # GET|POST /resource/auth/twitter
+    # def passthru
+    #   super
+    # end
+
+    # GET|POST /users/auth/twitter/callback
+    # def failure
+    #   super
+    # end
+
+    # protected
+
+    # The path used when OmniAuth fails
+    # def after_omniauth_failure_path_for(scope)
+    #   super(scope)
+    # end
