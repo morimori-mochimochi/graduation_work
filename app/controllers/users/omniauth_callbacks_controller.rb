@@ -20,7 +20,7 @@ module Users
     private
 
     def notify_line_already_linked
-      redirect_to user_setting_path
+      redirect_to rooy_path
       set_flash_message(:alert, :failure, kind: 'LINE', reason: '他アカウントでLINE連携済みです')
     end
 
@@ -31,7 +31,7 @@ module Users
 
     def fail_line_login
       session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra)
-      redirect_to new_user_registration_url
+      redirect_to new_user_session_path
       set_flash_message(:alert, :failure, kind:'LINE', reason: 'LINE連携に失敗しました')
     end      
   end # class OmniauthCallbacksController
