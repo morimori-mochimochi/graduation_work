@@ -2,7 +2,7 @@
 # このコントローラはDivise（認証ライブラリ）＋Omniauth（外部ログイン連携)の仕組みを使って「LINEでログイン」する処置を担当
 # ユーザーがログインした時に送られてくる認証情報を受け取ってアプリ内のUserモデルと結びつける役割を担う
 module Users
-  class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     skip_before_action :verify_authenticity_token, only: :line # LINEからのリクエストは外部サイトから来るためCSFRトークン検証をスキップ
 
     def line
@@ -30,11 +30,12 @@ module Users
     end
 
     def fail_line_login
-      auth_info = request.env['omniauth.auth'].slice(:provider, :uid, :info) #	request.env['omniauth.auth']は、LINEがRailsに渡してくれた情報全て。その中から必要なものだけを抜き出すのがslice(:provider, :uid, :info)
-      session['devise.line_data'] = auth_info #devise.line_dataという名前でauth_infoに抜き出したデータをsessionに一時保管
-      redirect_to new_user_line_registration_path #LINE認証後の専用メールアドレス入力画面にリダイレクトする
-    end
-  end
+      session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra)
+      redirect_to new_user_registration_url
+      set_flash_message(:alert, :failure, kind:'LINE', reason: 'LINE連携に失敗しました')
+    end      
+  end # class OmniauthCallbacksController
+end # module Users
     # You should configure your model like this:
     # devise :omniauthable, omniauth_providers: [:twitter]
 

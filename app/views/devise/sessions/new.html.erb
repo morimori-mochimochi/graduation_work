@@ -30,9 +30,11 @@
           class: "w-64 md:w-72 cursor-pointer transition-transform duration-300 hover:scale-110",
           onclick: "this.closest('form').submit();" %>
       </div>
-    
-      <%= image_tag "line_login_button.png",alt: "line_login_button", class:"w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
 
+    <% end %>
+
+    <%= button_to user_line_omniauth_authorize_path, method: :post, class: "contents" do %>
+      <%= image_tag "line_login_button.png", alt: "LINEでログイン", class: "w-64 md:w-72 transition-transform duration-300 hover:scale-110" %>
     <% end %>
   </div>
 

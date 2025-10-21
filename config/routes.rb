@@ -20,10 +20,6 @@ Rails.application.routes.draw do
   end
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-
-  get 'users/email_registration', to: 'email_registrations#email_registration'
-  post 'users/email_registration', to: 'email_registrations#email_registration_submit'
-
   # Defines the root path route ("/")
   # root "posts#index"
 end

@@ -1,9 +1,9 @@
 require 'omniauth-oauth2'
 
-  module Strategies
-    class Line < OmniAuth::Strategies::OAuth2 #Strategies::Line は、「LINE用のカスタム版OAuth2の使い方」を定義しているクラス
+  module OmniAuth::Strategies
+    class Line < OmniAuth::Strategies::OAuth2 # OmniAuth::Strategiesモジュール内にクラスを定義
     
-      option :scope, 'openid profile email' #scopeは「どんな情報をLINEから取得したいか」を指定
+      option :scope, 'openid profile' #scopeは「どんな情報をLINEから取得したいか」を指定
 
       option :client_options, { #ここではAPIのどのURLを使うかを指定
         site: 'https://api.line.me', #ユーザーがログイン画面に移行するURL
@@ -33,13 +33,17 @@ require 'omniauth-oauth2'
         end
       end
 
+      def callback_url
+        ENV['NGROK_URL']
+      end
+
       def verify_id_token # LINEから返ってきた id_token を検証する処理
         @id_token_payload ||= begin # id_token は「このユーザーが本当にLINEでログインしたか」を保証するデータ
           client.request(:post, 'https://api.line.me/oauth2/v2.1/verify',
             {
               body: {
                 id_token: access_token['id_token'],
-                client_id: client_options.client_id,
+                client_id: options.client_id,
                 nonce: session.delete('omniauth.nonce')
               }
             }
@@ -57,5 +61,3 @@ require 'omniauth-oauth2'
       end
     end
   end
-
-
