@@ -31,8 +31,8 @@ module Users
 
     def fail_line_login
       session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra)
+      flash[:alert] = "LINE連携に失敗しました。もう一度お試しください。"
       redirect_to new_user_session_path
-      set_flash_message(:alert, :failure, kind:'LINE', reason: 'LINE連携に失敗しました')
     end      
   end # class OmniauthCallbacksController
 end # module Users
