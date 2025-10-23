@@ -34,8 +34,6 @@ services:
       SELENIUM_URL: http://selenium:4444/wd/hub # webコンテナからseleniumコンテナに接続するためのURL
       LINE_CHANNEL_ID: ${LINE_CHANNEL_ID:-} 
       LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:-}
-      NGROK_URL: ${NGROK_URL}
-      MY_APP_URL: ${MY_APP_URL}
 
 volumes:
   db-data:

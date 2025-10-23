@@ -33,10 +33,6 @@ require 'omniauth-oauth2'
         end
       end
 
-      def callback_url
-        ENV['MY_APP_URL']
-      end
-
       def verify_id_token # LINEから返ってきた id_token を検証する処理
         @id_token_payload ||= begin # id_token は「このユーザーが本当にLINEでログインしたか」を保証するデータ
           client.request(:post, 'https://api.line.me/oauth2/v2.1/verify',
