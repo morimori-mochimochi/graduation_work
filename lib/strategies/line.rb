@@ -24,6 +24,13 @@ require 'omniauth-oauth2'
         @raw_info ||= verify_id_token #一度取得した情報は @raw_info に保存して、次に呼ぶときは再取得しない
       end
       
+      # 本番環境でhttpsを強制するための設定
+      def callback_url
+        return super unless Rails.env.production?
+
+        full_host + script_name + callback_path
+      end
+
       private
 
       def authorize_params #LINEログインでは「nonce（ナンス）」というランダムな文字列を送る必要がある
