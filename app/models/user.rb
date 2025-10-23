@@ -18,6 +18,18 @@ class User < ApplicationRecord
  
   #クラスメソッド
   def self.sign_in_or_create_user_from_line(auth)
+    user = User.find_or_initialize_by(provider: auth.provider, uid: auth.uid)
+    user.name = auth.info.name
+    #LINEログインであることを強制的にセット
+    user.provider = auth.provider
+    user.uid = auth.uid
+
+    if user.new_record? && user.provider == 'line'
+    #メアドなくてもアカウント作成可能なようにバリデスキップ
+      user.save(validate: false)
+    else
+      user.save?
+    end
 
     user = User.find_or_create_by(
       provider: auth.provider,
