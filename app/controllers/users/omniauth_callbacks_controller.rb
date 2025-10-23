@@ -30,7 +30,7 @@ module Users
     end      
   end # class OmniauthCallbacksController
 end # module Users
-    # You should configure your model like this:
+    # You shoud configure your model like this:
     # devise :omniauthable, omniauth_providers: [:twitter]
 
     # You should also create an action method in this controller like this:

@@ -37,7 +37,13 @@ class User < ApplicationRecord
     user
   end
 
+  # Deviseのバリデーションをオーバーライド
+  # superは親クラスの同名のメソッドを呼び出す
   def password_required?
+    super && !line_connected?
+  end
+
+  def email_required?
     super && !line_connected?
   end
 end
