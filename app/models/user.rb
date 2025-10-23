@@ -18,30 +18,21 @@ class User < ApplicationRecord
  
   #クラスメソッド
   def self.sign_in_or_create_user_from_line(auth)
-    user = User.find_or_initialize_by(provider: auth.provider, uid: auth.uid)
-    user.name = auth.info.name
-    #LINEログインであることを強制的にセット
-    user.provider = auth.provider
-    user.uid = auth.uid
-
-    if user.new_record? && user.provider == 'line'
-    #メアドなくてもアカウント作成可能なようにバリデスキップ
-      user.save(validate: false)
-    else
-      user.save?
-    end
-
-    user = User.find_or_create_by(
-      provider: auth.provider,
-      uid: auth.uid,
-    ) do |u|
+    # providerとuidでユーザーを検索、または新規作成(メモリ上)
+    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid) do |u|
+      # 新規作成の場合のみ、このブロックが実行される
       u.name = auth.info.name
-      u.email =auth.info.email
+      u.email = auth.info.email
       u.password = Devise.friendly_token[0, 20] # パスワードを自動生成
     end
 
+    # 既存ユーザーの場合も名前を更新する（LINEの表示名変更に対応）
+    user.name = auth.info.name if user.persisted?
+
+    user.save # ユーザーを保存（新規・更新）
+
     unless user.persisted?
-      Rails.logger.error "❌User保存失敗: #{user.errors.full_messages.join(',')}"
+      Rails.logger.error "❌ User保存失敗: #{user.errors.full_messages.join(',')}"
     end
     user
   end

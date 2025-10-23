@@ -24,7 +24,7 @@ module Users
     end
 
     def fail_line_login
-      session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra) #except(:extra)はOmniauthから返される膨大なデータの中から不要な部分を除去してセッションに保存する
+      session['devise.line_data'] = request.env['omniauth.auth'].except(:extra) #except(:extra)はOmniauthから返される膨大なデータの中から不要な部分を除去してセッションに保存する
       flash[:alert] = "LINE連携に失敗しました。もう一度お試しください。"
       redirect_to new_user_session_path
     end      
