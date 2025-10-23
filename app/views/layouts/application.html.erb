@@ -11,6 +11,9 @@
   </head>
 
   <body>
+    <% flash.each do |message_type, message| %>
+      <div class="flash_message <%= message_type %>"><%= message %></div>
+    <% end %>
     <%= render 'shared/component/barba_wrapper' do %>
       <link href='https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap' rel="stylesheet">
       <%= yield %>

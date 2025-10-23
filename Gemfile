@@ -19,6 +19,8 @@ gem 'geocoder'
 gem 'bootsnap', require: false
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'cssbundling-rails'
+gem 'omniauth-oauth2'
+gem 'omniauth-rails_csrf_protection'
 
 group :development, :test do
   gem 'rspec-rails'

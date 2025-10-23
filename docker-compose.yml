@@ -32,6 +32,9 @@ services:
       DATABASE_PASSWORD: password
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-} # .envファイルからAPIキーを読み込む
       SELENIUM_URL: http://selenium:4444/wd/hub # webコンテナからseleniumコンテナに接続するためのURL
+      LINE_CHANNEL_ID: ${LINE_CHANNEL_ID:-} 
+      LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:-}
+      NGROK_URL: ${NGROK_URL}
 
 volumes:
   db-data:
