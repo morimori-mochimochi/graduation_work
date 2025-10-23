@@ -22,7 +22,6 @@ class User < ApplicationRecord
     user = find_or_initialize_by(provider: auth.provider, uid: auth.uid) do |u|
       # 新規作成の場合のみ、このブロックが実行される
       u.name = auth.info.name
-      u.email = auth.info.email
       u.password = Devise.friendly_token[0, 20] # パスワードを自動生成
     end
 
