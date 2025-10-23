@@ -312,6 +312,6 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 require 'strategies/line'
 
-config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], callback_url: ENV['NGROK_URL']
+config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET']
 
 end

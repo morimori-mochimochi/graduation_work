@@ -6,9 +6,8 @@ module Users
     skip_before_action :verify_authenticity_token, only: :line # LINEからのリクエストは外部サイトから来るためCSFRトークン検証をスキップ
 
     def line
-      @user = User.from_omniauth(request.env['omniauth.auth'], current_user) # LINEから帰ってきた情報はrequest.env['omniauth.auth']に入っている
-                                                                             # User.from_omniauthはUserモデルで定義されたクラスメソッド。このメソッドが「LINEの認証情報を元に、既存のユーザーを探したり、新規作成」したりする
-      notify_line_already_linked and return if current_user && @user.nil?  #もし他ユーザーがすでにそのアカウントでLINE連携済みなら警告を出して中断する。
+      # Userモデルのメソッドを呼び出し、LINEの認証情報からユーザーを検索または作成する
+      @user = User.sign_in_or_create_user_from_line(request.env['omniauth.auth'])
 
       if @user.persisted? #「persisted?」は「DBに保存されているか」を表す
         complete_line_login  #保存済みならログイン成功、未保存なら失敗処理へ進む
@@ -19,18 +18,13 @@ module Users
 
     private
 
-    def notify_line_already_linked
-      redirect_to rooy_path
-      set_flash_message(:alert, :failure, kind: 'LINE', reason: '他アカウントでLINE連携済みです')
-    end
-
     def complete_line_login
       sign_in_and_redirect @user, event: :authentication
       set_flash_message(:notice, :success, kind: 'LINE')
     end
 
     def fail_line_login
-      session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra)
+      session['devise.line_data'] = request.env['omniauth.auth'].expect(:extra) #except(:extra)はOmniauthから返される膨大なデータの中から不要な部分を除去してセッションに保存する
       flash[:alert] = "LINE連携に失敗しました。もう一度お試しください。"
       redirect_to new_user_session_path
     end      
