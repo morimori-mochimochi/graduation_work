@@ -34,7 +34,7 @@ require 'omniauth-oauth2'
       end
 
       def callback_url
-        ENV['NGROK_URL']
+        ENV['MY_APP_URL']
       end
 
       def verify_id_token # LINEから返ってきた id_token を検証する処理
