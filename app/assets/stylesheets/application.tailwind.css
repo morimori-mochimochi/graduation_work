@@ -16,3 +16,11 @@ body {
   /* 0.5sかけて滑らかに背景色が変わる */
   transition: background-color 0.5s ease;
 }
+
+.flash_message.notice {
+  @apply bg-green-500 text-white text-center font-bold py-3 px-5 rounded-md shadow-md fixed top-4 left-1/2 transform -translate-x-1/2 z-50;
+}
+
+.flash_message.alert {
+  @apply bg-red-500 text-white text-center font-bold py-3 px-5 rounded-md shadow-md fixed top-4 left-1/2 transform -translate-x-1/2 z-50;
+}
