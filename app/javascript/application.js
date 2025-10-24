@@ -94,3 +94,13 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const flash = document.querySelector(".flash_message");
+  if (flash) {
+    setTimeout(() => {
+      flash.style.transition = "opacity 0.8s"; //フラッシュメッセージが出て3秒後から0.８秒かけて徐々にopacity=０に
+      flash.style.opacity = "0";
+    }, 3000);
+  }
+});
