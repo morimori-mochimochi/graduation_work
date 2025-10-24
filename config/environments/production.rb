@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
   config.hosts << "graduation-work-t4e9.onrender.com"
+  # 許可するホスト名を追加
+  config.hosts << "sketto-houmon-support.com"
+  config.hosts << "www.sketto-houmon-support.com"
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
