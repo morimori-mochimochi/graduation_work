@@ -95,12 +95,21 @@ if (document.readyState === "loading") {
   init();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// DOMContentLoadedがHTMLを全部読み込んだ時にはまだJSで追加されるフラッシュメッセージは存在していないためquerySelectorがnullになってしまう
+function fadeOutFlash() {
   const flash = document.querySelector(".flash_message");
-  if (flash) {
-    setTimeout(() => {
-      flash.style.transition = "opacity 0.8s"; //フラッシュメッセージが出て3秒後から0.８秒かけて徐々にopacity=０に
-      flash.style.opacity = "0";
-    }, 3000);
-  }
-});
+  if (!flash) return;
+
+  setTimeout(() => {
+    flash.style.transition = "opacity 0.8s"; //フラッシュメッセージが出て3秒後から0.８秒かけて徐々にopacity=０に
+    flash.style.opacity = "0";
+  }, 3000);
+}
+
+if (document.readyState === "loading" ) {
+  //まだ解析中ならDOMContentLoadedで呼ぶ
+  document.addEventListener("DOMContentLoaded", fadeOutFlash);
+} else {
+  //すでにinteractiveやcompleteなら即呼ぶ
+  fadeOutFlash();
+}
