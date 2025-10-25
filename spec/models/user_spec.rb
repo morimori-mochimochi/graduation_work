@@ -17,42 +17,43 @@ RSpec.describe User, type: :model do
       it 'nameが空だと登録できない' do
         @user.name = nil
         #valid?でバリデ通過か判定
+        #binding.pryを挿入することでテストを止められる
         @user.valid?
-        expect(@user.errors.full_messages).to include("Invalid Email or password.")
+        expect(@user.errors.full_messages).to include("Nameを入力してください")
       end
 
       it 'emailが空だと登録できない' do
         @user.email = nil
         @user.valid?
-        expect(@user.errors.full_messages).to include("Invalid Email or password.")
+        expect(@user.errors.full_messages).to include("メールアドレスを入力してください", "メールアドレスを入力してください", "メールアドレスは不正な値です")
       end
 
       it '登録ずみのEmailは再登録できない' do
-        @user.saved
+        @user.save
         #二人目のユーザーを用意
         another_user = FactoryBot.build(:user)
         another_user.email = @user.email
         another_user.valid?
-        expect(another_user.errors.full_messages).to include("Email has already been taken")
+        expect(another_user.errors.full_messages).to include("メールアドレスはすでに存在します", "メールアドレスはすでに存在します")
       end
 
       it 'passwordが空だと登録できない' do
         @user.password = nil
         @user.valid?
-        expect(@user.errors.full_messages).to include("Invalid Email or password.")
+        expect(@user.errors.full_messages).to include("パスワードを入力してください", "確認用パスワードとパスワードの入力が一致しません", "パスワードを入力してください", "パスワードは6文字以上で入力してください")
       end
 
       it 'passwordが6文字以下だと表示できない' do
         @user.password = "12345"
         @user.password_confirmation = "12345"
         @user.valid?
-        expect(@user.errors.full_messages).to include("Password は6文字以上で入力してください")
+        expect(@user.errors.full_messages).to include("パスワードは6文字以上で入力してください", "パスワードは6文字以上で入力してください")
       end
 
       it 'password=password_confiemationでないと登録できない' do
         @user.password_confirmation = ""
         @user.valid?
-        expect(@user.errors.full_messages).to include("Password confirmation doesn't match Password")
+        expect(@user.errors.full_messages).to include("確認用パスワードとパスワードの入力が一致しません")
       end  
     end
   end
