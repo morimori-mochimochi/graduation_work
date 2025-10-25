@@ -9,6 +9,18 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
 require 'rspec/rails'
+
+require 'capybara/rails'
+require 'capybara/rspec'
+
+# Capybaraサーバーのホストとポートを固定
+Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
+Capybara.server_host = "0.0.0.0"
+Capybara.server_port = 3001    # 任意の未使用ポート
+Capybara.app_host = "http://0.0.0.0:3001"
+
+# JavaScriptテスト用にドライバーを設定
+Capybara.javascript_driver = :selenium_chrome_headless
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

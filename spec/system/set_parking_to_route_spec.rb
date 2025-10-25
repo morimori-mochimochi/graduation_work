@@ -3,68 +3,51 @@
 require 'rails_helper'
 
 RSpec.describe "駐車場を含めたルートを作成する", type: :system, js: true do
-  it "車で移動する際、目的地と駐車場を設定し、駐車場までは車のルート、駐車場から目的地までは徒歩のルートを提案する" do
-    #1. トップページにアクセスし、車ルート作成ページに移動
-    visit root_path
+  context '目的地・出発地を設定し、駐車場を選択。その後ルート検索' do
+    let(:start) { FactoryBot.build(:location) }
+    let(:destination) { FactoryBot.build(:location, :tokyo_tower) }
+    let(:parking) { FactoryBot.build(:location, :parking_near_tower) }
+    binding.pry
 
-    find("a[href='#{new_route_path}']").click
-    find("a[href='#{car_routes_path}']").click
+    before do
+      puts "visit root_path"
+      visit root_path
 
-    expect(page).to have_current_path(car_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')
+      puts "clicked new_route_path"
+      find("a[href='#{new_route_path}']").click
 
-    # 2. JSで出発地・目的地・駐車場の位置情報を直接設定する
-    # application.jsの初期化が終わるのを待ってから、干渉するイベントリスナーを無効化する
-    page.evaluate_script(<<~JS)
-      // application.jsでテスト用に公開された関数を上書きして無効化
-      window.testHooks.searchParking = () => { console.log("searchParking is now disabled for testing."); };
-      window.testHooks.initMarkerEvents = () => { console.log("initMarkerEvents is now disabled for testing."); };
-    JS
+      puts "clicked car_routes_path"
+      find("a[href='#{car_routes_path}']").click
+    end
 
-    # 3. イベントリスナーを無効化した後、ルート描画に必要な値を設定し、関数を非同期で呼び出し、完了を待つ。
-    # carDrawRouteはPromiseを返すasync関数なのでawaitで完了を待ってdone()をよび、Rspecに処理を戻す
-    page.evaluate_async_script(<<~JS)
-      const done = arguments[0];
+    it "FactoryBotで定義した地図データを使ってルート検索をできる" do
+      expect(page).to have_selector('#map')
 
-      // Google Maps APIのLatLngオブジェクトをモックする
-      if (!window.google?.maps?.LatLng) {
-        window.google = window.google || {};
-        window.google.maps = window.google.maps || {};
-        window.google.maps.LatLng = function(obj) {
-          const lat = (typeof obj.lat === 'function') ? obj.lat() : obj.lat;
-          const lng = (typeof obj.lng === 'function') ? obj.lng() : obj.lng;
-          return { lat: () => lat, lng: () => lng, toJSON: () => ({ lat: lat, lng: lng }) };
-        };
-      }
+      #evaluate_async_script: 同期的に結果を返す（JSがすぐに終わる時用)
+      #evaluate_script: 非同期（promiseを使うもの)を待つ時に使う
+      #上記どちらも任意のJSを実行するメソッド
+      result = page.evaluate_async_script(<<~JS, start.lat, start.lng, destination.lat, destination.lng, parking.lat, parking.lng)
+        const done = arguments[6]; // 非同期の完了を知らせるdone関数をCapybaraが最後の引数に追加
+        const[startLat, startLng, destLat, destLng, parkLat, parkLng] = arguments;
 
-      // 出発地、目的地、駐車場の設定
-      window.routeStart = new google.maps.LatLng({ lat: 35.6812, lng: 139.7671 }); // 東京駅
-      window.routeDestination = new google.maps.LatLng({ lat: 35.6586, lng: 139.7454 }); // 東京タワー
-      window.routeParking = new google.maps.LatLng({ lat: 35.6590, lng: 139.7450 }); // 目的地の近くの駐車場
+        window.routeStart = new google.maps.LatLng({ lat: startLat, lng: startLng });
+        window.routeDestination = new google.maps.LatLng({ lat: destLat, lng: destLng });
+        window.routeParking = new google.maps.LatLng({ lat: parkLat, lng: parkLng});
 
-      console.log("Before carDrawRoute - routeDestination:", window.routeDestination);
-      console.log("Before carDrawRoute - routeParking:", window.routeParking);
+        console.log("FactoryBot data set to JS variables");
 
-      // carDrawRouteを実行
-      window.carDrawRoute()
-        .then(result => {
-          console.log("carDrawRoute finished with:", result);
-          done(); // 成功したらテスト再開
-        })
-        .catch(e => {
-          console.error("carDrawRoute failed in test:", e);
-          done("carDrawRoute failed: " + (e.message || e)); // 失敗したらエラーメッセージと共にテストを失敗させる
-        });
-    JS
-    
-    # 4.ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
+        window.carDrawRoute().then(done).catch(e => done(e.message));
+      JS
 
-    # 6.「ナビ開始」ボタンをクリック
-    find("img[alt='startNavi']").click
+      expect(result).to eq("success")
+      expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
 
-    # 7.ナビゲーションページに遷移したことを確認
-    expect(page).to have_current_path(car_navigation_routes_path)
-    expect(page).to have_selector("img[alt='stopNavi']")
+      # 6.「ナビ開始」ボタンをクリック
+      find("img[alt='startNavi']").click
+
+      # 7.ナビゲーションページに遷移したことを確認
+      expect(page).to have_current_path(car_navigation_routes_path)
+      expect(page).to have_selector("img[alt='stopNavi']")
+    end
   end              
 end
