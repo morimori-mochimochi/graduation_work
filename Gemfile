@@ -21,6 +21,8 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'cssbundling-rails'
 gem 'omniauth-oauth2'
 gem 'omniauth-rails_csrf_protection'
+gem 'devise-i18n'
+gem 'devise-i18n-views'
 
 group :development, :test do
   gem 'rspec-rails'
@@ -28,6 +30,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'faker'
 end
 
 group :development do
