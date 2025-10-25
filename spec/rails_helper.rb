@@ -9,6 +9,18 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
 require 'rspec/rails'
+
+require 'capybara/rails'
+require 'capybara/rspec'
+
+# Capybaraサーバーのホストとポートを固定
+Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
+Capybara.server_host = "0.0.0.0"
+Capybara.server_port = 3001    # 任意の未使用ポート
+Capybara.app_host = "http://0.0.0.0:3001"
+
+# JavaScriptテスト用にドライバーを設定
+Capybara.javascript_driver = :selenium_chrome_headless
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -34,6 +46,29 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 
+#Capybara に対して、Docker 上の Selenium（ブラウザ実行コンテナ）を使うリモートドライバを登録する
+#:remote_selenium_chrome が今回のドライバ名（好きな名前でOK）。do |app| ... end の中でどう動かすか定義
+Capybara.register_driver :remote_selenium_chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  #ブラウザを「画面表示なし（ヘッドレス）」で起動します。CI や Docker では普通これにする
+  options.add_argument('--headless')
+  #セキュリティサンドボックスを無効にする
+  options.add_argument('--no-sandbox')
+  #/dev/shm（共有メモリ）が小さい環境（Docker の一部設定など）でブラウザがクラッシュするのを防ぐためのオプション
+  options.add_argument('--disable-dev-shm-usage')
+  #	GPU 関連の機能を無効化します。ヘッドレスでの互換性用オプション。
+  options.add_argument('--disable-gpu')
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :remote,
+    url: 'http://selenium:4444/wd/hub', # docker-compose の service 名 "selenium"
+    capabilities: options
+  )
+end
+
+Capybara.javascript_driver = :remote_selenium_chrome
+  
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
