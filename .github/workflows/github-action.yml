@@ -23,7 +23,6 @@ jobs:
           --health-retries 5
       selenium:
         image: seleniarm/standalone-chromium:latest
-        shm_size: 2g
         ports:
           - "4444:4444"
 
