@@ -45,29 +45,6 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
-
-#Capybara に対して、Docker 上の Selenium（ブラウザ実行コンテナ）を使うリモートドライバを登録する
-#:remote_selenium_chrome が今回のドライバ名（好きな名前でOK）。do |app| ... end の中でどう動かすか定義
-Capybara.register_driver :remote_selenium_chrome do |app|
-  options = Selenium::WebDriver::Chrome::Options.new
-  #ブラウザを「画面表示なし（ヘッドレス）」で起動します。CI や Docker では普通これにする
-  options.add_argument('--headless')
-  #セキュリティサンドボックスを無効にする
-  options.add_argument('--no-sandbox')
-  #/dev/shm（共有メモリ）が小さい環境（Docker の一部設定など）でブラウザがクラッシュするのを防ぐためのオプション
-  options.add_argument('--disable-dev-shm-usage')
-  #	GPU 関連の機能を無効化します。ヘッドレスでの互換性用オプション。
-  options.add_argument('--disable-gpu')
-
-  Capybara::Selenium::Driver.new(
-    app,
-    browser: :remote,
-    url: 'http://selenium:4444/wd/hub', # docker-compose の service 名 "selenium"
-    capabilities: options
-  )
-end
-
-Capybara.javascript_driver = :remote_selenium_chrome
   
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
