@@ -22,6 +22,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
+
       selenium:
         image: seleniarm/standalone-chromium:latest
         ports:
