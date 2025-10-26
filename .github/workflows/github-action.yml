@@ -56,6 +56,9 @@ jobs:
       - name: Run rspec
         run: bundle exec rspec
 
+      - name: List all containers
+        run: docker ps -a
+
   rubocop:
     runs-on: ubuntu-latest
     timeout-minutes: 10
