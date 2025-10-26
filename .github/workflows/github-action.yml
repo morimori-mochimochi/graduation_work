@@ -62,7 +62,7 @@ jobs:
 
       - name: Run rspec
         env: 
-          SELENIUM_URL:  http://selenium:4444/wd/hub 
+          SELENIUM_URL:  http://localhost:4444/wd/hub 
         run: bundle exec rspec
 
       - name: List all containers
