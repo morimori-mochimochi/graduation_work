@@ -16,6 +16,10 @@
 require 'capybara/rspec'
 require 'selenium-webdriver'
 
+config.before(:each, type: :system) do
+  driven_by Capybara.javascript_driver
+end
+
 Capybara.register_driver :remote_chrome do |app|
   logging_prefs = { browser: 'ALL' }
   options = Selenium::WebDriver::Options.chrome(logging_prefs: logging_prefs)
