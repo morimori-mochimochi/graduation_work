@@ -83,13 +83,6 @@ RSpec.configure do |config|
     driven_by(:rack_test)
   end
 
-  config.before(:each, type: :system, js: true) do
-    driven_by Capybara.javascript_driver
-    Capybara.server_host = IPSocket.getaddress(Socket.gethostname)
-    Capybara.server_port = 45678
-    Capybara.app_host = "http://#{Capybara.server_host}:#{Capybara.server_port}"
-  end
-
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
