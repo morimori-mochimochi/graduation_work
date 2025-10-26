@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     services:
-      mysql:
+      db:
         image: postgres:15
         ports:
           - "5432:5432"
@@ -21,6 +21,11 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      selenium:
+        image: seleniarm/standalone-chromium:latest
+        shm_size: 2g
+        ports:
+          - "4444:4444"
 
     steps:
       - name: Checkout code
@@ -54,6 +59,8 @@ jobs:
           bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run rspec
+        env: 
+          SELENIUM_URL: http://localhost:4444/wd/hub 
         run: bundle exec rspec
 
       - name: List all containers
