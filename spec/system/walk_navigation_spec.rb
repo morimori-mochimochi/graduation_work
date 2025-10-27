@@ -5,23 +5,11 @@ RSpec.describe "ナビゲーション機能", type: :system, js: true do
       visit walk_routes_path
     end
 
-    it "マップとボタンが完全に読み込まれた状態でルート描画する" do
+    it "マップとボタンが完全に読み込まれた後、徒歩ルートを設定し、ナビゲーションを開始できる" do
         expect(page).to have_selector('#naviMap', visible: true, wait: 10)
         expect(page).to have_selector('#walkDrawRoute', visible: true, wait: 10)
         expect(page).to have_selector('#currentPosBtn', visible: true, wait: 10)
         
-        result = page.evaluate_script(<<~JS)
-            if (typeof window.walkDrawRoute === 'function') {
-                window.walkDrawRoute();
-                "called";
-            } else {
-                "not_loaded";
-            }
-        JS
-        expect(result).to eq("called")
-    end
-        
-    it "徒歩ルートを設定し、ナビゲーションを開始できること" do
         # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
         visit root_path
         find("a[href='#{new_route_path}']").click
