@@ -1,6 +1,8 @@
 import barba from "@barba/core";
 import Splide from "@splidejs/splide";
 import { initMap } from "./map";
+import "./maps_ready";
+import "./geocode_address"
 import { initMarkerEvents } from "./set_marker";
 import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
@@ -9,6 +11,47 @@ import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
+// ページ初期化のための共通関数
+function initializePage(container) {
+  console.log("initializePage called for container:", container);
+
+  // Splideの初期化
+  const el = container.querySelector('#splide');
+  if (el) {
+    new Splide(el, {
+      type: 'loop',
+      autoplay: true,
+      interval: 3000,
+      pauseOnHover: true,
+      arrows: true,
+      pagination: true
+    }).mount();
+  }
+
+  // マップ関連の初期化
+  const mapIds = ['map', 'naviMap', 'carNaviMap'];
+  mapIds.forEach(id => {
+    const mapDiv = container.querySelector(`#${id}`);
+    if (mapDiv && !mapDiv.dataset.mapInitialized) {
+      initMap(mapDiv);
+      mapDiv.dataset.mapInitialized = "true";
+
+      if (id === 'map') {
+        initMarkerEvents();
+        initSearchBox();
+        searchParking();
+        walkRouteBtn();
+        carRouteBtn();
+        // clearSearchMarkersOnRouteDraw(); // この関数は定義が見当たらないためコメントアウト
+        initCurrentPosBtn();
+      } else if (id === 'naviMap' || id === 'carNaviMap') {
+        // fetchCurrentPos(); // startNavigation内で呼ばれるなら不要かもしれません
+        startNavigation();
+      }
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log("barbaが呼ばれました");
 
@@ -16,8 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     transitions: [
       {
         name: 'slide-left',
-        once({ next }) {
-          next.container.style.opacity = 1;
+        async once({ next }) {
+          await window.mapApiLoaded; // Google Maps APIの読み込みを待つ
+          initializePage(next.container);
           console.log("barbaの途中経過1");
         },
         leave({ current }) {
@@ -45,57 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("barbaが完了しました");
           });
         },
-        afterEnter({ next }) {
-          console.log("afterEnter前: directionsResult", window.directionsResult);
-          console.log("afterEnterが呼ばれました", next.container);
-
-          const el = next.container.querySelector('#splide');
-          if (el) {
-            new Splide(el, {
-              type: 'loop',
-              autoplay: true,
-              interval: 3000,
-              pauseOnHover: true,
-              arrows: true,
-              pagination: true
-            }).mount();
-          }
-          console.log("afterEnter Splideが呼ばれました");
-
-          const mapIds = ['map', 'naviMap', 'carNaviMap'];
-          mapIds.forEach(id => {
-            const mapDiv = next.container.querySelector(`#${id}`);
-
-            console.log("mapDivチェック:", id, mapDiv);
-            console.log("dataset.mapInitialized:", mapDiv?.dataset.mapInitialized);
-            console.log("directionsResult 復元:", window.directionsResult); 
-            
-            if (mapDiv && !mapDiv.dataset.mapInitialized) {
-              initMap(mapDiv);
-              mapDiv.dataset.mapInitialized = "true";
-
-              if (id === 'map') {
-                initMarkerEvents();
-                initSearchBox();
-                searchParking();
-                walkRouteBtn();
-                carRouteBtn();
-                clearSearchMarkersOnRouteDraw(); 
-                initCurrentPosBtn();
-              }
-
-              if (id === 'naviMap') {
-                fetchCurrentPos();
-                startNavigation();
-              }
-
-              if (id === 'carNaviMap') {
-                fetchCurrentPos();
-                startNavigation();
-              }
-            }
-            console.log("afterEnterが終わりました");
-          });
+        async afterEnter({ next }) {
+          await window.mapApiLoaded; // 念のため遷移後もAPI読み込みを待つ
+          initializePage(next.container);
         }
       }
     ]
