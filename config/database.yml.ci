@@ -1,5 +1,5 @@
 test:
-  adapter: postgres
+  adapter: postgresql
   encoding: unicode
   database: shortest_route_app_test
   username: postgres

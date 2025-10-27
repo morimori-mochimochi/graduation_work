@@ -8,8 +8,9 @@ jobs:
   rspec:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     services:
-      mysql:
+      db:
         image: postgres:15
         ports:
           - "5432:5432"
@@ -17,22 +18,28 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         options: >-
-          --health-cmd "pg-isready -U postgres"
+          --health-cmd "pg_isready -U postgres -d postgres"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
+
+      selenium:
+        image: seleniarm/standalone-chromium:latest
+        ports:
+          - "4444:4444"
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          ruby-version: '3.2.3'
 
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{hashFiles('**/yarn.lock')}}
@@ -47,6 +54,9 @@ jobs:
       - name: Yarn install
         run: yarn install --check-files
 
+      - name: Build JavaScript assets
+        run: yarn build
+
       - name: Database create and migrate
         run: |
           cp config/database.yml.ci config/database.yml
@@ -54,14 +64,19 @@ jobs:
           bundle exec rails db:migrate RAILS_ENV=test
 
       - name: Run rspec
+        env: 
+          SELENIUM_URL:  http://localhost:4444/wd/hub 
         run: bundle exec rspec
+
+      - name: List all containers
+        run: docker ps -a
 
   rubocop:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
