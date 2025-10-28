@@ -13,5 +13,3 @@ export function initMap(mapDiv) {
   window.map = gmap;
 }
 
-// Google Maps APIがcallback=initMapしたときに参照できるように
-window.initMap = initMap;
