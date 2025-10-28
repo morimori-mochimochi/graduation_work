@@ -40,3 +40,5 @@
 /node_modules
 
 /public/assets/builds/*
+
+/config/master.key
