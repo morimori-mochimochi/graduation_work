@@ -1,3 +1,5 @@
+#アプリを動かすための複数のコンテナを一括管理する
+#例えば、web(Rails),db(PostgreSQL), selenium(テスト用ブラウザ)を同時に立ち上げて、それぞれをどう繋ぐかを定義
 services: 
   selenium:
     image: seleniarm/standalone-chromium:latest

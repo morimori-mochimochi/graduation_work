@@ -17,7 +17,7 @@ require 'capybara/rspec'
 Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
 Capybara.server_host = "0.0.0.0"
 Capybara.server_port = 3001 # 任意の未使用ポート
-Capybara.app_host = "http://127.0.0.1:3001" # Seleniumコンテナからジョブコンテナへのアクセス用
+Capybara.app_host = "http://127.0.0.1:3001" #  Seleniumコンテナからジョブコンテナへのアクセス用
 
 # JavaScriptテスト用にドライバーを設定
 Capybara.javascript_driver = :selenium_chrome_headless

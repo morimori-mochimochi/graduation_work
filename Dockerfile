@@ -1,3 +1,5 @@
+#Dockerfileはアプリが動作する環境を定義するファイル
+#どんなOS（ベースイメージ）を使う？どんなライブラリをインストールする？どんなソースコードをコピーする？コンテナ起動時にどんなコマンドを実行する？
 #ベースとなるRubyの公式イメージを指定
 FROM ruby:3.2.3
 
@@ -6,6 +8,7 @@ FROM ruby:3.2.3
 #libpg-dev: PostgreSQLと連携するためのライブラリ
 #nodejs, yarn: JSとCSSのコンパイル用
 RUN apt-get update -qq && apt-get install -y \
+    vim \
     build-essential \
     libpq-dev \
     curl \
