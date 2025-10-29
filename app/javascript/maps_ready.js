@@ -19,6 +19,7 @@ window.mapApiLoaded = new Promise((resolve, reject) => {
       await google.maps.importLibrary("maps");
       await google.maps.importLibrary("places");
       await google.maps.importLibrary("geometry");
+      await google.maps.importLibrary("routes");
       console.log("✅ Google Maps 全ライブラリ初期化完了");
       resolve();
     } catch (err) {
