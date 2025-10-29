@@ -1,0 +1,39 @@
+#Railsプロジェクト向けの設定を読みこむ
+require: rubocop-rails
+
+AllCops:
+  #チェック対象のRubyバージョンを指定
+  TargetRubyVersion: 3.2
+
+  #RuboCopのアップデートで追加された新しいルールを自動的に有効にする
+  NewCops: enable
+
+  #RuboCopのチェックから除外するファイルやディレクトリを指定
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/*'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'bin/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'log/**/*'
+    - 'public/**/*'
+    - 'app/assets/builds/*'
+
+  #Railsアプリ全体でドキュメントコメントを強制しない
+  Style/Documentation:
+    Enabled: false
+
+  # 文字列リテラルをシングルクォート(')とダブルクォート(")のどちらかに統一するルール
+  Style/StringLiterals:
+    Enabled: false
+
+  #日本語コメントを許可
+  Style/AsciiComments: 
+    Enabled: false
+
+  #メソッドの行数制限緩和
+  Metrics/Method.ength:
+    Max: 20
