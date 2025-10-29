@@ -4,7 +4,7 @@ require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
@@ -15,9 +15,9 @@ require 'capybara/rspec'
 
 # Capybaraサーバーのホストとポートを固定
 Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
-Capybara.server_host = "0.0.0.0"
+Capybara.server_host = '0.0.0.0'
 Capybara.server_port = 3001 # 任意の未使用ポート
-Capybara.app_host = "http://127.0.0.1:3001" #  Seleniumコンテナからジョブコンテナへのアクセス用
+Capybara.app_host = 'http://127.0.0.1:3001' #  Seleniumコンテナからジョブコンテナへのアクセス用
 
 # JavaScriptテスト用にドライバーを設定
 Capybara.javascript_driver = :selenium_chrome_headless
@@ -45,7 +45,7 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
-  
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [

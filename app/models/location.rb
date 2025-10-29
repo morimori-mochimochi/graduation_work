@@ -3,7 +3,7 @@ class Location < ApplicationRecord
 
   validates :lat, :lng, :name, presence: true
 
-  def lat 
+  def lat
     super.to_f
   end
 
