@@ -30,6 +30,9 @@ export async function walkDrawRoute(start, destination){
         travelMode: google.maps.TravelMode.WALKING
       },
       (response, status) => {
+        if (status !== "OK") {
+          console.error("Directionsエラー:", status, response);
+        }
         if (status === "OK"){
           window.directionsRenderer.setDirections(response);
           console.log("★ directionsService OK", response);

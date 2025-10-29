@@ -14,11 +14,6 @@
     <% flash.each do |message_type, message| %>
       <div class="flash_message <%= message_type %>"><%= message %></div>
     <% end %>
-    <%= render 'shared/component/barba_wrapper' do %>
-      <link href='https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap' rel="stylesheet">
-      <%= yield %>
-    <% end %>
-
     <%# GoogleMapsが呼び出す公式推奨のコールバック関数 %>
     <%# callback=initMapに指定した関数はGoogleMapsApiのロード&初期化が終わってから呼ばれる %>
     <script async defer 
@@ -26,5 +21,9 @@
       async
       defer
     ></script>
+    <%= render 'shared/component/barba_wrapper' do %>
+      <link href='https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap' rel="stylesheet">
+      <%= yield %>
+    <% end %>
   </body>
 </html>

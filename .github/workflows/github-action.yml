@@ -55,6 +55,9 @@ jobs:
         run: yarn install --check-files
 
       - name: Build JavaScript assets
+        env:
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: yarn build
 
       - name: Database create and migrate
@@ -63,10 +66,32 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
 
+      - name: Debug Credentials
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        run: |
+          echo "RAILS_ENV is $RAILS_ENV"
+          echo "Checking development key:"
+          RAILS_ENV=test bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :development, :api_key)&.present?"
+          echo "Checking test key:"
+          RAILS_ENV=test bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :test, :api_key)&.present?"
+
+
       - name: Run rspec
         env: 
+          RAILS_ENV: test
           SELENIUM_URL:  http://localhost:4444/wd/hub 
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: bundle exec rspec
+
+      - name: Upload test failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capybara-screenshots
+          path: |
+            tmp/capybara/*.png
+            tmp/capybara/*.html
 
       - name: List all containers
         run: docker ps -a

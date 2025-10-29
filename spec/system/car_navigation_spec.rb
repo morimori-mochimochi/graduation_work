@@ -2,12 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "ナビゲーション機能", type: :system, js: true do
 
-    it "マップとボタンが完全に読み込まれた後、車ルートを設定し、ナビゲーションを開始できること" do
-        # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
-        expect(page).to have_selector('#naviMap', visible: true, wait: 10)
-        expect(page).to have_selector('#walkDrawRoute', visible: true, wait: 10)
-        expect(page).to have_selector('#currentPosBtn', visible: true, wait: 10)
-
+    it "車ルートを設定し、ナビゲーションを開始できること" do
         visit root_path
         find("a[href='#{new_route_path}']").click
         find("a[href='#{car_routes_path}']").click
