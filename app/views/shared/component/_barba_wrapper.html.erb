@@ -1,12 +1,5 @@
 <div id="barba-wrapper" data-barba="wrapper">
   <div class="barba-container" data-barba="container" data-barba-namespace="<%= controller_name %>">
-    <%# GoogleMapsが呼び出す公式推奨のコールバック関数 %>
-    <%# callback=initMapに指定した関数はGoogleMapsApiのロード&初期化が終わってから呼ばれる %>
-    <script async defer 
-      src="https://maps.googleapis.com/maps/api/js?key=<%= google_maps_api_key %>&libraries=places,marker,geometry&callback=onGoogleMapsReady"
-      async
-      defer
-    ></script>
     <%= yield %>
   </div>
 </div>
