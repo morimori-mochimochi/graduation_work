@@ -69,9 +69,9 @@ jobs:
         run: |
           echo "RAILS_ENV is $RAILS_ENV"
           echo "Checking development key:"
-          bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :development, :api_key)&.present?"
+          RAILS_ENV=test bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :development, :api_key)&.present?"
           echo "Checking test key:"
-          bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :test, :api_key)&.present?"
+          RAILS_ENV=test bin/rails runner "puts Rails.application.credentials.dig(:google_maps, :test, :api_key)&.present?"
 
 
       - name: Run rspec
