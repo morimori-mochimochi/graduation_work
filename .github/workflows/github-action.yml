@@ -55,6 +55,9 @@ jobs:
         run: yarn install --check-files
 
       - name: Build JavaScript assets
+        env:
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: yarn build
 
       - name: Database create and migrate
@@ -76,7 +79,9 @@ jobs:
 
       - name: Run rspec
         env: 
+          RAILS_ENV: test
           SELENIUM_URL:  http://localhost:4444/wd/hub 
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: bundle exec rspec
 
       - name: List all containers
