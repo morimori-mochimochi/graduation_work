@@ -84,6 +84,15 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: bundle exec rspec
 
+      - name: Upload test failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capybara-screenshots
+          path: |
+            tmp/capybara/*.png
+            tmp/capybara/*.html
+
       - name: List all containers
         run: docker ps -a
 
