@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'omniauth-oauth2'
 
-module OmniAuth::Strategies
-  # OmniAuth::Strategiesモジュール内にクラスを定義
-  class Line < OmniAuth::Strategies::OAuth2
+module OmniAuth
+  module Strategies
+    # OmniAuth::Strategiesモジュール内にクラスを定義
+    class Line < OmniAuth::Strategies::OAuth2
     # scopeは「どんな情報をLINEから取得したいか」を指定
     option :scope, 'openid profile'
 
@@ -77,5 +80,6 @@ module OmniAuth::Strategies
                          })
       raise error
     end
+  end
   end
 end

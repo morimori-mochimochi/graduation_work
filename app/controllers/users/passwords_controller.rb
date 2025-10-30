@@ -34,4 +34,3 @@ module Users
   # end
   end
 end
-end
