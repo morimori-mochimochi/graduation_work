@@ -1,5 +1,5 @@
 # frozen_string_literal: true
- 
+
 # listen: Rails環境でファイル監視（ファイルの変更検知）を担っています。
 # web-console: Railsの開発モードでエラー画面やビュー上に IRB（対話式Ruby）を表示してコードを実行できる機能 を提供するGemです。
 # gem 'better-errors': Railsでエラーが発生したときに、見やすく、インタラクティブで、強力なエラー画面 を提供してくれるGemです。

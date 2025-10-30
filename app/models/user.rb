@@ -43,10 +43,8 @@ class User < ApplicationRecord # :nodoc:
     super && !line_connected?
   end
 
-  private
-
   def self.find_or_initialize_by_line_auth(auth)
     # providerとuidでユーザーを検索、または新規作成(メモリ上)
-    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid)
+    find_or_initialize_by(provider: auth.provider, uid: auth.uid)
   end
 end

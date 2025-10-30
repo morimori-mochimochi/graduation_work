@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module Users class PasswordsController < Devise::PasswordsController # :nodoc:
+module Users
+  class PasswordsController < Devise::PasswordsController # :nodoc:
   # GET /resource/password/new
   # def new
   #   super
@@ -32,4 +33,5 @@ module Users class PasswordsController < Devise::PasswordsController # :nodoc:
   #   super(resource_name)
   # end
   end
+end
 end
