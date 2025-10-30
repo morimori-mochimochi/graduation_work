@@ -9,13 +9,8 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
     let(:parking) { FactoryBot.build(:location, :parking_near_tower) }
 
     before do
-      puts 'visit root_path'
       visit root_path
-
-      puts 'clicked new_route_path'
       find("a[href='#{new_route_path}']").click
-
-      puts 'clicked car_routes_path'
       find("a[href='#{car_routes_path}']").click
     end
 
@@ -43,8 +38,9 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
         window.carDrawRoute().then(done).catch(e => done(e.message));
       JS
+      )
 
-      expect(result).to eq('OK')
+      expect(result).to be_nil
       expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
 
       # 6.「ナビ開始」ボタンをクリック
