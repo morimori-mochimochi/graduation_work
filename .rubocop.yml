@@ -1,5 +1,6 @@
-#Railsプロジェクト向けの設定を読みこむ
-require: rubocop-rails
+# Railsプロジェクト向けの設定を読みこむ
+plugins:
+  - rubocop-rails
 
 AllCops:
   #チェック対象のRubyバージョンを指定
@@ -22,23 +23,23 @@ AllCops:
     - 'public/**/*'
     - 'app/assets/builds/*'
 
-  #Railsアプリ全体でドキュメントコメントを強制しない
-  Style/Documentation:
-    Enabled: false
+# Railsアプリ全体でドキュメントコメントを強制しない
+Style/Documentation:
+  Enabled: false
 
-  # 文字列リテラルをシングルクォート(')とダブルクォート(")のどちらかに統一するルール
-  Style/StringLiterals:
-    Enabled: false
+# 文字列リテラルをシングルクォート(')とダブルクォート(")のどちらかに統一するルール
+Style/StringLiterals:
+  Enabled: false
 
-  #日本語コメントを許可
-  Style/AsciiComments: 
-    Enabled: false
+# 日本語コメントを許可
+Style/AsciiComments:
+  Enabled: false
 
-  #メソッドの行数制限緩和
-  Metrics/Method.ength:
-    Max: 20
+# メソッドの行数制限緩和
+Metrics/MethodLength:
+  Max: 20
 
-  # ブロックの行数制限解除
-  Metrics/BlockLength:
+# ブロックの行数制限解除
+Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
