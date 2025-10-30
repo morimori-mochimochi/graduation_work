@@ -38,7 +38,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
         parking.lng
       )
 
-      expect(result).to be_"OK"
+      expect(result).to eq('OK')
       expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
 
       # 6.「ナビ開始」ボタンをクリック
