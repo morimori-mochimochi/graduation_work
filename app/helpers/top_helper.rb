@@ -1,2 +1,4 @@
-module TopHelper
+# frozen_string_literal: true
+
+module TopHelper # :nodoc:
 end

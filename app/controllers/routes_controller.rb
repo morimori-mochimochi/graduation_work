@@ -1,14 +1,13 @@
-class RoutesController < ApplicationController
-  def new
-  end
+# frozen_string_literal: true
+
+class RoutesController < ApplicationController # :nodoc:
+  def show; end
+  def new; end
 
   def create
     respond_to do |format|
       format.html
-      format.json { render json: {route: params[:route]} }
+      format.json { render json: { route: params[:route] } }
     end
-  end
-
-  def show
   end
 end
