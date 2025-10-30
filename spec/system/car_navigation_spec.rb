@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'ナビゲーション機能', type: :system, js: true do
@@ -20,7 +22,8 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
 
     # evaluate_async_scriptを使い、非同期処理の完了を待つ
     # done.call()が呼ばれるまでテストは待機する
-    # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
+    # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。
+    # ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
     page.evaluate_async_script(<<~JS, start_location, destination_location)
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);

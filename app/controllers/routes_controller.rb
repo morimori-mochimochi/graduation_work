@@ -1,4 +1,6 @@
-class RoutesController < ApplicationController
+# frozen_string_literal: true
+
+class RoutesController < ApplicationController # :nodoc:
   def show; end
   def new; end
 

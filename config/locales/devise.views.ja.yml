@@ -9,7 +9,16 @@ ja:
         remember_me: "ログインを記憶"
     models:
       user: "ユーザ"
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              too_short: "は%{count}文字以上で入力してください"
   devise:
+    omniauth_callbacks:
+      line:
+        line_login_failed: "LINE連携に失敗しました。もう一度お試しください。"
     confirmations:
       new:
         resend_confirmation_instructions: "アカウント確認メール再送"

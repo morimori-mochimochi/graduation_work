@@ -37,3 +37,8 @@ AllCops:
   #メソッドの行数制限緩和
   Metrics/Method.ength:
     Max: 20
+
+  # ブロックの行数制限解除
+  Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'

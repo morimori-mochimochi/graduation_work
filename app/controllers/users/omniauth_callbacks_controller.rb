@@ -25,12 +25,13 @@ module Users
     end
 
     def fail_line_login
-      session['devise.line_data'] = request.env['omniauth.auth'].except(:extra) # except(:extra)はOmniauthから返される膨大なデータの中から不要な部分を除去してセッションに保存する
-      flash[:alert] = 'LINE連携に失敗しました。もう一度お試しください。'
+      # except(:extra)はOmniauthから返される膨大なデータの中から不要な部分を除去してセッションに保存する
+      session['devise.line_data'] = request.env['omniauth.auth'].except(:extra)
+      flash[:alert] = t('.line_login_failed')
       redirect_to new_user_session_path
     end
-  end # class OmniauthCallbacksController
-end # module Users
+  end
+end
 # You shoud configure your model like this:
 # devise :omniauthable, omniauth_providers: [:twitter]
 

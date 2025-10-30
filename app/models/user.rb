@@ -1,4 +1,6 @@
-class User < ApplicationRecord
+# frozen_string_literal: true
+
+class User < ApplicationRecord # :nodoc:
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   # Diviseの基本設定
@@ -9,7 +11,7 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP },
                     unless: :line_connected?
-  validates :password, presence: true, length: { minimum: 6, message: 'は6文字以上で入力してください' }, unless: :line_connected?
+  validates :password, presence: true, length: { minimum: 6 }, unless: :line_connected?
   validates :uid, uniqueness: { scope: :provider }, if: -> { provider.present? }
 
   # インスタンスメソッド
@@ -19,29 +21,32 @@ class User < ApplicationRecord
 
   # クラスメソッド
   def self.sign_in_or_create_user_from_line(auth)
-    # providerとuidでユーザーを検索、または新規作成(メモリ上)
-    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid) do |u|
-      # 新規作成の場合のみ、このブロックが実行される
-      u.name = auth.info.name
-      u.password = Devise.friendly_token[0, 20] # パスワードを自動生成
+    user = find_or_initialize_by_line_auth(auth)
+
+    unless user.persisted?
+      user.name = auth.info.name
+      user.email = auth.info.email
+      # パスワードはバリデーションを通過させるためのダミー
+      user.password = Devise.friendly_token[0, 20]
+      user.save!
     end
-
-    # 既存ユーザーの場合も名前を更新する（LINEの表示名変更に対応）
-    user.name = auth.info.name if user.persisted?
-
-    user.save # ユーザーを保存（新規・更新）
-
-    Rails.logger.error "❌ User保存失敗: #{user.errors.full_messages.join(',')}" unless user.persisted?
     user
   end
 
   # Deviseのバリデーションをオーバーライド
-  # superは親クラスの同名のメソッドを呼び出す
+  # superは親クラスの同名のメソッドを呼び出す(Deviseの認証で内部的に使われている)
   def password_required?
     super && !line_connected?
   end
 
   def email_required?
     super && !line_connected?
+  end
+
+  private
+
+  def self.find_or_initialize_by_line_auth(auth)
+    # providerとuidでユーザーを検索、または新規作成(メモリ上)
+    user = find_or_initialize_by(provider: auth.provider, uid: auth.uid)
   end
 end

@@ -1,4 +1,4 @@
-# テスト：　placesAPIの通信がうまくいかないため、最初から出発点、到着点、駐車場の場所を渡すようにした。しかし、search_parkng.jsでは出発地、目的地をクリックで選択して駐車場を探す、をクリックすることで初めて
+# frozen_string_literal: true
 
 require 'rails_helper'
 
