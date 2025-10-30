@@ -20,13 +20,14 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       # evaluate_async_script: 同期的に結果を返す（JSがすぐに終わる時用)
       # evaluate_script: 非同期（promiseを使うもの)を待つ時に使う
       # 上記どちらも任意のJSを実行するメソッド
-      result = page.evaluate_async_script(<<~JS
-                                          start.lat,
-                                          start.lng,
-                                          destination.lat,
-                                          destination.lng,
-                                          parking.lat,
-                                          parking.lng)
+      result = page.evaluate_async_script(<<~JS,
+        start.lat,
+        start.lng,
+        destination.lat,
+        destination.lng,
+        parking.lat,
+        parking.lng
+      )
         const done = arguments[6]; // 非同期の完了を知らせるdone関数をCapybaraが最後の引数に追加
         const[startLat, startLng, destLat, destLng, parkLat, parkLng] = arguments;
 
@@ -37,8 +38,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
         console.log("FactoryBot data set to JS variables");
 
         window.carDrawRoute().then(done).catch(e => done(e.message));
-      JS,
-                                        )
+      JS
 
       expect(result).to be_nil
       expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
