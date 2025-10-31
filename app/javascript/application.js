@@ -4,6 +4,8 @@
 
 import "./barba";
 import barba from "@barba/core";
+import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css"
 
 // DOMContentLoadedがHTMLを全部読み込んだ時にはまだJSで追加されるフラッシュメッセージは存在していないためquerySelectorがnullになってしまう
 function fadeOutFlash() {

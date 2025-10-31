@@ -1,8 +1,10 @@
 {
   "dependencies": {
     "@barba/core": "^2.10.3",
+    "@popperjs/core": "^2.11.8",
     "@splidejs/splide": "^4.1.4",
     "@tailwindcss/cli": "^4.1.12",
+    "bootstrap": "^5.3.8",
     "daisyui": "^5.1.6",
     "tailwindcss": "^4.1.12"
   },
