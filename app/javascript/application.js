@@ -18,6 +18,11 @@ function fadeOutFlash() {
   }, 3000);
 }
 
-// 初回読み込み時とページ遷移後の両方で実行
-document.addEventListener("DOMContentLoaded", fadeOutFlash);
+// DOMContentLoaded で一度だけ実行される処理を定義
+document.addEventListener('DOMContentLoaded', () => {
+  // 初回読み込み時の処理を実行
+  fadeOutFlash();
+});
+
+// Barba遷移後のイベント
 barba.hooks.after(() => fadeOutFlash());

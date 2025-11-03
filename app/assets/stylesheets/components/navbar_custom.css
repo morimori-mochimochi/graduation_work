@@ -4,7 +4,7 @@
 }
 
 .navbar-nav .nav-link  img{
-   /* hoverアニメ用 */
+  /*hoverアニメ用 */
   transition: transform 0.3s; 
 }
 
@@ -33,11 +33,11 @@
 /* Bootstrapが.navbar-collapseの内部でのみ縦並びを適用するため、セレクタの詳細度を上げる */
 .navbar-collapse .navbar-nav {
   flex-direction: row !important; /*  強制的に横並びにする */
-}
+}*/
 
 .navbar-collapse .nav-item {
   margin-bottom: 0 !important; /* 各メニュー間の下マージンを無効化 */
-}
+}*/
 
 .navbar-collapse .nav-item:not(:last-child) {
   margin-right: 3rem;
