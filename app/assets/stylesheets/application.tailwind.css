@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import "tailwindcss"; */
+@import "bootstrap/dist/css/bootstrap.min.css";
 
 @import "./components/buttons.css";
 @import "./components/map.css";
 @import "./components/logo.css";
 @import "./components/character.css";
 @import "./components/slider.css"; 
+@import "./components/navbar_custom.css";
 /* @import "./pages/top.css"; */
 
 body {

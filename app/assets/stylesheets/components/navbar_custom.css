@@ -1,0 +1,44 @@
+/* 背景色を自作の色に */
+.navbar {
+  background-color:  #FFEFE2 !important;
+}
+
+.navbar-nav .nav-link  img{
+   /* hoverアニメ用 */
+  transition: transform 0.3s; 
+}
+
+.navbar-nav .nav-link:hover img {
+  transform: scale(1.1);
+}
+
+/* レスポンシブ時のハンバーガーアイコン調整 */
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* CSSでは階層を深く書くと特異性が上がり、優先度が上がる */
+/* html body nav.navbar, */
+/* html body nav.navbar * { */
+  /* その要素に適用されたすべてのCSSを「ブラウザ標準＋Bootstrap定義」に戻す */
+  /* all: revert !important; */
+  /* box-sizing: border-box !important; */
+/* } */
+
+/* Bootstrapが.navbar-collapseの内部でのみ縦並びを適用するため、セレクタの詳細度を上げる */
+.navbar-collapse .navbar-nav {
+  flex-direction: row !important; /*  強制的に横並びにする */
+}
+
+.navbar-collapse .nav-item {
+  margin-bottom: 0 !important; /* 各メニュー間の下マージンを無効化 */
+}
+
+.navbar-collapse .nav-item:not(:last-child) {
+  margin-right: 3rem;
+}

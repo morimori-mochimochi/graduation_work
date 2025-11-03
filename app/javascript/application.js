@@ -1,11 +1,11 @@
 // このファイルはアプリケーションのエントリーポイントです。
 // 主にbarba.jsやその他のグローバルなスクリプトを読み込みます。
 // ページごとの初期化はbarba.jsのフックで行われます。
+import barba from "./barba.js";
+import { Collapse } from "bootstrap";
 
-import "./barba";
-import barba from "@barba/core";
-import "bootstrap"
-import "bootstrap/dist/css/bootstrap.min.css"
+// callapseをバンドル対象と認識させるためのダミーコード
+const collapse = Collapse;
 
 // DOMContentLoadedがHTMLを全部読み込んだ時にはまだJSで追加されるフラッシュメッセージは存在していないためquerySelectorがnullになってしまう
 function fadeOutFlash() {

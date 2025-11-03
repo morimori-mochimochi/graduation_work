@@ -97,3 +97,5 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   });
 });
+
+export  default barba;
