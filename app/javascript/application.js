@@ -5,7 +5,7 @@ import barba from "./barba.js";
 import { Collapse } from "bootstrap";
 
 // callapseをバンドル対象と認識させるためのダミーコード
-const collapse = Collapse;
+window.Collapse = Collapse;
 
 // DOMContentLoadedがHTMLを全部読み込んだ時にはまだJSで追加されるフラッシュメッセージは存在していないためquerySelectorがnullになってしまう
 function fadeOutFlash() {

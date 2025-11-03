@@ -14,7 +14,7 @@
 
 /* レスポンシブ時のハンバーガーアイコン調整 */
 .navbar-toggler {
-    border: none;
+  border: none;
 }
 
 .navbar-toggler:focus {
