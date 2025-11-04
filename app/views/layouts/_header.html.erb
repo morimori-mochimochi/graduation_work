@@ -6,50 +6,51 @@
   <div class="container-fluid">
     <%# <a> タグはリンク %>
     <%= render 'shared/component/login_info' %>
-    <%# navbar-toggler → 小さい画面で表示されるボタン %>
-    <%# data-bs-toggle="collapse" → 折りたたみ機能（クリックで開閉）%>
-    <%# data-bs-target="#navbarNav" → 開閉させる対象のIDを指定 %>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <%# <ul> → メニュー項目のリスト %>
-      <%  1 # navbar-nav → ナビゲーション用のリストスタイル.横並びに整列 %>
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <img src="/images/new_route_logo.png" alt="new_route_logo" class="h-10">
-          </a>
-        </li>
+    <% if user_signed_in? %>
+      <%# navbar-toggler → 小さい画面で表示されるボタン %>
+      <%# data-bs-toggle="collapse" → 折りたたみ機能（クリックで開閉）%>
+      <%# data-bs-target="#navbarNav" → 開閉させる対象のIDを指定 %>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <%# <ul> → メニュー項目のリスト %>
+        <%  1 # navbar-nav → ナビゲーション用のリストスタイル.横並びに整列 %>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <img src="/images/new_route_logo.png" alt="new_route_logo" class="h-10">
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <img src="/images/locations_logo.png" alt="locations_logo" class="h-10">
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <img src="/images/locations_logo.png" alt="locations_logo" class="h-10">
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <img src="/images/routes_logo.png" alt="routes_logo" class="h-10">
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <img src="/images/routes_logo.png" alt="routes_logo" class="h-10">
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <img src="/images/parkings_logo.png" alt="parkings_logo" class="h-10">
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <img src="/images/parkings_logo.png" alt="parkings_logo" class="h-10">
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <%= button_to destroy_user_session_path,
-            method: :delete, 
-            data: { confirm: "ログアウトしますか？" },
-            class: "bg-transparent border-none p-0 nav-link"  do %>
-            <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-9 cursor-pointer" %>
-          <% end %>
-        </li>
-
-      </ul>
-    </div>
+          <li class="nav-item">
+            <%= button_to destroy_user_session_path,
+              method: :delete, 
+              data: { confirm: "ログアウトしますか？" },
+              class: "bg-transparent border-none p-0 nav-link"  do %>
+              <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-9 cursor-pointer" %>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
   </div>
 </nav>

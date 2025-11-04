@@ -55,13 +55,13 @@
 @media (max-width: 991.98px) {
   /* スマホ・タブレットのサイズを調整 */
   .navbar-nav .nav-item .nav-link img {
-    height: 24px !important;
+    height: 30px !important;
     width: auto !important; /* 比率維持のため */
   }
 
   /* ログアウトボタンの画像サイズを調整 */
   .navbar-nav .nav-item:last-child img {
-    height: 28px !important; 
+    height: 25px !important; 
     width: auto !important;
   }
   
@@ -72,13 +72,13 @@
 
   /* マージンも少しだけ詰めて、さらに横幅に余裕を持たせます */
   .navbar-nav .nav-item:not(:last-child) {
-    margin-right: 0.5rem; 
+    margin-right: 2rem; 
   }
 }
 
 @media (min-width: 992px) {
   /* 大画面ではより広い間隔を適用 */
   .navbar-nav .nav-item:not(:last-child) {
-    margin-right: 1rem; /* デスクトップ向けに広いマージン */
+    margin-right: 2rem; /* デスクトップ向けに広いマージン */
   }
 }
