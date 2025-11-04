@@ -1,6 +1,8 @@
 /* 背景色を自作の色に */
 .navbar {
-  background-color:  #FFEFE2 !important;
+  background-color:  #FFEBDC !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md に相当 */
+  font-weight: bold; /* font-bold に相当 */
 }
 
 .navbar-nav .nav-link  img{
@@ -22,13 +24,15 @@
   box-shadow: none;
 }
 
-/* CSSでは階層を深く書くと特異性が上がり、優先度が上がる */
-/* html body nav.navbar, */
-/* html body nav.navbar * { */
-  /* その要素に適用されたすべてのCSSを「ブラウザ標準＋Bootstrap定義」に戻す */
-  /* all: revert !important; */
-  /* box-sizing: border-box !important; */
-/* } */
+.navbar-nav {
+  flex-direction: row !important;
+  /* アイコンが多すぎる場合に画面幅を超えてしまうのを防ぐため、折り返しを許可します */
+  flex-wrap: wrap; 
+  /* Bootstrapのデフォルトで下マージンが設定される可能性があるため無効化 */
+  margin-bottom: 0 !important;
+  /* ナビゲーションを右寄せに保つ */
+  justify-content: flex-end;
+}
 
 /* Bootstrapが.navbar-collapseの内部でのみ縦並びを適用するため、セレクタの詳細度を上げる */
 .navbar-collapse .navbar-nav {
@@ -41,4 +45,40 @@
 
 .navbar-collapse .nav-item:not(:last-child) {
   margin-right: 3rem;
+}
+
+/* ログアウトボタンのグローバルな垂直調整 */
+.navbar-nav .nav-item:last-child {
+  padding-top: 0.15rem; 
+}
+
+@media (max-width: 991.98px) {
+  /* スマホ・タブレットのサイズを調整 */
+  .navbar-nav .nav-item .nav-link img {
+    height: 24px !important;
+    width: auto !important; /* 比率維持のため */
+  }
+
+  /* ログアウトボタンの画像サイズを調整 */
+  .navbar-nav .nav-item:last-child img {
+    height: 28px !important; 
+    width: auto !important;
+  }
+  
+  /* ログアウトボタンの垂直位置を微調整 (アイコンの縮小に伴い微調整) */
+  .navbar-nav .nav-item:last-child {
+    padding-top: 0.05rem; 
+  }
+
+  /* マージンも少しだけ詰めて、さらに横幅に余裕を持たせます */
+  .navbar-nav .nav-item:not(:last-child) {
+    margin-right: 0.5rem; 
+  }
+}
+
+@media (min-width: 992px) {
+  /* 大画面ではより広い間隔を適用 */
+  .navbar-nav .nav-item:not(:last-child) {
+    margin-right: 1rem; /* デスクトップ向けに広いマージン */
+  }
 }
