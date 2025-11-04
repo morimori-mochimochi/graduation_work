@@ -11,6 +11,41 @@ import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
+console.log("controlNavbarDisplayByContainerSignを開始します");
+// ナビゲーションバーの表示・非表示を制御する関数
+function controlNavbarDisplayByContainerSign(container) {
+  // ハンバーガーボタンを含む、メニューを表示/非表示にしたい要素のセレクタを取得
+  // 
+  console.log("controlNavbarDisplayByContainerSign読みました");
+  console.log("navbarNav: ", navMenuWrapper)
+  const navMenuWrapper = document.getElementById('navbarNav'); 
+  const navbarToggler = document.querySelector('.navbar-toggler');
+  
+  if (!navMenuWrapper || !navbarToggler) {
+    // そもそもユーザーがサインインしておらず、メニューのHTML自体が存在しない場合は処理を終了
+    return;
+  }
+  
+  // 1. 新しいコンテナにサインがあるかチェック
+  // HTML側で data-requires-navbar-menu="true" が付与されているかを確認
+  console.log("data-requires-navbar-menuを確認します");
+  const shouldDisplayMenu = container.hasAttribute('data-requires-navbar-menu');
+  console.log("data-requires-navbar-menuを確認しました");
+  
+  // 2. 表示の切り替え
+  if (shouldDisplayMenu) {
+    // 表示
+    navMenuWrapper.style.display = '';
+    navbarToggler.style.display = ''; // ハンバーガーボタンも表示
+    console.log("Navbar menu and toggler displayed.");
+  } else {
+    // 非表示
+    navMenuWrapper.style.display = 'none';
+    navbarToggler.style.display = 'none'; // ハンバーガーボタンも非表示
+    console.log("Navbar menu and toggler hidden.");
+  }
+}
+
 // ページ初期化のための共通関数
 function initializePage(container) {
   console.log("initializePage called for container:", container);
@@ -92,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         async afterEnter({ next }) {
           await window.mapApiLoaded; // 念のため遷移後もAPI読み込みを待つ
           initializePage(next.container);
+          controlNavbarDisplayByContainerSign(next.container);
         }
       }
     ]
