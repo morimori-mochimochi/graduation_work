@@ -14,8 +14,6 @@ let stepIndex = 0;
 let isRerouting = false;
 const REROUTE_COOLDOWN_MS = 10000;
 
-const directionsService = new google.maps.DirectionsService();
-
 export function stopNavigation() {
   if (watchId) {
     navigator.geolocation.clearWatch(watchId);
@@ -54,6 +52,8 @@ function showArrivalMessage() {
 
 async function reroute(currentLatLng, destination, travelMode) {
   console.log("リルート処理を開始します: ", currentLatLng, destination);
+
+  const directionsService = new google.maps.DirectionsService();
 
   // リルートフラグを立てる
   isRerouting = true;
@@ -126,7 +126,7 @@ export async function startNavigation() {
   console.log("★ startNavigation開始:", directionsResult);
 
   // 最初のルート情報から目的地と移動手段を取得
-  const route_info = directionsResult.route[0];
+  const route_info = directionsResult.routes[0];
   // 最終目的地のLatLngオブジェクト
   const originalDestination = route_info.legs[route_info.legs.length - 1].end_location;
   // 元ルートの移動手段
@@ -189,14 +189,14 @@ export async function startNavigation() {
       // sessionStorageから最新のルート情報を再取得
       const updateDirections = JSON.parse(sessionStorage.getItem("directionsResult"));
       if (updatedDirections) {
-        routePath = updatedDirections.route[0].overview_path;
+        update_routePath = updatedDirections.routes[0].overview_path;
       }
 
       // 現在地がルートポリライン上にあるかチェック
       // isLocationOnEdge関数は指定された地点がポリラインから指定した50m以内にあるか判定する公式メソッド
       const isNearRoute = google.maps.geometry.poly.isLocationOnEdge(
         currentLatLng,
-        new google.maps.Polyline({ path: routePath }), // ルート全体のポリライン
+        new google.maps.Polyline({ path: update_routePath }), // ルート全体のポリライン
         50 // 許容範囲(m)
       );
 
