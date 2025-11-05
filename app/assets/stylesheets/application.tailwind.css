@@ -2,13 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import "tailwindcss"; */
+/* Tailwindの定義を上書きするために詳細度をあげてvisibility: visibleを強制*/
+.collapse:not(.show) .nav-item,
+.navbar-nav .nav-item {
+  visibility: visible !important;
+}
+
+@import "bootstrap/dist/css/bootstrap.min.css";
 
 @import "./components/buttons.css";
 @import "./components/map.css";
 @import "./components/logo.css";
 @import "./components/character.css";
 @import "./components/slider.css"; 
+@import "./components/navbar_custom.css";
 /* @import "./pages/top.css"; */
 
 body {
