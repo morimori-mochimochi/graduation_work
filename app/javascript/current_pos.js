@@ -28,7 +28,7 @@ export function fetchCurrentPos() {
         console.log("現在地取得完了:", currentPos);
       },
       (err) => reject(err),
-      { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+      { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
     );
   });
 }
