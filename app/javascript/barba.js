@@ -11,15 +11,15 @@ import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 
-console.log("controlNavbarDisplayByContainerSignを開始します");
 // ナビゲーションバーの表示・非表示を制御する関数
 function controlNavbarDisplayByContainerSign(container) {
   // ハンバーガーボタンを含む、メニューを表示/非表示にしたい要素のセレクタを取得
-  // 
-  console.log("controlNavbarDisplayByContainerSign読みました");
-  console.log("navbarNav: ", navMenuWrapper)
+  console.log("処理タイミングのせい？");
+
   const navMenuWrapper = document.getElementById('navbarNav'); 
   const navbarToggler = document.querySelector('.navbar-toggler');
+
+  console.log("navMenuWrapper: ", navMenuWrapper);
   
   if (!navMenuWrapper || !navbarToggler) {
     // そもそもユーザーがサインインしておらず、メニューのHTML自体が存在しない場合は処理を終了
@@ -28,11 +28,10 @@ function controlNavbarDisplayByContainerSign(container) {
   
   // 1. 新しいコンテナにサインがあるかチェック
   // HTML側で data-requires-navbar-menu="true" が付与されているかを確認
-  console.log("data-requires-navbar-menuを確認します");
   const shouldDisplayMenu = container.hasAttribute('data-requires-navbar-menu');
-  console.log("data-requires-navbar-menuを確認しました");
   
   // 2. 表示の切り替え
+  console.log("🥸 表示の出し変え");
   if (shouldDisplayMenu) {
     // 表示
     navMenuWrapper.style.display = '';
