@@ -1,0 +1,37 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">保存した場所一覧</h1>
+  </div>
+
+  <%# flashメッセージの表示 %>
+  <% if flash[:notice] %>
+    <div role="alert" class="alert alert-success mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <span><%= flash[:notice] %></span>
+    </div>
+  <% end %>
+
+  <% if @locations.empty? %>
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <p>保存されている場所はありません。</p>
+        <p>地図ページから場所を検索し、「この場所を保存」ボタンを押して登録してください。</p>
+      </div>
+    </div>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>住所</th>
+            <th class="text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @locations %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
