@@ -76,14 +76,16 @@ export function highlightMarker(marker, duration = 1500) {
     if (save_btn) {
       save_btn.addEventListener("click", function() {
         const position = marker.getPosition ? marker.getPosition() : marker.position;
-        const locationData = {
-          name: facilityName,
-          address: facilityAddress,
-          lat: position.lat(),
-          lng: position.lng()
-        };
-        createLocation(locationData);
-        infoWindow.close();
+        // URLのクエリパラメータを作成
+        const params = new URLSearchParams({
+          'location[name]': facilityName,
+          'location[address]': facilityAddress,
+          'location[lat]': position.lat(),
+          'location[lng]': position.lng()
+        });
+
+        // new_location_path にクエリパラメータを付けて遷移
+        window.location.href = `/locations/new?${params.toString()}`;
       });
     }
   });
@@ -93,39 +95,6 @@ export function highlightMarker(marker, duration = 1500) {
   setTimeout(() => {
     marker.setAnimation(null);
   }, duration);
-}
-
-// ユーザーがクリックした場所をサーバーに保存する関数
-async function creatLocation(locationData) {
-  // RailsのCSRFトークンを取得(CSRF対策を通すため)
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-  try {
-    const response = await fetch('/locations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
-      },
-      // location: {...}の形式でデータを送信
-      body: JSON.stringify({ location: locationData })
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      // 成功した場合の処理
-      alert('保存しました');
-    } else {
-      // 失敗した場合の処理
-      const errorMessage = result.errors ? result.errors.join(',') : '保存に失敗しました';
-      alert('エラー: ${errorMessage}');
-      console.error('保存失敗: ', result);
-    }
-  } catch (error) {
-    alert('通信エラーが発生しました');
-    console.error('Fetchエラー: ', error);
-  }
 }
 
 // #部分一致検索＋ピン設置
