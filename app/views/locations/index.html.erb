@@ -35,5 +35,7 @@
       </table>
     </div>
   <% end %>
-  <div id="map"></div>
+  <% unless @locations.empty? %>
+    <div id="map"></div>
+  <% end %>
 </div>

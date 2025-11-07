@@ -88,6 +88,9 @@ export function highlightMarker(marker, duration = 1500) {
           'location[lng]': position.lng()
         });
 
+        // facilityAddress の中身を確認
+        console.log("addressの中身: ", facilityAddress);
+
         // new_location_path にクエリパラメータを付けて遷移
         window.location.href = `/locations/new?${params.toString()}`;
       });
