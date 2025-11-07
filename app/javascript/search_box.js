@@ -17,9 +17,8 @@ export function highlightMarker(marker, duration = 1500) {
   // InfoWindowの内容ボタン
   const infoContent = `
     <div style = "min-width:200px";>
-      <div style="font-weight:bold;font-size:1.1em;margin-bottom:4px;">${facilityName}</div>
-      <div style="font-size:0.95em;margin-bottom:8px;color:#555;">${facilityAddress}</div>
-      <button id="setStr" style="marin-right:8px;">ここを出発地に設定</button>
+      <div style="font-weight:bold;font-size:1.1em;margin-bottom:2px;text-align:center;">${facilityName}</div>
+      <button id="setStr" style="margin-right:4px;">出発地</button>
       <button id="setDest">ここを目的地に設定</button>
       <button id="saveLocation">この場所を保存</button>
     </div>
@@ -78,7 +77,6 @@ export function highlightMarker(marker, duration = 1500) {
         const position = marker.getPosition ? marker.getPosition() : marker.position;
         // URLのクエリパラメータを作成
         const params = new URLSearchParams({
-          'location[name]': facilityName,
           'location[address]': facilityAddress,
           'location[lat]': position.lat(),
           'location[lng]': position.lng()
