@@ -33,12 +33,12 @@
   <template id="info-window-template">
     <div style="min-width:200px;">
         <div class="info-window-facility-name" style="font-weight:bold;font-size:1.1em;margin-bottom:8px;text-align:center;"></div>
-        <button class="info-window-route-btn" style="margin-right: 8px;">ルート設定</button>
-        <button class="info-window-save-location">この場所を保存</button>
+        <button class="info-window-route-btn btn btn-sm bg-white border-white shadow-md" style="margin-right: 8px;">ルート設定</button>
+        <button class="info-window-save-location btn btn-sm bg-white border-white shadow-md">この場所を保存</button>
     </div>
-    <ul class="info-window-dropdown-menu menu bg-base-100 rounded-box shadow-lg p-2 mt-1" hidden>
-      <li><a class="info-window-set-start">出発地に設定</a></li>
-      <li><a class="info-window-set-destination">目的地に設定</a></li>
+    <ul class="info-window-dropdown-menu bg-base-100 rounded-box p-2 mt-1" hidden>
+      <li><button class="info-window-set-start btn btn-sm btn-primary rounded-full">出発地に設定</button></li>
+      <li><button class="info-window-set-destination btn btn-sm btn-secondary rounded-full">目的地に設定</button></li>
     </ul>
   </template>
 </html>
