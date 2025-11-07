@@ -27,7 +27,7 @@
 
   <div class="mt-6 flex items-center space-x-2">
     <%= link_to '編集', edit_location_path(@location), class: "btn-warning" %>
-    <%= button_to '削除', @location, method: :delete, data: { turbo_confirm: '本当に削除しますか？' }, class: "btn btn-sm btn-error" %>
+    <%= button_to '削除', @location, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
     <%= link_to '一覧に戻る', locations_path, class: "btn btn-ghost" %>
   </div>
 </div>
