@@ -312,6 +312,8 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 require 'strategies/line'
 
-config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET']
+config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], {
+  redirect_uri: "https://sketto-houmon-support.com/users/auth/line/callback"
+}
 
 end
