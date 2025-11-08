@@ -19,7 +19,7 @@ class LocationsController < ApplicationController
   def create
     @location = current_user.locations.build(location_params)
     if @location.save
-      redirect_to locations_path, notice: '場所を保存しました。'
+      redirect_to locations_path, notice: t('.notice')
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class LocationsController < ApplicationController
 
   def update
     if @location.update(location_params)
-      redirect_to @location, notice: '場所の情報を更新しました。'
+      redirect_to @location, notice: t('.notice')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class LocationsController < ApplicationController
 
   def destroy
     @location.destroy
-    redirect_to locations_path, notice: '場所を削除しました。', status: :see_other
+    redirect_to locations_path, notice: t('.notice'), status: :see_other
   end
 
   private

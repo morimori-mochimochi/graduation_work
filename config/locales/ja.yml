@@ -1,0 +1,10 @@
+ja:
+  locations:
+    create:
+      notice: "場所を保存しました。"
+    update:
+      notice: "場所の情報を更新しました。"
+    destroy:
+      notice: "場所を削除しました。"
+  defaults:
+    location_already_registered: "はすでに登録されています"

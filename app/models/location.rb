@@ -7,7 +7,7 @@ class Location < ApplicationRecord # :nodoc:
   validates :lat, presence: true, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
   validates :lng, presence: true, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
   validates :name, presence: true, length: { maximum: 20 },
-                   uniqueness: { scope: :user_id, message: 'はすでに登録されています' }
+                   uniqueness: { scope: :user_id, message: I18n.t('defaults.location_already_registered') }
 
   def lat
     super.to_f
