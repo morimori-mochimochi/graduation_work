@@ -22,10 +22,8 @@
     <% end %>
     <%# GoogleMapsが呼び出す公式推奨のコールバック関数 %>
     <%# callback=initMapに指定した関数はGoogleMapsApiのロード&初期化が終わってから呼ばれる %>
-    <script async defer 
+    <script defer 
       src="https://maps.googleapis.com/maps/api/js?key=<%= google_maps_api_key %>&libraries=places,marker,geometry&callback=onGoogleMapsReady"
-      async
-      defer
     ></script>
 
     <%= render 'shared/component/barba_wrapper' do %>
