@@ -1,0 +1,26 @@
+<div class="container cute-title mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold mb-4">新しい場所を登録</h1>
+
+  <div class="mb-4">
+    <%= Time.current.strftime('%Y年%m月%d日') %>
+  </div>
+
+  <%= form_with(model: @location, url: locations_path, class: "card bg-base-200 shadow-xl") do |form| %>
+    <div class="card-body">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">場所の名前</span>
+        </label>
+        <%= form.text_field :name, class: "input input-bordered", required: true %>
+        <%= form.hidden_field :lat %>
+        <%= form.hidden_field :lng %>
+        <%= form.hidden_field :address %>
+      </div>
+
+      <div class="card-actions justify-end mt-6">
+        <%= link_to 'キャンセル', locations_path, class: "btn btn-ghost" %>
+        <%= form.submit '保存', class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -14,34 +14,34 @@ export function highlightMarker(marker, duration = 1500) {
   if (!facilityAddress && marker.address) facilityAddress = marker.address;
   if (!facilityAddress && marker.label) facilityAddress = marker.label;
 
-  // InfoWindowの内容ボタン
-  const infoContent = `
-    <div style = "min-width:200px";>
-      <div style="font-weight:bold;font-size:1.1em;margin-bottom:4px;">${facilityName}</div>
-      <div style="font-size:0.95em;margin-bottom:8px;color:#555;">${facilityAddress}</div>
-      <button id="setStr" style="marin-right:8px;">ここを出発地に設定</button>
-      <button id="setDest">ここを目的地に設定</button>
-    </div>
-  `;
+  // <template>からInfoWindowのコンテンツを作成
+  // cloneNode(false) → 要素自体だけコピー（中身の子要素はコピーしない）
+	// cloneNode(true) → 要素 とその子要素すべて を再帰的にコピー
+  const template = document.getElementById('info-window-template');
+  const content = template.content.cloneNode(true);
+
+  //動的な値を埋め込む
+  content.querySelector('.info-window-facility-name').textContent = facilityName;
+    
   // 既存のInfoWindowを閉じる
   if (window.activeInfoWindow) {
     window.activeInfoWindow.close();
   }
 
   const infoWindow = new google.maps.InfoWindow({
-    content: infoContent
+    content: content
   });
   infoWindow.open(marker.getMap(), marker);
   window.activeInfoWindow = infoWindow;
 
   //ボタンクリックベントを設定
   google.maps.event.addListenerOnce(infoWindow, "domready", function() {
-    console.log("setStr:", document.getElementById("setStr"));
-    console.log("setDest:", document.getElementById("setDest"));
+    const start_btn = document.querySelector(".info-window-set-start");
+    const destination_btn = document.querySelector(".info-window-set-destination");
+    const route_btn = document.querySelector(".info-window-route-btn");
+    const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
+    const save_btn = document.querySelector(".info-window-save-location");
 
-    const start_btn = document.getElementById("setStr");
-    const destination_btn = document.getElementById("setDest");
-    
     if (start_btn) {
       start_btn.addEventListener("click", function() {
         window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
@@ -68,9 +68,33 @@ export function highlightMarker(marker, duration = 1500) {
         }
         infoWindow.close();
       });
+      console.log("目的地ボタンにイベント登録しました", destination_btn);
     }
 
-    console.log("目的地ボタンにイベント登録しました", destination_btn);
+    if (route_btn) {
+      route_btn.addEventListener("click", (e) => {
+        e.stopPropagation(); // イベントの伝播を停止
+        dropdown_menu.hidden = !dropdown_menu.hidden;
+      });
+    }
+
+    if (save_btn) {
+      save_btn.addEventListener("click", function() {
+        const position = marker.getPosition ? marker.getPosition() : marker.position;
+        // URLのクエリパラメータを作成
+        const params = new URLSearchParams({
+          'location[address]': facilityAddress,
+          'location[lat]': position.lat(),
+          'location[lng]': position.lng()
+        });
+
+        // facilityAddress の中身を確認
+        console.log("addressの中身: ", facilityAddress);
+
+        // new_location_path にクエリパラメータを付けて遷移
+        window.location.href = `/locations/new?${params.toString()}`;
+      });
+    }
   });
   
   marker.setAnimation(google.maps.Animation.BOUNCE);

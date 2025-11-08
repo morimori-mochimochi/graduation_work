@@ -7,6 +7,8 @@ class User < ApplicationRecord # :nodoc:
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :omniauthable, omniauth_providers: [:line]
 
+  has_many :locations, dependent: :destroy
+
   # バリデーション
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP },

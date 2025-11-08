@@ -1,0 +1,8 @@
+<tr id="<%= dom_id location %>">
+  <td><%= location.name %></td>
+  <td><%= location.address %></td>
+  <td class="text-right space-x-2">
+    <%= link_to '詳細', location, class: "btn btn-sm btn-info" %>
+    <%= link_to '編集', edit_location_path(location), class: "btn btn-sm btn-warning" %>
+  </td>
+</tr>
