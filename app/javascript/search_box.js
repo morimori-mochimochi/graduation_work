@@ -148,6 +148,9 @@ async function searchExactPlace(query) {
         url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
       }
     });
+    // placeオブジェクトの情報をmarkerに紐付ける
+    marker.placeResult = place;
+    marker.formattedAddress = place.formattedAddress;
     window.markers.push(marker);
   });
 

@@ -54,9 +54,11 @@ async function reroute(currentLatLng, destination, travelMode) {
   console.log("リルート処理を開始します: ", currentLatLng, destination);
 
   const directionsService = new google.maps.DirectionsService();
+  console.log("rerouteの途中経過1");
 
   // リルートフラグを立てる
   isRerouting = true;
+  console.log("rerouteの途中経過2");
 
   const request = {
     origin: currentLatLng, // 現在地を新しい出発地とする
@@ -64,9 +66,11 @@ async function reroute(currentLatLng, destination, travelMode) {
     travelMode: travelMode, // 移動手段（元の設定を再利用）
     unitSystem: google.maps.UnitSystem.METRIC, // メートル記法で
   };
+  console.log("rerouteの途中経過3");
 
   try {
     const response = await directionsService.route(request);
+    console.log("rerouteの途中経過4");
 
     if (response.status === google.maps.DirectionsStatus.OK) {
       // 成功した場合、DirectionsResultを更新
