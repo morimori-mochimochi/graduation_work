@@ -313,7 +313,7 @@ Devise.setup do |config|
   require 'strategies/line'
 
   config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], {
-    redirect_uri: "https://sketto-houmon-support.com/users/auth/line/callback
+    redirect_uri: "https://sketto-houmon-support.com/users/auth/line/callback"
   }
     
 end
