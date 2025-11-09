@@ -2,6 +2,10 @@ console.log("navigation.jsを始めます");
 
 import { fetchCurrentPos } from "./current_pos";
 
+// マーカーを滑らかに動かすための変数
+let lastMarkerPosition = null;
+let animationFrameId = null;
+
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号
@@ -33,6 +37,12 @@ export function stopNavigation() {
   }
   // ナビ停止時はリルートフラグもリセット
   isRerouting = false;
+
+  // アニメーションを停止
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
 }
 
 function showArrivalMessage() {
@@ -99,6 +109,40 @@ async function reroute(currentLatLng, destination, travelMode) {
     }, REROUTE_COOLDOWN_MS);
   }
 }
+
+// マーカーを滑らかに動かすアニメーション関数
+function animateMarkerTo(marker, newPosition, duration = 1000) {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+
+  const startPosition = marker.getPosition();
+  lastMarkerPosition = newPosition; //次の更新のために最終位置を保存
+  const startTime = performance.now();
+
+  // elapseTime: どれくらい時間が経過したか
+  // Math.min: JSに組み込まれている数学用オブジェクト
+  // 引数として渡された数値の中から最も小さい値を返す
+  const animate = (currentTime) => {
+    const elapseTime = currentTime - startTime;
+    const fraction = Math.min(elapseTime / duration, 1);
+
+    // 線形補間で中間地点を計算
+    const lat = startPosition.lat() + (newPosition.lat - startPosition.lat()) * fraction;
+    const lng = startPosition.lng() + (newPosition.lng - startPosition.lng()) * fraction;
+    const interpolatedPosition = new google.maps.LatLng(lat, lng); //googleMapが理解できる形にして補完地点保存
+
+    marker.setPosition(interpolatedPosition);
+
+    if (fraction < 1) {
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      animationFrameId = null;
+    }
+  };
+  animationFrameId = requestAnimationFrame(animate);
+}
+
 export async function startNavigation() {
   //既存のナビがあれば停止
   stopNavigation();
@@ -163,6 +207,7 @@ export async function startNavigation() {
   watchId = navigator.geolocation.watchPosition(
     (pos) => { // asyncは不要に
       // watchPositionのコールバック引数から直接位置情報を取得
+      // coords: coordinates(座標)の略
       const currentPos = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
@@ -183,7 +228,7 @@ export async function startNavigation() {
           map: window.map,
           title: "現在地",
           icon: {
-            path: google.maps.SymbolPath.CIRCLE,
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
             scale: 8, 
             fillColor: "#00F",
             fillOpacity: 1,
@@ -191,9 +236,22 @@ export async function startNavigation() {
             strokeColor: "#FFF"
           }
         });
+        lastMarkerPosition = currentPos;
       }else{
-        currentMarker.setPosition(currentPos);
-      }  
+        // マーカーを瞬間移動させる代わりにアニメーションさせる
+        if (lastMarkerPosition?.lat !== currentPos.lat || lastMarkerPosition?.lng !== currentPos.lng) {
+          animateMarkerTo(currentMarker, currentPos);
+        }
+      }
+
+      // 進行方向が取得できればマーカーを回転させる
+      // 停止中は回転させない
+      if (pos.coords.heading != null && pos.coords.speed > 0.5) {
+        const icon = currentMarker.getIcon();
+        icon.rotation = pos.coords.heading;
+        currentMarker.setIcon(icon);
+      }
+
       // #マップを追従
       window.map.panTo(currentPos);
 
@@ -255,6 +313,6 @@ export async function startNavigation() {
       stopNavigation();
     },
     // GPSを使って今現在の正確な位置情報をとってくるようにする
-    { enableHighAccuracy: true, maximumAge: 0 }
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
   );
 };
