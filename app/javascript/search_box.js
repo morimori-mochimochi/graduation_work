@@ -7,8 +7,6 @@ export function highlightMarker(marker, duration = 1500) {
   let facilityAddress = marker.placeResult && marker.placeResult.formattedAddress
     ? marker.placeResult.formattedAddress
     : (marker.formattedAddress || "");
-
-  console.log("施設名、住所を取り出しました");
     
   // フォールバック: データの種類が足りない時に備えて代替フィールドを順に探す
   if (!facilityAddress && marker.address) facilityAddress = marker.address;
@@ -118,7 +116,6 @@ async function searchExactPlace(query) {
   };
 
   const result = await Place.searchByText(request);
-  console.log(result);
 
   // #結果が一件もなければ終了
   if (!result.places || result.places.length === 0) {
@@ -148,6 +145,9 @@ async function searchExactPlace(query) {
         url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
       }
     });
+    // placeオブジェクトの情報をmarkerに紐付ける
+    marker.placeResult = place;
+    marker.formattedAddress = place.formattedAddress;
     window.markers.push(marker);
   });
 

@@ -2,6 +2,10 @@ console.log("navigation.jsを始めます");
 
 import { fetchCurrentPos } from "./current_pos";
 
+// マーカーを滑らかに動かすための変数
+let lastMarkerPosition = null;
+let animationFrameId = null;
+
 // #現在地マーカー
 let currentMarker;
 // #watchIdは位置情報の監視プロセスを識別する番号
@@ -33,6 +37,12 @@ export function stopNavigation() {
   }
   // ナビ停止時はリルートフラグもリセット
   isRerouting = false;
+
+  // アニメーションを停止
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
 }
 
 function showArrivalMessage() {
@@ -54,9 +64,11 @@ async function reroute(currentLatLng, destination, travelMode) {
   console.log("リルート処理を開始します: ", currentLatLng, destination);
 
   const directionsService = new google.maps.DirectionsService();
+  console.log("rerouteの途中経過1");
 
   // リルートフラグを立てる
   isRerouting = true;
+  console.log("rerouteの途中経過2");
 
   const request = {
     origin: currentLatLng, // 現在地を新しい出発地とする
@@ -64,9 +76,11 @@ async function reroute(currentLatLng, destination, travelMode) {
     travelMode: travelMode, // 移動手段（元の設定を再利用）
     unitSystem: google.maps.UnitSystem.METRIC, // メートル記法で
   };
+  console.log("rerouteの途中経過3");
 
   try {
     const response = await directionsService.route(request);
+    console.log("rerouteの途中経過4");
 
     if (response.status === google.maps.DirectionsStatus.OK) {
       // 成功した場合、DirectionsResultを更新
@@ -95,6 +109,40 @@ async function reroute(currentLatLng, destination, travelMode) {
     }, REROUTE_COOLDOWN_MS);
   }
 }
+
+// マーカーを滑らかに動かすアニメーション関数
+function animateMarkerTo(marker, newPosition, duration = 1000) {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+
+  const startPosition = marker.getPosition();
+  lastMarkerPosition = newPosition; //次の更新のために最終位置を保存
+  const startTime = performance.now();
+
+  // elapseTime: どれくらい時間が経過したか
+  // Math.min: JSに組み込まれている数学用オブジェクト
+  // 引数として渡された数値の中から最も小さい値を返す
+  const animate = (currentTime) => {
+    const elapseTime = currentTime - startTime;
+    const fraction = Math.min(elapseTime / duration, 1);
+
+    // 線形補間で中間地点を計算
+    const lat = startPosition.lat() + (newPosition.lat - startPosition.lat()) * fraction;
+    const lng = startPosition.lng() + (newPosition.lng - startPosition.lng()) * fraction;
+    const interpolatedPosition = new google.maps.LatLng(lat, lng); //googleMapが理解できる形にして補完地点保存
+
+    marker.setPosition(interpolatedPosition);
+
+    if (fraction < 1) {
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      animationFrameId = null;
+    }
+  };
+  animationFrameId = requestAnimationFrame(animate);
+}
+
 export async function startNavigation() {
   //既存のナビがあれば停止
   stopNavigation();
@@ -137,6 +185,11 @@ export async function startNavigation() {
     window.directionsRenderer = new google.maps.DirectionsRenderer({
       //suppressMarkers: true, //ナビ中の始点、終点のマーカーを非表示にする
       preserveViewport: true, //ルート描画中に地図の表示領域を維持する
+      polylineOptions: {
+        strokeColor: '#4A90E2', //線の色を少し明るく
+        strokeOpacity: 0.8, //線の不透明度
+        strokeWeight: 6 //線の太さ
+      }
     });
   }
   window.directionsRenderer.setMap(window.map);
@@ -154,6 +207,7 @@ export async function startNavigation() {
   watchId = navigator.geolocation.watchPosition(
     (pos) => { // asyncは不要に
       // watchPositionのコールバック引数から直接位置情報を取得
+      // coords: coordinates(座標)の略
       const currentPos = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
@@ -165,38 +219,54 @@ export async function startNavigation() {
       const currentLatLng = new google.maps.LatLng(currentPos);
 
        // 最初の一回はマーカーを作成。それ以降はそれを更新
+      // リルート後の新しいルート情報を保持する変数
+      let updated_routePath = routePath;
+
       if (!currentMarker) {
         currentMarker = new google.maps.Marker({
           position: currentPos,
           map: window.map,
           title: "現在地",
           icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 6,
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 8, 
             fillColor: "#00F",
             fillOpacity: 1,
             strokeWeight: 2,
             strokeColor: "#FFF"
           }
         });
+        lastMarkerPosition = currentPos;
       }else{
-        currentMarker.setPosition(currentPos);
-      }  
+        // マーカーを瞬間移動させる代わりにアニメーションさせる
+        if (lastMarkerPosition?.lat !== currentPos.lat || lastMarkerPosition?.lng !== currentPos.lng) {
+          animateMarkerTo(currentMarker, currentPos);
+        }
+      }
+
+      // 進行方向が取得できればマーカーを回転させる
+      // 停止中は回転させない
+      if (pos.coords.heading != null && pos.coords.speed > 0.5) {
+        const icon = currentMarker.getIcon();
+        icon.rotation = pos.coords.heading;
+        currentMarker.setIcon(icon);
+      }
+
       // #マップを追従
       window.map.panTo(currentPos);
 
       // リルートが発生したときにroutePathを更新
       // sessionStorageから最新のルート情報を再取得
-      const updateDirections = JSON.parse(sessionStorage.getItem("directionsResult"));
+      const updatedDirections = JSON.parse(sessionStorage.getItem("directionsResult"));
       if (updatedDirections) {
-        update_routePath = updatedDirections.routes[0].overview_path;
+        updated_routePath = updatedDirections.routes[0].overview_path;
       }
 
       // 現在地がルートポリライン上にあるかチェック
       // isLocationOnEdge関数は指定された地点がポリラインから指定した50m以内にあるか判定する公式メソッド
       const isNearRoute = google.maps.geometry.poly.isLocationOnEdge(
         currentLatLng,
-        new google.maps.Polyline({ path: update_routePath }), // ルート全体のポリライン
+        new google.maps.Polyline({ path: updated_routePath }), // ルート全体のポリライン
         50 // 許容範囲(m)
       );
 
@@ -243,6 +313,6 @@ export async function startNavigation() {
       stopNavigation();
     },
     // GPSを使って今現在の正確な位置情報をとってくるようにする
-    { enableHighAccuracy: true, maximumAge: 0 }
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
   );
 };
