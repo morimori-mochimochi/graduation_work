@@ -198,9 +198,11 @@ export async function startNavigation() {
   // 最初のルート情報を取得
   const route = directionsResult.routes[0].legs[0];
   const steps = route.steps;
+  console.log("ルート情報: steps:", steps);
 
   // ルート全体のルート情報を取得
   const routePath = directionsResult.routes[0].overview_path; //ポリラインの配列を取得
+  console.log("ルート情報: routePath:", routePath);
 
   // 現在地の追跡開始
   // 常に現在地を監視することでユーザの位置が変わるたびにこの関数が呼ばれる
@@ -269,6 +271,7 @@ export async function startNavigation() {
         new google.maps.Polyline({ path: updated_routePath }), // ルート全体のポリライン
         50 // 許容範囲(m)
       );
+      console.log("リルート判定", isNearRoute);
 
       // ルートから大きく逸脱している & リルート処理中でない場合
       if (!isNearRoute && !isRerouting) {
