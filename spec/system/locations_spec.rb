@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-Rspec.describe 'Locations', type: :system do
+RSpec.describe 'Locations', type: :system do
     #テストで使用するユーザーと場所のデータを作成
     let(:user) { create(:user) }
     # FactoryBotで定義した:locationファクトリからテストで使う住所や緯度経度情報を取得
@@ -13,16 +13,12 @@ Rspec.describe 'Locations', type: :system do
 
     describe 'スポットの保存から一覧表示までの流れ' do
         it 'ユーザーが新しい場所を保存し、詳細ページと一覧ページで確認できること' do
-            visit new_location_path(location: {
-                                      address: location_attributes[:name], # Factoryのnameをaddressとして使用
-                                      lat: location_attributes[:lat],
-                                      lng: location_attributes[:lng]
-                                    })
-                                
-            # new.html.erbのフォームに値が設定されていることを確認 ☝️☝️ここはフォームに名前を入れるのでは？
-            expect(page).to have_field('名称', with: location_attributes[:name])
-            
-            # 「この場所を保存する」ボタンをクリックするとDBに登録されることを検証
+            visit new_location_path
+
+            # new.html.erbのフォームに名前を入力する
+            fill_in '場所の名前', with: location_attributes[:name]
+
+            # 保存ボタンをクリック
             expect do
                 click_button '保存'
             end.to change(Location, :count).by(1)
