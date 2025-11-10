@@ -103,3 +103,9 @@ RSpec.configure do |config|
     end
   end
 end
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    puts "Capybara.app_host = #{Capybara.app_host.inspect}"
+  end
+end
