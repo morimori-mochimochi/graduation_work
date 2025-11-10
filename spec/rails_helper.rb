@@ -22,8 +22,8 @@ if ENV['SELENIUM_URL']
   # 環境に応じて接続先ホストを切り替え
   # - Docker Compose 環境では `web`
   # - GitHub Actions では `host.docker.internal`
-  app_host = if ENV['CI']
-               'host.docker.internal'
+  app_host = if ENV['CI'] # GitHub Actions環境
+               '172.17.0.1' # ホストランナーのIPアドレスを直接指定
              else
                'web'
              end
