@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe 'Locations', type: :system do
+RSpec.describe 'Locations', type: :system, js: true do
     #テストで使用するユーザーと場所のデータを作成
     let(:user) { create(:user) }
     # FactoryBotで定義した:locationファクトリからテストで使う住所や緯度経度情報を取得

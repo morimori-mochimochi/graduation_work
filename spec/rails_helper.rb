@@ -13,17 +13,15 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 
 require 'capybara/rails'
-require 'capybara/rspec'
 
-# Capybaraサーバーのホストとポートを固定
-Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
-Capybara.server_host = '0.0.0.0'
-Capybara.server_port = 3001 # 任意の未使用ポート
-Capybara.app_host = 'http://127.0.0.1:3001' #  Seleniumコンテナからジョブコンテナへのアクセス用
-
-# JavaScriptテスト用にドライバーを設定
-Capybara.javascript_driver = :selenium_chrome_headless
-# Add additional requires below this line. Rails is not loaded until this point!
+# Dockerコンテナでテストを実行する場合（SELENIUM_URLが設定されている場合）
+if ENV['SELENIUM_URL']
+  # Capybaraがテスト用サーバーを起動する際の設定
+  Capybara.server_host = '0.0.0.0' # すべてのIPアドレスからの接続を許可
+  Capybara.server_port = 3001      # 任意のポート
+  # SeleniumコンテナからRailsアプリ（webコンテナ）へのアクセスURL
+  Capybara.app_host = "http://web:#{Capybara.server_port}"
+end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -37,7 +35,6 @@ Capybara.javascript_driver = :selenium_chrome_headless
 # of increasing the boot-up time by auto-requiring all files in the support
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
-
 Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
