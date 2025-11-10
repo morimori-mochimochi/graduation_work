@@ -66,12 +66,6 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
 
-      - name: Start Rails server
-        env:
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bundle exec rails s -e test -p 3001 -d
-
       - name: Wait for server to start
         run: |
           for i in {1..10}; do
