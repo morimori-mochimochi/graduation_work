@@ -19,9 +19,8 @@ if ENV['SELENIUM_URL']
   # Capybaraがテスト用サーバーを起動する際の設定
   Capybara.server_host = '0.0.0.0' # すべてのIPアドレスからの接続を許可
   Capybara.server_port = 3001      # 任意のポート
-  # GitHub ActionsのCI環境か、ローカルのDocker Compose環境かでホスト名を切り替える
-  # CI環境ではホストランナーを指す `localhost` を、Docker Composeではサービス名 `web` を使う
-  app_host = ENV['CI'] ? 'localhost' : 'web'
+  # Docker Compose環境(ローカル、CI問わず)では、Railsアプリは `web` というホスト名でアクセス可能
+  app_host = 'web'
   # SeleniumコンテナからRailsアプリ（webコンテナ）へのアクセスURL
   Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
 end
