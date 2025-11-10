@@ -18,7 +18,7 @@ RSpec.describe 'Locations', type: :system, js: true do
             visit new_location_path
 
             # new.html.erbのフォームに名前を入力する
-            fill_in '場所の名前', with: location_attributes[:name]
+            fill_in 'location_name', with: location_attributes[:name]
 
             # 保存ボタンをクリック
             expect do
