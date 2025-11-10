@@ -21,7 +21,12 @@ if ENV['SELENIUM_URL']
   Capybara.server_port = 3001      # 任意のポート
   # 環境に応じて接続先ホストを切り替え
   # - Docker Compose 環境では `web`
-  app_host = 'web'
+  # - GitHub Actions では `host.docker.internal`
+  app_host = if ENV['CI']
+               'host.docker.internal'
+             else
+               'web'
+             end
 
   Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
 
