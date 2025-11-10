@@ -13,17 +13,26 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 require 'rspec/rails'
 
 require 'capybara/rails'
-require 'capybara/rspec'
 
-# Capybaraサーバーのホストとポートを固定
-Capybara.server = :puma, { Silent: true } # サーバー起動時のログを抑制
-Capybara.server_host = '0.0.0.0'
-Capybara.server_port = 3001 # 任意の未使用ポート
-Capybara.app_host = 'http://127.0.0.1:3001' #  Seleniumコンテナからジョブコンテナへのアクセス用
+# Dockerコンテナでテストを実行する場合（SELENIUM_URLが設定されている場合）
+if ENV['SELENIUM_URL']
+  # Capybaraがテスト用サーバーを起動する際の設定
+  Capybara.server_host = '0.0.0.0' # すべてのIPアドレスからの接続を許可
+  Capybara.server_port = 3001      # 任意のポート
+  # 環境に応じて接続先ホストを切り替え
+  # - Docker Compose 環境では `web`
+  # - GitHub Actions では `host.docker.internal`
+  app_host = if ENV['CI'] # GitHub Actions環境
+               '172.17.0.1' # ホストランナーのIPアドレスを直接指定
+             else
+               'web'
+             end
 
-# JavaScriptテスト用にドライバーを設定
-Capybara.javascript_driver = :selenium_chrome_headless
-# Add additional requires below this line. Rails is not loaded until this point!
+  Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
+
+  puts "[DEBUG] ENV['CI']: #{ENV['CI'].inspect}"
+  puts "[DEBUG] Capybara.app_host: #{Capybara.app_host}"
+end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -37,9 +46,7 @@ Capybara.javascript_driver = :selenium_chrome_headless
 # of increasing the boot-up time by auto-requiring all files in the support
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
-#
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
-
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
@@ -53,6 +60,8 @@ RSpec.configure do |config|
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
   ]
+
+  config.include FactoryBot::Syntax::Methods
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -79,7 +88,6 @@ RSpec.configure do |config|
   # To enable this behaviour uncomment the line below.
   # config.infer_spec_type_from_file_location!
 
-  Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
@@ -102,5 +110,11 @@ RSpec.configure do |config|
         Rails.logger.info "---------------------------\n"
       end
     end
+  end
+end
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    puts "Capybara.app_host = #{Capybara.app_host.inspect}"
   end
 end
