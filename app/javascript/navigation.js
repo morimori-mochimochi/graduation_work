@@ -312,11 +312,27 @@ export async function startNavigation() {
       }
     },
     (err) => {
-    // エラーコードに応じて処理を分析     
+    // エラーコードに応じて処理を分析 
+    const showErrorMessage = (message, duration = 3000) => {
+      const errorEl =document.getElementById('error-message');
+      if (!errorEl) return;
+
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      
+      // durationミリ秒後にメッセージを消す
+      setTimeout(() => {
+        errorEl.classList.add('opacity-0');
+        // transitionが終わってからhiddenにする
+        setTimeout(() => errorEl.classList.add('hidden'), 300);
+      }, duration);
+      
+      console.error(message);
+    };
+    
     switch (err.code) {
       case err.PERMISSION_DENIED:
-        console.error("位置情報へのアクセスが拒否されました。");
-        alert("位置情報の利用が許可されていません。ブラウザまたはOSの設定を確認してください。");
+        showErrorMessage("位置情報へのアクセスが拒否されました。");
         stopNavigation();
         break; // switch 中断の合図
       case err.POSITION_UNAVAILABLE:
