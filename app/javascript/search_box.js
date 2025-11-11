@@ -46,14 +46,11 @@ export function highlightMarker(marker, duration = 1500) {
 
         const uiStart = document.getElementById("startPoint"); 
         if (uiStart) {
-          console.log("出発地UIを更新します:", uiStart);
           uiStart.textContent = facilityName || "選択した場所";
         }
         infoWindow.close();
       });
     }
-
-    console.log("出発地ボタンにイベント登録しました", start_btn);
 
     if (destination_btn) {
       destination_btn.addEventListener("click", function() {
@@ -61,12 +58,10 @@ export function highlightMarker(marker, duration = 1500) {
 
         const uiDest = document.getElementById("destinationPoint");
         if (uiDest) {
-          console.log("目的地UIを更新します:", uiDest);
           uiDest.textContent = facilityName || "選択した場所";
         }
         infoWindow.close();
       });
-      console.log("目的地ボタンにイベント登録しました", destination_btn);
     }
 
     if (route_btn) {
@@ -85,9 +80,6 @@ export function highlightMarker(marker, duration = 1500) {
           'location[lat]': position.lat(),
           'location[lng]': position.lng()
         });
-
-        // facilityAddress の中身を確認
-        console.log("addressの中身: ", facilityAddress);
 
         // new_location_path にクエリパラメータを付けて遷移
         window.location.href = `/locations/new?${params.toString()}`;
@@ -112,7 +104,6 @@ async function searchExactPlace(query) {
     if (response.ok) {
       const locations = await response.json();
       if (locations.length > 0) {
-      console.log("自前DBから場所が見つかりました: ", locations);
       // Google Places APIの結果と同じ形式に変換
       const places = locations.map(loc => ({
         location: new google.maps.LatLng(loc.latitude, loc.longitude),
@@ -133,7 +124,6 @@ async function searchExactPlace(query) {
 
   const {Place} = await google.maps.importLibrary("places");
   const center = map.getCenter();
-  console.log("Placeライブラリが呼ばれました");
 
   const request = {
     textQuery: query,
@@ -152,153 +142,152 @@ async function searchExactPlace(query) {
 
   displayPlaces(result.places);
 
-  // マーカーと結果リストを表示する共通関数
-  function displayPlaces(places) {
-    const center = map.getCenter();
-
-    // 距離順に並べ替え
-    const sortedPlaces = places.sort((a,b) => {
-      const distA = google.maps.geometry.spherical.computeDistanceBetween(center, a.location);
-      const distB = google.maps.geometry.spherical.computeDistanceBetween(center, b.location);
-      return distA - distB;
-    });
-    
-    // 既存のマーカーを削除
-    if (window.markers && window.markers.length > 0) {
-      window.markers.forEach(m => m.setMap(null));
-    }
-    window.markers = [];
-
-    sortedPlaces.forEach(place => {
-      const marker = new google.maps.Marker({
-        position: place.location,
-        map: map,
-        title: place.displayName,
-        icon: {
-          url: place.isCustom ? "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png" : "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-        }
-      });
-      // placeオブジェクトの情報をmarkerに紐付ける
-      marker.placeResult = place;
-      marker.formattedAddress = place.formattedAddress;
-      window.markers.push(marker);
-    });
-
-    // 検索結果をリスト表示
-    let mapDiv = document.getElementById("map");
-    let container = document.getElementById("resultContainer");
-    if (!container) {
-      container = document.createElement("div");
-      container.id = "resultContainer";
-      container.style.maxHeight = "200px";
-      container.style.overflowY = "auto";
-      container.style.border = "1px solid #ccc";
-      container.style.padding = "5px";
-      container.style.marginTop = "10px";
-
-      mapDiv.parentNode.insertBefore(container, mapDiv.nextSibling);
-    } else {
-      container.innerHTML = ""; //前回の結果をクリア
-    }
-
-    // forEachはJSの繰り返し処理。マーカーとリストを対応付けてリストのHTMLを作る。
-    sortedPlaces.forEach((place, index) => {
-      const marker = window.markers[index];
-
-      // マーカークリックで対応するリストへ移動
-      // window.markerにすることでこの処理の外からマーカーを消すことが可能。
-      window.markers[index].addListener("click", () => {
-        highlightMarker(window.markers[index]);
-
-        // 対応するリスト要素までスクロール
-        const listItem = container.children[index];
-        if (listItem) {
-          listItem.scrollIntoView({ behavior: "smooth", block: "center" });
-          // ハイライト効果
-          listItem.style.backgroundColor = "#ffff99";
-          setTimeout(() => {
-            listItem.style.backgroundColor = "";
-          }, 1500);
-        }
-      });
-
-      // 新たにdivを作り、クラス名をresult-itemにする
-      const item = document.createElement("div");
-      item.classList.add("result-item");
-      item.style.borderBottom = "1px solid #eee";
-      item.style.padding = "5px";
-      item.style.cursor = "pointer";
-        
-      // 自前DBからの結果の場合、「保存したスポット」アイコンとテキストを表示
-      if (place.isCustom) {
-        const savedSpotDiv = document.createElement("div");
-        savedSpotDiv.style.display = "flex";
-        savedSpotDiv.style.alignItems = "center";
-        savedSpotDiv.style.marginBottom = "5px";
-
-        const savedIcon = document.createElement("img");
-        // Railsのアセットパイプライン経由で画像を参照します
-        savedIcon.src = "/images/saved_location.png"; 
-        savedIcon.style.width = "16px";
-        savedIcon.style.height = "16px";
-        savedIcon.style.marginRight = "5px";
-
-        const savedText = document.createElement("span");
-        savedText.textContent = "保存したスポット";
-        savedText.style.fontSize = "0.8em";
-        savedText.style.color = "#666";
-        
-        savedSpotDiv.appendChild(savedIcon);
-        savedSpotDiv.appendChild(savedText);
-        item.appendChild(savedSpotDiv);
-      }
-
-      // 施設名
-      const name = document.createElement("h4");
-      name.textContent = place.displayName;
-      name.style.margin = "0 0 3px 0";
-
-      // 住所
-      const address = document.createElement("p");
-      address.textContent = place.formattedAddress || "";
-      address.style.margin = "0 0 3px 0";
-      address.style.fontSize = "0.9em";
-      address.style.color = "#555";
-
-      // 画像
-      let img;
-      if (place.photos && place.photos.length > 0) {
-        img = document.createElement("img");
-        img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
-        img.style.display = "block";
-        img.style.marginBottom = "3px";
-      }
-
-      item.appendChild(name);
-      if (img) item.appendChild(img);
-      item.appendChild(address);
-      container.appendChild(item);
-
-      //クリックでマップを移動
-      item.addEventListener("click", () => {
-        map.panTo(place.location);
-        highlightMarker(window.markers[index]);
-        console.log("highlightMarkerが呼ばれた");
-      });
-    });
-  };
 };
+
+function displayPlaces(places) {
+  const center = map.getCenter();
+
+  // 距離順に並べ替え
+  const sortedPlaces = places.sort((a,b) => {
+    const distA = google.maps.geometry.spherical.computeDistanceBetween(center, a.location);
+    const distB = google.maps.geometry.spherical.computeDistanceBetween(center, b.location);
+    return distA - distB;
+  });
+  
+  // 既存のマーカーを削除
+  if (window.markers && window.markers.length > 0) {
+    window.markers.forEach(m => m.setMap(null));
+  }
+  window.markers = [];
+
+  sortedPlaces.forEach(place => {
+    const marker = new google.maps.Marker({
+      position: place.location,
+      map: map,
+      title: place.displayName,
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      }
+    });
+    // placeオブジェクトの情報をmarkerに紐付ける
+    marker.placeResult = place;
+    marker.formattedAddress = place.formattedAddress;
+    window.markers.push(marker);
+  });
+
+  // 検索結果をリスト表示
+  let mapDiv = document.getElementById("map");
+  let container = document.getElementById("resultContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "resultContainer";
+    container.style.maxHeight = "200px";
+    container.style.overflowY = "auto";
+    container.style.border = "1px solid #ccc";
+    container.style.padding = "5px";
+    container.style.marginTop = "10px";
+    container.style.backgroundColor = "#FFFFFF";
+    container.style.borderRadius = "8px"; 
+
+    mapDiv.parentNode.insertBefore(container, mapDiv.nextSibling);
+  } else {
+    container.innerHTML = ""; //前回の結果をクリア
+  }
+
+  // forEachはJSの繰り返し処理。マーカーとリストを対応付けてリストのHTMLを作る。
+  sortedPlaces.forEach((place, index) => {
+    const marker = window.markers[index];
+
+    // マーカークリックで対応するリストへ移動
+    // window.markerにすることでこの処理の外からマーカーを消すことが可能。
+    window.markers[index].addListener("click", () => {
+      highlightMarker(window.markers[index]);
+
+      // 対応するリスト要素までスクロール
+      const listItem = container.children[index];
+      if (listItem) {
+        listItem.scrollIntoView({ behavior: "smooth", block: "center" });
+        // ハイライト効果
+        listItem.style.backgroundColor = "#ffff99";
+        setTimeout(() => {
+          listItem.style.backgroundColor = "";
+        }, 1500);
+      }
+    });
+
+    // 新たにdivを作り、クラス名をresult-itemにする
+    const item = document.createElement("div");
+    item.classList.add("result-item");
+    item.style.borderBottom = "1px solid #eee";
+    item.style.padding = "5px";
+    item.style.cursor = "pointer";
+      
+    // 自前DBからの結果の場合、「保存したスポット」アイコンとテキストを表示
+    if (place.isCustom) {
+      const savedSpotDiv = document.createElement("div");
+      savedSpotDiv.style.display = "flex";
+      savedSpotDiv.style.alignItems = "center";
+      savedSpotDiv.style.marginBottom = "5px";
+
+      const savedIcon = document.createElement("img");
+      // Railsのアセットパイプライン経由で画像を参照します
+      savedIcon.src = "/images/saved_location.png"; 
+      savedIcon.style.width = "16px";
+      savedIcon.style.height = "16px";
+      savedIcon.style.marginRight = "5px";
+
+      const savedText = document.createElement("span");
+      savedText.textContent = "保存したスポット";
+      savedText.style.fontSize = "0.8em";
+      savedText.style.color = "#666";
+      
+      savedSpotDiv.appendChild(savedIcon);
+      savedSpotDiv.appendChild(savedText);
+      item.appendChild(savedSpotDiv);
+    }
+
+    // 施設名
+    const name = document.createElement("h4");
+    name.textContent = place.displayName;
+    name.style.margin = "0 0 3px 0";
+
+    // 住所
+    const address = document.createElement("p");
+    address.textContent = place.formattedAddress || "";
+    address.style.margin = "0 0 3px 0";
+    address.style.fontSize = "0.9em";
+    address.style.color = "#555";
+
+    // 画像
+    let img;
+    if (place.photos && place.photos.length > 0) {
+      img = document.createElement("img");
+      img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
+      img.style.display = "block";
+      img.style.marginBottom = "3px";
+    }
+
+    item.appendChild(name);
+    if (img) item.appendChild(img);
+    item.appendChild(address);
+    container.appendChild(item);
+
+    //クリックでマップを移動
+    item.addEventListener("click", () => {
+      map.panTo(place.location);
+      highlightMarker(window.markers[index]);
+    });
+  });
+}
 
 export function initSearchBox() {
   const btn = document.getElementById("searchBtn");
   const input = document.getElementById("address");
-  console.log("検索ボタンアクションが呼ばれました", searchBtn);
 
   if (btn && input) {
     btn.addEventListener("click", () => {
       // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
       const value = input.value.trim();
-      console.log('検索開始');
       // #valueに値があればsearchExactPlace関数を実行
       if (value) {
         searchExactPlace(value);
@@ -315,7 +304,6 @@ export function clearSearchMarkersOnRouteDraw() {
     if (window.markers && window.markers.length > 0) {
       window.markers.forEach(marker => marker.setMap(null));
       window.markers = [];
-      console.log("検索マーカーを消しました");
     }
   };
   if (walkBtn) walkBtn.addEventListener("click", clearMarkers);
