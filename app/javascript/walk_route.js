@@ -38,6 +38,14 @@ export async function walkDrawRoute(start, destination){
           console.log("★ directionsService OK", response);
           // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
           window.directionsResult = response;
+
+          // ルート情報から所要時間を取得して表示
+          const route = response.route[0];
+          if (route && route.legs && route.legs.length > 0) {
+            const duration = route.legs[0].duration;
+            console.log(`所要時間: ${duration.text} (${duration.value}秒)`);
+          }
+
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
           console.log("★ window.directionsResult set", window.directionsResult);
           resolve(status);
