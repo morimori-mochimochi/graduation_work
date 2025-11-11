@@ -1,0 +1,26 @@
+<div class="mt-15">
+  <div class="point-selector">
+    <button id="startPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">現在地</button>
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-[#624007]">出発時刻: </span>
+      <select class="select select-borderd select-sm w-20 bg-white border-[#9A6812]">
+        <option disabled selected>時</option>
+        <% (0..23).each do |h| %>
+          <option><%= format('%02d', h) %></option>
+        <% end %>
+      </select>
+    </div>
+    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
+    <button id="destinationPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">目的地</button>
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-[#624007]">到着時刻: </span>
+      <select class="select select-borderd select-sm w-20 bg-white border-[#9A6812]">
+        <option disabled selected>時</option>
+        <% (0..23).each do |h| %>
+          <option><%= format('%02d', h) %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <div id="map"></div>
+</div>
