@@ -40,8 +40,15 @@ class LocationsController < ApplicationController
 
   def search
     # ログインしているユーザーが保存した場所から検索
-    @locations = current_user.locations.where("name LIKE ? OR address LIKE ?", "%#{params[:query]}%", "%#{params[:query]}%")
-    render json: @locations.map { |loc| { id: loc.id, name: loc.name, address: loc.address, latitude: loc.lat, longitude: loc.lng }}
+    query = "%#{params[:query]}%"
+    @locations = current_user.locations.where('name LIKE ? OR address LIKE ?', query, query)
+    render json: @locations.map { |loc|
+      {
+        id: loc.id, name: loc.name,
+        address: loc.address, latitude: loc.lat,
+        longitude: loc.lng
+      }
+    }
   end
 
   private
