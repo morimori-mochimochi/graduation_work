@@ -21,7 +21,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :locations
+  # cllection doは特定のIDを含まないURLを定義する（今回はlocationsの集合体に対して)
+  # search_box.jsからのfetchリクエストこのURLに届き、
+  # LocationsControllerのsearchアクションで検索可能に
+  resources :locations do
+    collection do
+      get 'search'
+    end
+  end
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Defines the root path route ("/")

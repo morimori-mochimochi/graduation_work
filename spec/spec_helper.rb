@@ -32,6 +32,8 @@ Capybara.register_driver :remote_chrome do |app|
   # /dev/shm（共有メモリ）が小さい環境（Docker の一部設定など）でブラウザがクラッシュするのを防ぐためのオプション
   options.add_argument('disable-dev-shm-usage')
   options.add_argument('window-size=1400,1400')
+  # 位置情報利用の許可を求めるアラートを自動的に承認する
+  options.add_argument('--use-fake-ui-for-media-stream')
 
   Capybara::Selenium::Driver.new(
     app,

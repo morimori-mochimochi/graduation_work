@@ -46,14 +46,11 @@ export function highlightMarker(marker, duration = 1500) {
 
         const uiStart = document.getElementById("startPoint"); 
         if (uiStart) {
-          console.log("出発地UIを更新します:", uiStart);
           uiStart.textContent = facilityName || "選択した場所";
         }
         infoWindow.close();
       });
     }
-
-    console.log("出発地ボタンにイベント登録しました", start_btn);
 
     if (destination_btn) {
       destination_btn.addEventListener("click", function() {
@@ -61,12 +58,10 @@ export function highlightMarker(marker, duration = 1500) {
 
         const uiDest = document.getElementById("destinationPoint");
         if (uiDest) {
-          console.log("目的地UIを更新します:", uiDest);
           uiDest.textContent = facilityName || "選択した場所";
         }
         infoWindow.close();
       });
-      console.log("目的地ボタンにイベント登録しました", destination_btn);
     }
 
     if (route_btn) {
@@ -86,9 +81,6 @@ export function highlightMarker(marker, duration = 1500) {
           'location[lng]': position.lng()
         });
 
-        // facilityAddress の中身を確認
-        console.log("addressの中身: ", facilityAddress);
-
         // new_location_path にクエリパラメータを付けて遷移
         window.location.href = `/locations/new?${params.toString()}`;
       });
@@ -104,9 +96,34 @@ export function highlightMarker(marker, duration = 1500) {
 
 // #部分一致検索＋ピン設置
 async function searchExactPlace(query) {
+  // 1. 自前DBを検索
+  // encodeはフォームに入力された日本語によって
+  // URLが壊れないよう安全な形に変換する
+  try {
+    const response = await fetch (`/locations/search?query=${encodeURIComponent(query)}`);
+    if (response.ok) {
+      const locations = await response.json();
+      if (locations.length > 0) {
+      // Google Places APIの結果と同じ形式に変換
+      const places = locations.map(loc => ({
+        location: new google.maps.LatLng(loc.latitude, loc.longitude),
+        displayName: loc.name,
+        formattedAddress: loc.address,
+        isCustom: true // 自前DBからの結果であることを示すフラグ
+      }));
+      displayPlaces(places);
+      return;
+      }
+    }
+  } catch (error) {
+    console.error("自前DB検索中にエラーが発生しました: ", error);
+  }
+
+  // 2. 自前DBになければGoogle Places APIで検索
+  console.log("自前DBにないため、Google Places APIで検索します。");
+
   const {Place} = await google.maps.importLibrary("places");
   const center = map.getCenter();
-  console.log("Placeライブラリが呼ばれました");
 
   const request = {
     textQuery: query,
@@ -123,13 +140,20 @@ async function searchExactPlace(query) {
     return;
   }
 
- // 距離順に並べ替え
-  const sortedPlaces = result.places.sort((a,b) => {
+  displayPlaces(result.places);
+
+};
+
+function displayPlaces(places) {
+  const center = map.getCenter();
+
+  // 距離順に並べ替え
+  const sortedPlaces = places.sort((a,b) => {
     const distA = google.maps.geometry.spherical.computeDistanceBetween(center, a.location);
     const distB = google.maps.geometry.spherical.computeDistanceBetween(center, b.location);
     return distA - distB;
   });
-    
+  
   // 既存のマーカーを削除
   if (window.markers && window.markers.length > 0) {
     window.markers.forEach(m => m.setMap(null));
@@ -162,6 +186,8 @@ async function searchExactPlace(query) {
     container.style.border = "1px solid #ccc";
     container.style.padding = "5px";
     container.style.marginTop = "10px";
+    container.style.backgroundColor = "#FFFFFF";
+    container.style.borderRadius = "8px"; 
 
     mapDiv.parentNode.insertBefore(container, mapDiv.nextSibling);
   } else {
@@ -189,12 +215,37 @@ async function searchExactPlace(query) {
       }
     });
 
+    // 新たにdivを作り、クラス名をresult-itemにする
     const item = document.createElement("div");
     item.classList.add("result-item");
     item.style.borderBottom = "1px solid #eee";
     item.style.padding = "5px";
     item.style.cursor = "pointer";
       
+    // 自前DBからの結果の場合、「保存したスポット」アイコンとテキストを表示
+    if (place.isCustom) {
+      const savedSpotDiv = document.createElement("div");
+      savedSpotDiv.style.display = "flex";
+      savedSpotDiv.style.alignItems = "center";
+      savedSpotDiv.style.marginBottom = "5px";
+
+      const savedIcon = document.createElement("img");
+      // Railsのアセットパイプライン経由で画像を参照します
+      savedIcon.src = "/images/saved_location.png"; 
+      savedIcon.style.width = "16px";
+      savedIcon.style.height = "16px";
+      savedIcon.style.marginRight = "5px";
+
+      const savedText = document.createElement("span");
+      savedText.textContent = "保存したスポット";
+      savedText.style.fontSize = "0.8em";
+      savedText.style.color = "#666";
+      
+      savedSpotDiv.appendChild(savedIcon);
+      savedSpotDiv.appendChild(savedText);
+      item.appendChild(savedSpotDiv);
+    }
+
     // 施設名
     const name = document.createElement("h4");
     name.textContent = place.displayName;
@@ -224,8 +275,7 @@ async function searchExactPlace(query) {
     //クリックでマップを移動
     item.addEventListener("click", () => {
       map.panTo(place.location);
-      highlightMarker(markers[index]);
-      console.log("highlightMarkerが呼ばれた");
+      highlightMarker(window.markers[index]);
     });
   });
 }
@@ -233,7 +283,6 @@ async function searchExactPlace(query) {
 export function initSearchBox() {
   const btn = document.getElementById("searchBtn");
   const input = document.getElementById("address");
-  console.log("検索ボタンアクションが呼ばれました");
 
   if (btn && input) {
     btn.addEventListener("click", () => {
@@ -255,7 +304,6 @@ export function clearSearchMarkersOnRouteDraw() {
     if (window.markers && window.markers.length > 0) {
       window.markers.forEach(marker => marker.setMap(null));
       window.markers = [];
-      console.log("検索マーカーを消しました");
     }
   };
   if (walkBtn) walkBtn.addEventListener("click", clearMarkers);

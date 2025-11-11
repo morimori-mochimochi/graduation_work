@@ -310,10 +310,40 @@ export async function startNavigation() {
           showArrivalMessage();
         }
       }
-    },           
+    },
     (err) => {
-      console.error("位置情報の取得に失敗しました: ", err);
-      stopNavigation();
+    // エラーコードに応じて処理を分析 
+    const showErrorMessage = (message, duration = 3000) => {
+      const errorEl =document.getElementById('error-message');
+      if (!errorEl) return;
+
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      
+      // durationミリ秒後にメッセージを消す
+      setTimeout(() => {
+        errorEl.classList.add('opacity-0');
+        // transitionが終わってからhiddenにする
+        setTimeout(() => errorEl.classList.add('hidden'), 300);
+      }, duration);
+      
+      console.error(message);
+    };
+    
+    switch (err.code) {
+      case err.PERMISSION_DENIED:
+        showErrorMessage("位置情報へのアクセスが拒否されました。");
+        stopNavigation();
+        break; // switch 中断の合図
+      case err.POSITION_UNAVAILABLE:
+        console.warn("現在地が取得できませんでした。再試行します。");
+        //ナビは継続し、次の更新を待つ
+        break;
+      case err.TIMEOUT:
+        console.warn("位置情報の取得がタイムアウトしました。再試行します。");
+        // タイムアウトも一時的な場合があるため、ナビは持続
+        break;
+      }
     },
     // GPSを使って今現在の正確な位置情報をとってくるようにする
     { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }

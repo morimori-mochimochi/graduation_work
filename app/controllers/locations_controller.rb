@@ -38,6 +38,19 @@ class LocationsController < ApplicationController
     redirect_to locations_path, notice: t('.notice'), status: :see_other
   end
 
+  def search
+    # ログインしているユーザーが保存した場所から検索
+    query = "%#{params[:query]}%"
+    @locations = current_user.locations.where('name LIKE ? OR address LIKE ?', query, query)
+    render json: @locations.map { |loc|
+      {
+        id: loc.id, name: loc.name,
+        address: loc.address, latitude: loc.lat,
+        longitude: loc.lng
+      }
+    }
+  end
+
   private
 
   def location_params
