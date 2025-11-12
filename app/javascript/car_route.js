@@ -117,6 +117,14 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
       }
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
+
+      // ルート情報から所要時間を取得して表示
+      const route = response.routes[0];
+      if (route && route.legs && route.legs.length > 0) {
+        const duration = route.legs[0].duration;
+        console.log(`所要時間: ${duration.text} (${duration.value}秒)`);
+      }
+
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
       return "OK";
     } catch (error) {
