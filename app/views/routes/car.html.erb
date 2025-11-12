@@ -22,12 +22,6 @@
 </div>
 
 <div class="mt-15">
-  <div class="point-selector -mt-3">
-    <button id="startPoint">現在地</button>
-    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
-    <button id="routeParking"style="display:none;">駐車場</button>
-    <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
-    <button id="destinationPoint">目的地</button>
-  </div>
+  <%= render 'shared/route_points' %>
   <div id="map"></div>
 </div>

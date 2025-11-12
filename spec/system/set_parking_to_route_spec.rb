@@ -21,14 +21,16 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       # evaluate_script: 非同期（promiseを使うもの)を待つ時に使う
       # 上記どちらも任意のJSを実行するメソッド
       result = page.evaluate_async_script(
-        <<~JS,
-          const done = arguments[6]; // 非同期の完了を知らせるdone関数をCapybaraが最後の引数に追加
+        <<~JS, # 非同期処理の完了を待つ
           const[startLat, startLng, destLat, destLng, parkLat, parkLng] = arguments;
+          const done = arguments[arguments.length - 1];
+
           window.routeStart = new google.maps.LatLng({ lat: startLat, lng: startLng });
           window.routeDestination = new google.maps.LatLng({ lat: destLat, lng: destLng });
           window.routeParking = new google.maps.LatLng({ lat: parkLat, lng: parkLng});
           console.log("FactoryBot data set to JS variables");
-          window.carDrawRoute().then(done).catch(e => done(e.message));
+
+          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));
         JS
         start.lat,
         start.lng,

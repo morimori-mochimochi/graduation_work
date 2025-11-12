@@ -1,5 +1,9 @@
 import { fetchCurrentPos } from "./current_pos"
 
+function isValidLatLng(point) {
+  return point && typeof point.lat === 'function' && typeof point.lng === 'function';
+}
+
 export async function walkDrawRoute(start, destination){
   console.log("ルートを作ります");
   await window.mapApiLoaded;
@@ -15,20 +19,38 @@ export async function walkDrawRoute(start, destination){
   // #取得したルートをマップに表示
   // #DirectionsRendererは検索したルートをマップに描画するクラス
   if (!window.directionsRenderer) {
-    window.directionsRenderer = new google.maps.DirectionsRenderer();
+    window.directionsRenderer = new google.maps.DirectionsRenderer({
+      map: window.map
+    });
+  } else {
+    // #既存のルートをクリア
+    window.directionsRenderer.setMap(null);
   }
-
   // #どのマップにルートを描画するかを指定
   window.directionsRenderer.setMap(window.map);
 
+  // waypoints配列を作り、そこに中継点を入れていく
+  const waypoints = [];
+  // 中継地点が存在する場合、リクエストに追加
+  if (isValidLatLng(window.relayPoint)) {
+    waypoints.push({
+      location: window.relayPoint,
+      stopover: true // 立ち寄り地点として設定
+    });
+  }
+
+  const request = {
+    origin: originPos,
+    destination: finalDestination,
+    travelMode: google.maps.TravelMode.WALKING,
+    waypoints: waypoints,
+    optimizeWaypoints: true, // ウェイポイントの順序を最適化
+  };
+
+  console.log("requestの中身:", request);
+
   return new Promise((resolve, reject) => {
-    directionsService.route(
-      {
-        origin: originPos,
-        destination: finalDestination,
-        optimizeWaypoints: true,
-        travelMode: google.maps.TravelMode.WALKING
-      },
+    directionsService.route(request,
       (response, status) => {
         if (status !== "OK") {
           console.error("Directionsエラー:", status, response);
@@ -38,6 +60,14 @@ export async function walkDrawRoute(start, destination){
           console.log("★ directionsService OK", response);
           // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
           window.directionsResult = response;
+
+          // ルート情報から所要時間を取得して表示
+          const route = response.routes[0];
+          if (route && route.legs && route.legs.length > 0) {
+            const duration = route.legs[0].duration;
+            console.log(`所要時間: ${duration.text} (${duration.value}秒)`);
+          }
+
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
           console.log("★ window.directionsResult set", window.directionsResult);
           resolve(status);
@@ -55,7 +85,7 @@ export function walkRouteBtn() {
     
   if (walkDrawRouteBtn) {
     walkDrawRouteBtn.addEventListener("click", () => {
-      walkDrawRoute(); // 通常のクリック時は引数なしで呼び出す
+      walkDrawRoute(); // eventオブジェクトを渡さないように修正
     });
   }else{
     console.warn("walkDrawRouteボタンが存在しません");

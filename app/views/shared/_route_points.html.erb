@@ -19,7 +19,30 @@
       </div>
     </div>
   </div>
-  <%= image_tag "/images/arrow.png", alt: "arrow", class: "arrow" %>
+
+  <div id="relayPointContainer" class="flex flex-col gap-1" style="display: none;">
+    <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-5 ml-25" %>
+    <div class="flex items-center gap-4">
+      <button id="relayPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">中継地</button>
+      <div class="flex flex-col gap-1">
+        <span class="font-bold text-[#624007]">中継</span>
+        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+          <option disabled selected>時</option>
+          <% (0..23).each do |h| %>
+            <option><%= format('%02d', h) %></option>
+          <% end %>
+        </select>
+        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+          <option disabled selected>分</option>
+          <% (0..59).step(5).each do |m| %>
+            <option><%= format('%02d', m) %></option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-auto" %>
   <div class="flex items-center gap-4">
     <button id="destinationPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">目的地</button>
     <div class="flex items-center gap-2">

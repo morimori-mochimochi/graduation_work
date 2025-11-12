@@ -36,6 +36,7 @@ export function highlightMarker(marker, duration = 1500) {
   google.maps.event.addListenerOnce(infoWindow, "domready", function() {
     const start_btn = document.querySelector(".info-window-set-start");
     const destination_btn = document.querySelector(".info-window-set-destination");
+    const relay_point_btn = document.querySelector(".info-window-set-relay-point");
     const route_btn = document.querySelector(".info-window-route-btn");
     const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
     const save_btn = document.querySelector(".info-window-save-location");
@@ -50,6 +51,28 @@ export function highlightMarker(marker, duration = 1500) {
         }
         infoWindow.close();
       });
+    }
+
+    // 出発/到着地の設定があるときのみ
+    if (window.routeDestination) {
+      console.log("relayPointボタンを表示します");
+      if (relay_point_btn) {
+        relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
+        relay_point_btn.addEventListener("click", () => { // アロー関数に変更
+          window.relayPoint = marker.getPosition ? marker.getPosition() : marker.position;
+          const uiRelayButton = document.getElementById("relayPoint");
+          const uiRelayContainer = document.getElementById("relayPointContainer");
+          if (uiRelayButton && uiRelayContainer) {
+            uiRelayButton.textContent = facilityName || "選択した場所";
+            uiRelayContainer.style.display = 'flex';
+          }
+          infoWindow.close();
+        });
+      } 
+    } else {
+      if (relay_point_btn) {
+        relay_point_btn.parentElement.style.display = 'none';
+      }
     }
 
     if (destination_btn) {

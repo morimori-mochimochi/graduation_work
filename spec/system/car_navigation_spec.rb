@@ -32,6 +32,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
       window.mapApiLoaded.then(async () => {
           const start = new google.maps.LatLng(start_location);
           const destination = new google.maps.LatLng(destination_location);
+          window.routeDestination = destination; // 目的地をグローバル変数にも設定
 
           try {
             if (typeof window.carDrawRoute !== 'function'){
@@ -39,8 +40,9 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
               done("Error: window.carDrawRoute is not a function");
               return;
             }
-            await window.carDrawRoute(start, destination);
-            done();
+            // carDrawRouteはPromiseを返すので、awaitで完了を待つ
+            const result = await window.carDrawRoute(start, destination);
+            done(result); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
             done("Error in carDrawRoute: " + e.message);
