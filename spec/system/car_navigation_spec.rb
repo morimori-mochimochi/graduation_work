@@ -32,6 +32,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
       window.mapApiLoaded.then(async () => {
           const start = new google.maps.LatLng(start_location);
           const destination = new google.maps.LatLng(destination_location);
+          window.routeDestination = destination; // 目的地をグローバル変数にも設定
 
           try {
             if (typeof window.carDrawRoute !== 'function'){
