@@ -40,11 +40,9 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
               done("Error: window.carDrawRoute is not a function");
               return;
             }
-            // carDrawRouteは成功時に"OK"を返すPromiseを返すので、
-            // .then()で結果を受け取り、done()に渡してテストを完了させる
-            window.carDrawRoute(start, destination)
-              .then(result => done(result))
-              .catch(e => done("Error in carDrawRoute: " + e.message));
+            // carDrawRouteはPromiseを返すので、awaitで完了を待つ
+            const result = await window.carDrawRoute(start, destination);
+            done(result); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
             done("Error in carDrawRoute: " + e.message);

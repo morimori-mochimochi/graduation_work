@@ -57,9 +57,8 @@ export function highlightMarker(marker, duration = 1500) {
     if (window.routeDestination) {
       console.log("relayPointボタンを表示します");
       if (relay_point_btn) {
-        relay_point_btn.parentElement.style.display = 'list-item';
-        relay_point_btn.addEventListener("click", function() {
-          console.log("relayPointボタンを表示します2");
+        relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
+        relay_point_btn.addEventListener("click", () => { // アロー関数に変更
           window.relayPoint = marker.getPosition ? marker.getPosition() : marker.position;
           const uiRelayButton = document.getElementById("relayPoint");
           const uiRelayContainer = document.getElementById("relayPointContainer");
@@ -67,7 +66,6 @@ export function highlightMarker(marker, duration = 1500) {
             uiRelayButton.textContent = facilityName || "選択した場所";
             uiRelayContainer.style.display = 'flex';
           }
-          console.log("relayPointボタンを表示します3");
           infoWindow.close();
         });
       } 
