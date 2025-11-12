@@ -42,12 +42,21 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
     finalDestination
   ) {
     try {
-      // 1.出発点から駐車場(車)
-      const response1 = await routePromise({
+      const drivingRequest = {
         origin: originPos,
         destination: window.routeParking,
-        travelMode: google.maps.TravelMode.DRIVING
-      });
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true,
+      };
+
+      // 中継地点が存在する場合、リクエストに追加
+      if (window.relayPoint) {
+        drivingRequest.waypoints = [{ location: window.relayPoint, stopover: true }];
+      }
+
+      // 1.出発点から駐車場(車)
+      const response1 = await routePromise(drivingRequest);
+
       window.drivingRouteRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
         polylineOptions: { strokeColor: "green" }
@@ -90,11 +99,19 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
   // 駐車場がない場合（通常の車ルート）
   } else if (finalDestination) {
     try {
-      const response = await routePromise({
+      const request = {
         origin: originPos,
         destination: finalDestination,
-        travelMode: google.maps.TravelMode.DRIVING
-      });
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true,
+      };
+
+      // 中継地点が存在する場合、リクエストに追加
+      if (window.relayPoint) {
+        request.waypoints = [{ location: window.relayPoint, stopover: true }];
+      }
+
+      const response = await routePromise(request);
       if (!window.directionsRenderer) {
         window.directionsRenderer = new google.maps.DirectionsRenderer();
       }

@@ -54,7 +54,7 @@ export function highlightMarker(marker, duration = 1500) {
     }
 
     // 出発/到着地の設定があるときのみ
-    if (window.routeStart && window.routeDestination) {
+    if (window.routeDestination) {
       console.log("relayPointボタンを表示します");
       if (relay_point_btn) {
         relay_point_btn.parentElement.style.display = 'list-item';
