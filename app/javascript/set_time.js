@@ -33,7 +33,7 @@ function calculateAndSetArrivalTime() {
   const startMinute = parseInt(startMinuteEl.value, 10);
 
   // sessionStorageからルート情報を取得 64-69
-  const storeDirections = sessionStorage.getItem("directionsResult"); ///////
+  const storedDirections = sessionStorage.getItem("directionsResult"); ///////
   if (!storedDirections) {
     console.error("ルート情報が見つかりません");
     return;
