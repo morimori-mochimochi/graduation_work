@@ -10,6 +10,7 @@ import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
+import { initSetTime } from "./set_time";
 
 // ページ初期化のための共通関数
 function initializePage(container) {
@@ -42,6 +43,7 @@ function initializePage(container) {
         searchParking();
         walkRouteBtn();
         carRouteBtn();
+        initSetTime("walkDrawRouteBtn");
         // clearSearchMarkersOnRouteDraw(); // この関数は定義が見当たらないためコメントアウト
         initCurrentPosBtn();
       } else if (id === 'naviMap' || id === 'carNaviMap') {

@@ -4,13 +4,13 @@
     <div class="flex items-center gap-2">
       <div class="flex flex-col gap-1">
         <span class="font-bold text-[#624007]">出発</span>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="startHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>時</option>
           <% (0..23).each do |h| %>
             <option><%= format('%02d', h) %></option>
           <% end %>
         </select>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="startMinute"class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>分</option>
           <% (0..59).step(5).each do |m| %>
             <option><%= format('%02d', m) %></option>
@@ -26,13 +26,13 @@
       <button id="relayPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">中継地</button>
       <div class="flex flex-col gap-1">
         <span class="font-bold text-[#624007]">中継</span>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="relayHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>時</option>
           <% (0..23).each do |h| %>
             <option><%= format('%02d', h) %></option>
           <% end %>
         </select>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="relayMinute" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>分</option>
           <% (0..59).step(5).each do |m| %>
             <option><%= format('%02d', m) %></option>
@@ -48,13 +48,13 @@
     <div class="flex items-center gap-2">
       <div class="flex flex-col gap-1">
         <span class="font-bold text-[#624007]">到着</span>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="destinationHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>時</option>
           <% (0..23).each do |h| %>
             <option><%= format('%02d', h) %></option>
           <% end %>
         </select>
-        <select class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="destinationMinute" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>分</option>
           <% (0..59).step(5).each do |m| %>
             <option><%= format('%02d', m) %></option>
