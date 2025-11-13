@@ -23,14 +23,22 @@ function calculateAndSetArrivalTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 出発時刻が選択されていなければ現時刻を出発時刻に
-  if (startHourEl.value === "時" || startMinuteEl.value === "分") { //////
-    console.log("出発時刻が選択されていません。");
-    return;
-  }
+  let startHour, startMinute;
 
-  const startHour = parseInt(startHourEl.value, 10);
-  const startMinute = parseInt(startMinuteEl.value, 10);
+  // 出発時刻が選択されていなければ現時刻を出発時刻に
+  if (startHourEl.value === "時" || startMinuteEl.value === "分") {
+    console.log("出発時刻が選択されていないため、現在時刻を使用します。");
+    const now = new Date();
+    startHour = now.getHours();
+    startMinute = now.getMinutes();
+
+    // フォームにも現在時刻をセット
+    startHourEl.value = String(startHour).padStart(2, '0');
+    startMinuteEl.value = String(startMinute).padStart(2, '0');
+  } else {
+    startHour = parseInt(startHourEl.value, 10);
+    startMinute = parseInt(startMinuteEl.value, 10);
+  }
 
   // sessionStorageからルート情報を取得 64-69
   const storedDirections = sessionStorage.getItem("directionsResult"); ///////

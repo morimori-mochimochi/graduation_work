@@ -12,7 +12,7 @@
         </select>
         <select id="startMinute"class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>分</option>
-          <% (0..59).step(5).each do |m| %>
+          <% (0..59).step(1).each do |m| %>
             <option><%= format('%02d', m) %></option>
           <% end %>
         </select>
@@ -34,7 +34,7 @@
         </select>
         <select id="relayMinute" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
           <option disabled selected>分</option>
-          <% (0..59).step(5).each do |m| %>
+          <% (0..59).step(1).each do |m| %>
             <option><%= format('%02d', m) %></option>
           <% end %>
         </select>
