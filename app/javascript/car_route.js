@@ -51,6 +51,10 @@ export async function carDrawRoute(start, destination) { // Promiseを返すasyn
       window.directionsRenderer.setDirections(response);
       window.directionsResult = response;
       sessionStorage.setItem("directionsResult", JSON.stringify(response));
+
+      // ルート描画完了のカスタムイベントを発行
+      const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
+      document.dispatchEvent(event);
       resolve("OK");
     });
   });

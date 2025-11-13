@@ -1,17 +1,11 @@
-console.log("set_timee.jsを読み込みました");
+console.log("set_time.jsを読み込みました");
 
 export function initSetTime() {
-  const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-  if (!walkDrawRouteBtn) return;
-
-  walkDrawRouteBtn.addEventListener("click", async() => {
-    try{
-      //walkDrawRouteはグローバルスコープに公開されているので直接呼び出せる
-      await window.walkDrawRoute();
-      calculateAndSetArrivalTime();
-    } catch (error) {
-      console.error("ルートの検索に失敗したため、到着時刻の計算を注意します: ", error);
-    }
+  // 'routeDrawn' カスタムイベントをリッスンする
+  document.addEventListener('routeDrawn', (e) => {
+    console.log('routeDrawnイベントを検知しました。到着時刻を計算します。', e.detail);
+    // イベントを受け取ったら到着時刻を計算・設定する
+    calculateAndSetArrivalTime();
   });
 }
 
@@ -23,14 +17,22 @@ function calculateAndSetArrivalTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 出発時刻が選択されていなければ現時刻を出発時刻に
-  if (startHourEl.value === "時" || startMinuteEl.value === "分") { //////
-    console.log("出発時刻が選択されていません。");
-    return;
-  }
+  let startHour, startMinute;
 
-  const startHour = parseInt(startHourEl.value, 10);
-  const startMinute = parseInt(startMinuteEl.value, 10);
+  // 出発時刻が選択されていなければ現時刻を出発時刻に
+  if (startHourEl.value === "時" || startMinuteEl.value === "分") {
+    console.log("出発時刻が選択されていないため、現在時刻を使用します。");
+    const now = new Date();
+    startHour = now.getHours();
+    startMinute = now.getMinutes();
+
+    // フォームにも現在時刻をセット
+    startHourEl.value = String(startHour).padStart(2, '0');
+    startMinuteEl.value = String(startMinute).padStart(2, '0');
+  } else {
+    startHour = parseInt(startHourEl.value, 10);
+    startMinute = parseInt(startMinuteEl.value, 10);
+  }
 
   // sessionStorageからルート情報を取得 64-69
   const storedDirections = sessionStorage.getItem("directionsResult"); ///////

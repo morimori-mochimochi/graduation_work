@@ -43,7 +43,7 @@ function initializePage(container) {
         searchParking();
         walkRouteBtn();
         carRouteBtn();
-        initSetTime("walkDrawRouteBtn");
+        initSetTime();
         // clearSearchMarkersOnRouteDraw(); // この関数は定義が見当たらないためコメントアウト
         initCurrentPosBtn();
       } else if (id === 'naviMap' || id === 'carNaviMap') {
