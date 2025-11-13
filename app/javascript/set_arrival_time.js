@@ -17,6 +17,12 @@ function calculateAndSetArrivalTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
+  // ユーザーが到着時刻をすでに指定している場合は、この関数の処理（到着時刻の上書き）を中断する
+  if (destinationHourEl.value !== "時" && destinationMinuteEl.value !== "分") {
+    console.log("到着時刻が指定されているため、set_arrival_timeの計算をスキップします。");
+    return;
+  }
+
   let startHour, startMinute;
 
   // 出発時刻が選択されていなければ現時刻を出発時刻に
