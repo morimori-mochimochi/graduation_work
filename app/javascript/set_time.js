@@ -55,6 +55,10 @@ function calculateAndSetArrivalTime() {
   // totalDurationSeconds * 1000: 所要時間（秒）をミリ秒に変換
   const arrivalTime = new Date(departureTime.getTime() + totalDurationSeconds * 1000);
 
+  console.log("時間設定要素:", destinationHourEl); // 追加
+  console.log("分設定要素:", destinationMinuteEl); // 追加
+  console.log("設定する分の値:", String(arrivalTime.getMinutes()).padStart(2, '0')); // 追加
+
   // 到着時刻フォームに値を設定
   // padStartでフォーム用に09の形に変換
   destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
