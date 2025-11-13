@@ -70,6 +70,12 @@ export async function walkDrawRoute(start, destination){
 
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
           console.log("★ window.directionsResult set", window.directionsResult);
+
+          // ルート描画完了のカスタムイベントを発行
+          // イベントにデータを含めたいときはdetailに入れるのがルール
+          const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
+          // 1行目で作ったカスタムイベントを実際に発信する
+          document.dispatchEvent(event);
           resolve(status);
         } else {
           console.error("ルートの取得に失敗しました: " + status);

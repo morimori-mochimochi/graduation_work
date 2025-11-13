@@ -1,17 +1,11 @@
-console.log("set_timee.jsを読み込みました");
+console.log("set_time.jsを読み込みました");
 
 export function initSetTime() {
-  const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-  if (!walkDrawRouteBtn) return;
-
-  walkDrawRouteBtn.addEventListener("click", async() => {
-    try{
-      //walkDrawRouteはグローバルスコープに公開されているので直接呼び出せる
-      await window.walkDrawRoute();
-      calculateAndSetArrivalTime();
-    } catch (error) {
-      console.error("ルートの検索に失敗したため、到着時刻の計算を注意します: ", error);
-    }
+  // 'routeDrawn' カスタムイベントをリッスンする
+  document.addEventListener('routeDrawn', (e) => {
+    console.log('routeDrawnイベントを検知しました。到着時刻を計算します。', e.detail);
+    // イベントを受け取ったら到着時刻を計算・設定する
+    calculateAndSetArrivalTime();
   });
 }
 
