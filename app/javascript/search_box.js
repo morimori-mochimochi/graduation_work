@@ -60,18 +60,19 @@ export function highlightMarker(marker, duration = 1500) {
       console.log("relayPointボタンを表示します");
       if (relay_point_btn) {
         relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
-        relay_point_btn.addEventListener("click", () => { // アロー関数に変更
-          window.relayPoint = marker.getPosition ? marker.getPosition() : marker.position;
-          const uiRelayButton = document.getElementById("relayPoints");
-          const uiRelayContainer = document.getElementById("relayPointContainer");
-
-          console.log("uiRelayButton: ", uiRelayButton);
-          console.log("uiRelayContainer: ", uiRelayContainer);
-
-          if (uiRelayButton && uiRelayContainer) {
-            uiRelayButton.textContent = facilityName || "選択した場所";
-            uiRelayContainer.style.display = 'flex';
+        relay_point_btn.addEventListener("click", () => {
+          // window.relayPointsが配列でなければ初期化
+          if (!Array.isArray(window.relayPoints)) {
+            window.relayPoints = [];
           }
+          // 新しい中継点（位置情報と名前）を配列に追加
+          window.relayPoints.push({
+            position: marker.getPosition ? marker.getPosition() : marker.position,
+            name: facilityName || "選択した場所"
+          });
+
+          // UIを再描画
+          renderRelayPoints();
           infoWindow.close();
         });
       } 
@@ -121,6 +122,46 @@ export function highlightMarker(marker, duration = 1500) {
   setTimeout(() => {
     marker.setAnimation(null);
   }, duration);
+}
+
+// 中継点リストのUIを再描画する関数
+function renderRelayPoints() {
+  const container = document.getElementById("relayPointsContainer");
+  if (!container) return;
+
+  // コンテナをクリア
+  container.innerHTML = '';
+  // 保持しているすべての中継点を描画
+  window.relayPoints.forEach((relayPoint, index) => {
+    const relayPointElement = createRelayPointElement(relayPoint, index);
+    container.appendChild(relayPointElement);
+  });
+}
+
+// 中継点要素をひな形から生成するヘルパー関数
+function createRelayPointElement(relayPoint, index) {
+  const template = document.getElementById('relay-point-template');
+  const clone = template.content.cloneNode(true);
+  const itemDiv = clone.querySelector('.relay-point-item');
+
+  // 動的な値を設定
+  itemDiv.dataset.index = index;
+  clone.querySelector('.relay-point-name').textContent = relayPoint.name;
+  clone.querySelector('.relay-hour-select').id = `relayHour_${index}`;
+  clone.querySelector('.relay-minute-select').id = `relayMinute_${index}`;
+
+  // 削除ボタンのイベントリスナーを設定
+  const removeBtn = clone.querySelector('.remove-relay-point-btn');
+  removeBtn.dataset.index = index;
+  removeBtn.addEventListener('click', (e) => {
+    const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
+    // 配列から該当する中継点を削除
+    window.relayPoints.splice(indexToRemove, 1);
+    // UIを再描画
+    renderRelayPoints();
+  });
+
+  return itemDiv;
 }
 
 // #部分一致検索＋ピン設置

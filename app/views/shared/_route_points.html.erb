@@ -20,27 +20,34 @@
     </div>
   </div>
 
-  <div id="relayPointContainer" class="flex flex-col gap-1" style="display: none;">
-    <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-5 ml-25" %>
-    <div class="flex items-center gap-4">
-      <button id="relayPoints" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">中継地</button>
-      <div class="flex flex-col gap-1">
-        <span class="font-bold text-[#624007]">中継</span>
-        <select id="relayHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
-          <option disabled selected>時</option>
-          <% (0..23).each do |h| %>
-            <option><%= format('%02d', h) %></option>
-          <% end %>
-        </select>
-        <select id="relayMinute" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
-          <option disabled selected>分</option>
-          <% (0..59).step(1).each do |m| %>
-            <option><%= format('%02d', m) %></option>
-          <% end %>
-        </select>
+  <!-- 中継点はこのコンテナの中にJavaScriptによって動的に追加されます -->
+  <div id="relayPointsContainer" class="flex flex-col items-center justify-center gap-4"></div>
+
+  <!-- 中継点要素のひな形 -->
+  <template id="relay-point-template">
+    <div class="relay-point-item flex flex-col items-center justify-center gap-4">
+      <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-auto" %>
+      <div class="flex items-center gap-4">
+        <button class="relay-point-name btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">中継地</button>
+        <div class="flex flex-col gap-1">
+          <span class="font-bold text-[#624007]">中継</span>
+          <select class="relay-hour-select select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+            <option disabled selected>時</option>
+            <% (0..23).each do |h| %>
+              <option><%= format('%02d', h) %></option>
+            <% end %>
+          </select>
+          <select class="relay-minute-select select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+            <option disabled selected>分</option>
+            <% (0..59).step(1).each do |m| %>
+              <option><%= format('%02d', m) %></option>
+            <% end %>
+          </select>
+        </div>
+        <button class="remove-relay-point-btn text-red-500 font-bold text-xl" style="cursor: pointer;">×</button>
       </div>
     </div>
-  </div>
+  </template>
 
   <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-auto" %>
   <div class="flex items-center gap-4">
