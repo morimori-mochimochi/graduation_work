@@ -41,24 +41,32 @@ export async function carDrawRoute(start, destination) {
         directionsService.route(walkingRequest)
       ]);
 
-      // --- 3. 2つのルート情報を1つに結合 ---
-      // drivingResponseをベースに、walkingResponseの区間(leg)を追加する
-      const combinedResponse = JSON.parse(JSON.stringify(drivingResponse)); // deep copy
-      combinedResponse.routes[0].legs.push(walkingResponse.routes[0].legs[0]);
+      // --- 3. 2つのルート情報を安全に結合 ---
+      // JSON.parse(JSON.stringify(...)) はクラス情報を破壊するため使用しない
+      const combinedResponse = drivingResponse;
+      const drivingLeg = drivingResponse.routes[0].legs[0];
+      const walkingLeg = walkingResponse.routes[0].legs[0];
 
-      // 結合したルートの概要（ポリラインと境界ボックス）を再計算
-      combinedResponse.routes[0].overview_polyline = {
-        points: drivingResponse.routes[0].overview_polyline.points + walkingResponse.routes[0].overview_polyline.points.slice(1)
+      // 徒歩ルートの区間(leg)を車ルートに追加
+      combinedResponse.routes[0].legs.push(walkingLeg);
+
+      // 概要情報（距離、時間）を合算
+      // routes[0].legs[0] は書き換えず、routes[0]の概要(overview)を更新するのが安全
+      const combinedSummary = {
+        distance: {
+          text: `${((drivingLeg.distance.value + walkingLeg.distance.value) / 1000).toFixed(1)} km`,
+          value: drivingLeg.distance.value + walkingLeg.distance.value
+        },
+        duration: {
+          text: `${Math.ceil((drivingLeg.duration.value + walkingLeg.duration.value) / 60)} 分`,
+          value: drivingLeg.duration.value + walkingLeg.duration.value
+        }
       };
-      const bounds = new google.maps.LatLngBounds();
-      combinedResponse.routes[0].legs.forEach(leg => {
-        leg.steps.forEach(step => {
-          step.path.forEach(point => bounds.extend(new google.maps.LatLng(point.lat, point.lng)));
-        });
-      });
-      combinedResponse.routes[0].bounds = bounds.toJSON();
+      // 結合したルートの概要として新しいサマリーを割り当てる
+      combinedResponse.routes[0].summary = `合計: ${combinedSummary.distance.text}`;
+      // boundsやoverview_polylineはRendererが自動で再計算するので、手動での結合は不要
 
-      // --- 4. 結合したルートを描画・保存 ---
+      // 結合したルートを描画・保存
       // 1つのRendererで結合したルートを描画する
       const combinedRenderer = new google.maps.DirectionsRenderer({
         map: window.map,
