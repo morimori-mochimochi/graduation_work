@@ -1,3 +1,5 @@
+import { openInfoWindow, renderRelayPoints, createRelayPointElement } from './info_window';
+
 // クリックしたマーカーが大きくなる
 export function highlightMarker(marker, duration = 1500) {
   if (!marker) return;
@@ -12,110 +14,9 @@ export function highlightMarker(marker, duration = 1500) {
   if (!facilityAddress && marker.address) facilityAddress = marker.address;
   if (!facilityAddress && marker.label) facilityAddress = marker.label;
 
-  // <template>からInfoWindowのコンテンツを作成
-  // cloneNode(false) → 要素自体だけコピー（中身の子要素はコピーしない）
-	// cloneNode(true) → 要素 とその子要素すべて を再帰的にコピー
-  const template = document.getElementById('info-window-template');
-  const content = template.content.cloneNode(true);
+  // InfoWindowを開く
+  openInfoWindow(marker, facilityName, facilityAddress);
 
-  //動的な値を埋め込む
-  content.querySelector('.info-window-facility-name').textContent = facilityName;
-    
-  // 既存のInfoWindowを閉じる
-  if (window.activeInfoWindow) {
-    window.activeInfoWindow.close();
-  }
-
-  const infoWindow = new google.maps.InfoWindow({
-    content: content
-  });
-  infoWindow.open(marker.getMap(), marker);
-  window.activeInfoWindow = infoWindow;
-
-  //ボタンクリックベントを設定
-  google.maps.event.addListenerOnce(infoWindow, "domready", function() {
-    const start_btn = document.querySelector(".info-window-set-start");
-    const destination_btn = document.querySelector(".info-window-set-destination");
-    const relay_point_btn = document.querySelector(".info-window-set-relay-point");
-    const route_btn = document.querySelector(".info-window-route-btn");
-    const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
-    const save_btn = document.querySelector(".info-window-save-location");
-
-    console.log("中継点クリックイベント: ", relay_point_btn);
-
-    if (start_btn) {
-      start_btn.addEventListener("click", function() {
-        window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
-
-        const uiStart = document.getElementById("startPoint"); 
-        if (uiStart) {
-          uiStart.textContent = facilityName || "選択した場所";
-        }
-        infoWindow.close();
-      });
-    }
-
-    // 出発/到着地の設定があるときのみ
-    if (window.routeDestination) {
-      console.log("relayPointボタンを表示します");
-      if (relay_point_btn) {
-        relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
-        relay_point_btn.addEventListener("click", () => { // アロー関数に変更
-          window.relayPoint = marker.getPosition ? marker.getPosition() : marker.position;
-          const uiRelayButton = document.getElementById("relayPoints");
-          const uiRelayContainer = document.getElementById("relayPointContainer");
-
-          console.log("uiRelayButton: ", uiRelayButton);
-          console.log("uiRelayContainer: ", uiRelayContainer);
-
-          if (uiRelayButton && uiRelayContainer) {
-            uiRelayButton.textContent = facilityName || "選択した場所";
-            uiRelayContainer.style.display = 'flex';
-          }
-          infoWindow.close();
-        });
-      } 
-    } else {
-      if (relay_point_btn) {
-        relay_point_btn.parentElement.style.display = 'none';
-      }
-    }
-
-    if (destination_btn) {
-      destination_btn.addEventListener("click", function() {
-        window.routeDestination = marker.getPosition ? marker.getPosition() : marker.position;
-
-        const uiDest = document.getElementById("destinationPoint");
-        if (uiDest) {
-          uiDest.textContent = facilityName || "選択した場所";
-        }
-        infoWindow.close();
-      });
-    }
-
-    if (route_btn) {
-      route_btn.addEventListener("click", (e) => {
-        e.stopPropagation(); // イベントの伝播を停止
-        dropdown_menu.hidden = !dropdown_menu.hidden;
-      });
-    }
-
-    if (save_btn) {
-      save_btn.addEventListener("click", function() {
-        const position = marker.getPosition ? marker.getPosition() : marker.position;
-        // URLのクエリパラメータを作成
-        const params = new URLSearchParams({
-          'location[address]': facilityAddress,
-          'location[lat]': position.lat(),
-          'location[lng]': position.lng()
-        });
-
-        // new_location_path にクエリパラメータを付けて遷移
-        window.location.href = `/locations/new?${params.toString()}`;
-      });
-    }
-  });
-  
   marker.setAnimation(google.maps.Animation.BOUNCE);
 
   setTimeout(() => {

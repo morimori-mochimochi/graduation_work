@@ -1,5 +1,9 @@
 import { fetchCurrentPos } from "./current_pos"
 
+function isValidLatLng(point) {
+  return point && typeof point.lat === 'function' && typeof point.lng === 'function';
+}
+
 export async function carDrawRoute(start, destination) {
   await window.mapApiLoaded;
 
@@ -20,6 +24,22 @@ export async function carDrawRoute(start, destination) {
 
   const directionsService = new google.maps.DirectionsService();
 
+  // 複数の中継点を設定
+  const waypoints = [];
+  if (Array.isArray(window.relayPoints)) {
+    window.relayPoints.forEach(relayPoint => {
+      // relayPointオブジェクトから位置情報を取り出す
+      const point = relayPoint.position;
+      // Google Maps APIが解釈できる形式かチェック
+      if (isValidLatLng(point)) {
+        waypoints.push({
+          location: point,
+          stopover: true 
+        });
+      }
+    });
+  }
+
   // 駐車場が設定されている場合：車ルートと徒歩ルートを分けて検索
   if (window.routeParking) {
     try {
@@ -27,7 +47,9 @@ export async function carDrawRoute(start, destination) {
       const drivingRequest = {
         origin: originPos,
         destination: window.routeParking,
-        travelMode: google.maps.TravelMode.DRIVING
+        travelMode: google.maps.TravelMode.DRIVING,
+        waypoints: waypoints, // 中継点を追加
+        optimizeWaypoints: true // 中継点の順序を最適化
       };
       const walkingRequest = {
         origin: window.routeParking,
@@ -41,7 +63,7 @@ export async function carDrawRoute(start, destination) {
         directionsService.route(walkingRequest)
       ]);
 
-      // --- 3. 2つのルート情報を安全に結合 ---
+      // 2つのルート情報を安全に結合
       // JSON.parse(JSON.stringify(...)) はクラス情報を破壊するため使用しない
       const combinedResponse = drivingResponse;
       const drivingLeg = drivingResponse.routes[0].legs[0];
@@ -95,6 +117,8 @@ export async function carDrawRoute(start, destination) {
       origin: originPos,
       destination: finalDestination,
       travelMode: google.maps.TravelMode.DRIVING,
+      waypoints: waypoints, // 中継点を追加
+      optimizeWaypoints: true // 中継点の順序を最適化
     };
     try {
       const response = await directionsService.route(request);

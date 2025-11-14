@@ -1,5 +1,7 @@
 console.log("set_marker module loaded");
 
+import { openInfoWindow, renderRelayPoints, createRelayPointElement } from './info_window';
+
 export async function initMarkerEvents() {
   console.log("マーカーイベントが発火しました");
 
@@ -17,7 +19,6 @@ export async function initMarkerEvents() {
 
   // #マーカーが無い、という初期状態を作る
   let selectedMarker = null;
-  const infoWindow = new google.maps.InfoWindow();
   const geocoder = new google.maps.Geocoder();
   const placesService = new google.maps.places.PlacesService(map); 
 
@@ -32,7 +33,9 @@ export async function initMarkerEvents() {
     // #既存のマーカーを削除
       if (selectedMarker) {
         selectedMarker.setMap(null);
-        infoWindow.close();
+        if (window.activeInfoWindow) {
+          window.activeWindow.close();
+        }
       }
 
     // #新しいマーカーを配置
@@ -48,7 +51,7 @@ export async function initMarkerEvents() {
     // 逆ジオコーディングで住所取得
       geocoder.geocode({ location: event.latLng}, (results, status) => {
         if (status === "OK" && results[0]) {
-          let content = `<div><strong>住所: </strong> ${results[0].formatted_address}</div>`;
+          const facilityAddress = results[0].formatted_address;
 
           // 近隣の施設名を検索
           placesService.nearbySearch(
@@ -57,48 +60,11 @@ export async function initMarkerEvents() {
               radius: 30, //半径30m以内
             },
             (places, pStatus) => {
+              let facilityName = "選択地名";
               if (pStatus === "OK" && places.length > 0) {
-                const place = places[0];
-                let content = `
-                  <div>
-                    <strong>${place.name}</strong><br>
-                    ${results[0].formatted_address}<br>
-                    <button id="setStart">ここを出発地に設定</button>
-                    <button id="setDestination">ここを目的地に設定</button> 
-                  </div>
-                `;
-
-                infoWindow.setContent(content);
-                infoWindow.open(map, selectedMarker);
-
-                // InfoWindowがDOMに描画された後にイベントを登録
-                google.maps.event.addListenerOnce(infoWindow, "domready", () => {
-                  document.getElementById("setStart").addEventListener("click", () => {
-                    console.log("出発地に設定: ", event.latLng.toString());
-                    window.routeStart = event.latLng; //グローバルに保存
-
-                    const startBtn = document.getElementById("startPoint");
-                    if (startBtn) {
-                      startBtn.textContent = results[0].formatted_address;  
-                    }
-                    infoWindow.close();
-                  });
-
-                  document.getElementById("setDestination").addEventListener("click", () => {
-                    console.log("目的地に設定: ", event.latLng.toString());
-                    window.routeDestination = event.latLng; //グローバルに保存
-
-                    const destinationBtn = document.getElementById("destinationPoint");
-                    if (destinationBtn) {
-                      destinationBtn.textContent = results[0].formatted_address;
-                    }
-                    infoWindow.close();
-                  });
-                });
-              }else{
-                infoWindow.setContent(content);
-                infoWindow.open(map, selectedMarker);
+                facilityName = places[0].name;
               }
+              openInfoWindow(selectedMarker, facilityName, facilityAddress);
             }
           )
         }
