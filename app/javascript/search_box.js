@@ -41,6 +41,8 @@ export function highlightMarker(marker, duration = 1500) {
     const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
     const save_btn = document.querySelector(".info-window-save-location");
 
+    console.log("中継点クリックイベント: ", relay_point_btn);
+
     if (start_btn) {
       start_btn.addEventListener("click", function() {
         window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
@@ -60,8 +62,12 @@ export function highlightMarker(marker, duration = 1500) {
         relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
         relay_point_btn.addEventListener("click", () => { // アロー関数に変更
           window.relayPoint = marker.getPosition ? marker.getPosition() : marker.position;
-          const uiRelayButton = document.getElementById("relayPoint");
+          const uiRelayButton = document.getElementById("relayPoints");
           const uiRelayContainer = document.getElementById("relayPointContainer");
+
+          console.log("uiRelayButton: ", uiRelayButton);
+          console.log("uiRelayContainer: ", uiRelayContainer);
+
           if (uiRelayButton && uiRelayContainer) {
             uiRelayButton.textContent = facilityName || "選択した場所";
             uiRelayContainer.style.display = 'flex';

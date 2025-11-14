@@ -32,10 +32,16 @@ export async function walkDrawRoute(start, destination){
   // waypoints配列を作り、そこに中継点を入れていく
   const waypoints = [];
   // 中継地点が存在する場合、リクエストに追加
-  if (isValidLatLng(window.relayPoint)) {
-    waypoints.push({
-      location: window.relayPoint,
-      stopover: true // 立ち寄り地点として設定
+  // Array.isArray(): () の中に入っているものが配列かtrue/falseで教えてくれる
+  if (Array.isArray(window.relayPoints)) {
+    window.relayPoints.forEach(point => {
+      // point =>: 配列から取り出した一つ一つの経由地データにpointと名付けて後の処理で使えるように
+      if (isValidLatLng(point)) {
+        waypoints.push({
+          location: point,
+          stopover: true // 立ち寄り地点として設定
+        });
+      }
     });
   }
 
@@ -44,7 +50,7 @@ export async function walkDrawRoute(start, destination){
     destination: finalDestination,
     travelMode: google.maps.TravelMode.WALKING,
     waypoints: waypoints,
-    optimizeWaypoints: true, // ウェイポイントの順序を最適化
+    optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
   console.log("requestの中身:", request);
