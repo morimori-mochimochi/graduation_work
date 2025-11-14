@@ -63,7 +63,7 @@ export async function carDrawRoute(start, destination) {
         directionsService.route(walkingRequest)
       ]);
 
-      // --- 3. 2つのルート情報を安全に結合 ---
+      // 2つのルート情報を安全に結合
       // JSON.parse(JSON.stringify(...)) はクラス情報を破壊するため使用しない
       const combinedResponse = drivingResponse;
       const drivingLeg = drivingResponse.routes[0].legs[0];

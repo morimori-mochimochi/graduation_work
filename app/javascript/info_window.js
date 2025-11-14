@@ -19,7 +19,7 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
     content: content
   });
 
-  infoWindow.open(marker.getMap(), marker);
+  infoWindow.open(marker.map, marker);
   window.activeInfoWindow = infoWindow;
 
   //ボタンクリックベントを設定
