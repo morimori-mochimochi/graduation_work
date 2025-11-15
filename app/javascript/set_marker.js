@@ -34,7 +34,7 @@ export async function initMarkerEvents() {
       if (selectedMarker) {
         selectedMarker.setMap(null);
         if (window.activeInfoWindow) {
-          window.activeWindow.close();
+          window.activeInfoWindow.close();
         }
       }
 
