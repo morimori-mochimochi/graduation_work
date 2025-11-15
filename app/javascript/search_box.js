@@ -208,6 +208,11 @@ function displayPlaces(places) {
       highlightMarker(window.markers[index]);
     });
   });
+
+  // 検索結果リストの先頭にスクロール
+  if (container && container.children.length > 0) {
+    container.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 export function initSearchBox() {
@@ -215,12 +220,23 @@ export function initSearchBox() {
   const input = document.getElementById("address");
 
   if (btn && input) {
-    btn.addEventListener("click", () => {
+    const performSearch = () => {
       // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
       const value = input.value.trim();
       // #valueに値があればsearchExactPlace関数を実行
       if (value) {
         searchExactPlace(value);
+      }
+    };
+
+    // 検索ボタンクリックで検索実行
+    btn.addEventListener("click", performSearch);
+
+    // Enterキーで検索実行
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault(); // フォームのデフォルト送信を防止
+        performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
       }
     });
   }

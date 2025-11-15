@@ -44,13 +44,18 @@
             <% end %>
           </select>
         </div>
-        <button class="remove-relay-point-btn text-red-500 font-bold text-xl" style="cursor: pointer;">×</button>
+        <div class="flex flex-col gap-1">
+          <button class="remove-relay-point-btn text-red-500 text-xl btn_effect bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold w-6 h-6 flex items-center justify-center p-0">×</button>
+          <button id="searchNearby" class="appearance-none bg-transparent border-none">
+            <%= image_tag "/images/search_parking.png", alt: "search_parking", class: "btn_effect mt-2 h-13 w-13" %>
+          </button>
+        </div>
       </div>
     </div>
   </template>
 
   <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-auto" %>
-  <div class="flex items-center gap-4">
+  <div class="flex items-center ml-15 gap-4">
     <button id="destinationPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">目的地</button>
     <div class="flex items-center gap-2">
       <div class="flex flex-col gap-1">
@@ -68,6 +73,9 @@
           <% end %>
         </select>
       </div>
+      <button id="searchNearby" class="appearance-none bg-transparent border-none">
+        <%= image_tag "/images/search_parking.png", alt: "search_parking", class: "btn_effect mt-2 h-13 w-13" %>
+      </button>
     </div>
   </div>
 </div>

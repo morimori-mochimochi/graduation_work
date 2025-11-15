@@ -34,11 +34,12 @@ export async function walkDrawRoute(start, destination){
   // 中継地点が存在する場合、リクエストに追加
   // Array.isArray(): () の中に入っているものが配列かtrue/falseで教えてくれる
   if (Array.isArray(window.relayPoints)) {
-    window.relayPoints.forEach(point => {
+    window.relayPoints.forEach(relayPoint => {
       // point =>: 配列から取り出した一つ一つの経由地データにpointと名付けて後の処理で使えるように
+      const point = relayPoint.position;
       if (isValidLatLng(point)) {
         waypoints.push({
-          location: point,
+          location: point, // 正しくは point.position
           stopover: true // 立ち寄り地点として設定
         });
       }
@@ -53,7 +54,9 @@ export async function walkDrawRoute(start, destination){
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
-  console.log("requestの中身:", request);
+  console.log("⚫︎requestの中身:", request);
+  console.log("⚫︎waypointsの中身:", waypoints);
+  console.log("⚫︎relayPointsの中身:", window.relayPoints);
 
   return new Promise((resolve, reject) => {
     directionsService.route(request,
