@@ -47,7 +47,7 @@
         <div class="flex flex-col gap-1">
           <button class="remove-relay-point-btn text-red-500 text-xl btn_effect bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold w-6 h-6 flex items-center justify-center p-0">×</button>
           <% if local_assigns.fetch(:mode, nil) == :car %>
-            <button id="searchNearby" class="appearance-none bg-transparent border-none">
+            <button class="search-nearby-parking-btn appearance-none bg-transparent border-none" data-point-type="relay">
               <%= image_tag "/images/search_parking.png", alt: "search_parking", class: "btn_effect mt-2 h-13 w-13" %>
             </button>
           <% end %>
@@ -76,7 +76,7 @@
         </select>
       </div>
       <% if local_assigns.fetch(:mode, nil) == :car %>
-        <button id="searchNearby" class="appearance-none bg-transparent border-none">
+        <button class="search-nearby-parking-btn appearance-none bg-transparent border-none" data-point-type="destination">
           <%= image_tag "/images/search_parking.png", alt: "search_parking", class: "btn_effect mt-2 h-13 w-13" %>
         </button>
       <% end %>
