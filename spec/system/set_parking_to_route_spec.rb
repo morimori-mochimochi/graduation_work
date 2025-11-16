@@ -28,33 +28,23 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       }.to_json
 
       result = page.evaluate_async_script(
-        <<~JS, route_data # 非同期処理の完了を待つ
+        <<~JS, # 非同期処理の完了を待つ
           const routeDataFromRuby = JSON.parse(arguments[0]);
           const done = arguments[1];
 
-          window.mapApiLoaded.then(async () => {
-            // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換してwindow.routeDataを構築
-            window.routeData = {
-              start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
-              destination: { 
-                mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) },
-                parkingLot: null // テストデータに合わせて設定
-              },
-              waypoints: routeDataFromRuby.waypoints.map(wp => {
-                // このテストでは、中継点自体が駐車場というシナリオを模倣。
-                // isParkingがtrueの場合、parkingLotとして設定。
-                // 本来の中継点(mainPoint)は、このテストケースではnullで問題ない。
-                return {
-                  mainPoint: null, // このテストでは使わないが、構造として存在
-                  parkingLot: { point: new google.maps.LatLng(wp.point) }
-                };
-              })
-            };
+          // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換してwindow.routeDataを構築
+          window.routeData = {
+            start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+            destination: { mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) } },
+            waypoints: routeDataFromRuby.waypoints.map(wp => ({
+              point: new google.maps.LatLng(wp.point),
+              isParking: wp.isParking
+            }))
+          };
 
-            const result = await window.carDrawRoute();
-            done(result);
-          }).catch(e => done(e.message));
-        JS
+          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));
+        JS,
+        route_data
       )
 
       expect(result).to eq('OK')

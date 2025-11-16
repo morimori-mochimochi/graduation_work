@@ -6,8 +6,6 @@ on:
 
 jobs:
   rspec:
-    # ジョブにIDを付与し、他のジョブやステップから参照できるようにする
-    job-id: rspec-job
     # このジョブのアウトプットを定義
     outputs:
       DOCKER_NETWORK: ${{ steps.get-docker-network.outputs.DOCKER_NETWORK }}
