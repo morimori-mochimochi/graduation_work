@@ -6,6 +6,11 @@ on:
 
 jobs:
   rspec:
+    # ジョブにIDを付与し、他のジョブやステップから参照できるようにする
+    job-id: rspec-job
+    # このジョブのアウトプットを定義
+    outputs:
+      DOCKER_NETWORK: ${{ steps.get-docker-network.outputs.DOCKER_NETWORK }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -65,6 +70,14 @@ jobs:
           cp config/database.yml.ci config/database.yml
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
+
+      - name: Get Docker network ID
+        id: get-docker-network
+        run: |
+          # GitHub Actionsのサービスコンテナが使用するネットワークIDを取得し、
+          # 環境変数 DOCKER_NETWORK として設定する
+          DOCKER_NETWORK_ID=$(docker ps --filter "name=selenium" --format "{{.Networks}}")
+          echo "DOCKER_NETWORK=${DOCKER_NETWORK_ID}" >> $GITHUB_ENV
 
       - name: Run rspec
         env: 

@@ -24,7 +24,9 @@ services:
 
   web:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b 0.0.0.0"
+    # 環境変数 RAILS_COMMAND があればそれを実行し、なければデフォルトのサーバー起動コマンドを実行する
+    # これにより、`docker compose run` で任意のコマンドを実行しつつ、`docker compose up` ではサーバーを起動できる
+    command: bash -c "rm -f tmp/pids/server.pid && ${RAILS_COMMAND:-bundle exec rails s -b 0.0.0.0}"
     volumes:
       - .:/app
       - bundle:/usr/local/bundle
@@ -38,6 +40,7 @@ services:
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: password
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-} # .envファイルからAPIキーを読み込む
+      DOCKER_CONTAINER: "true" # Dockerコンテナ内で実行されていることを示す
       SELENIUM_URL: http://selenium:4444/wd/hub # webコンテナからseleniumコンテナに接続するためのURL
       LINE_CHANNEL_ID: ${LINE_CHANNEL_ID:-} 
       LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:-}

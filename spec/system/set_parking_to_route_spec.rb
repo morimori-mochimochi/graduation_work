@@ -20,24 +20,41 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       # evaluate_async_script: 同期的に結果を返す（JSがすぐに終わる時用)
       # evaluate_script: 非同期（promiseを使うもの)を待つ時に使う
       # 上記どちらも任意のJSを実行するメソッド
+      # carDrawRouteが参照するwindow.routeDataの構造に合わせてRubyでハッシュを作成
+      route_data = {
+        start: { point: { lat: start.lat, lng: start.lng } },
+        destination: { mainPoint: { point: { lat: destination.lat, lng: destination.lng } } },
+        waypoints: [{ point: { lat: parking.lat, lng: parking.lng }, isParking: true }]
+      }.to_json
+
       result = page.evaluate_async_script(
-        <<~JS, # 非同期処理の完了を待つ
-          const[startLat, startLng, destLat, destLng, parkLat, parkLng] = arguments;
-          const done = arguments[arguments.length - 1];
+        <<~JS, route_data # 非同期処理の完了を待つ
+          const routeDataFromRuby = JSON.parse(arguments[0]);
+          const done = arguments[1];
 
-          window.routeStart = new google.maps.LatLng({ lat: startLat, lng: startLng });
-          window.routeDestination = new google.maps.LatLng({ lat: destLat, lng: destLng });
-          window.routeParking = new google.maps.LatLng({ lat: parkLat, lng: parkLng});
-          console.log("FactoryBot data set to JS variables");
+          window.mapApiLoaded.then(async () => {
+            // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換してwindow.routeDataを構築
+            window.routeData = {
+              start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+              destination: { 
+                mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) },
+                parkingLot: null // テストデータに合わせて設定
+              },
+              waypoints: routeDataFromRuby.waypoints.map(wp => {
+                // このテストでは、中継点自体が駐車場というシナリオを模倣。
+                // isParkingがtrueの場合、parkingLotとして設定。
+                // 本来の中継点(mainPoint)は、このテストケースではnullで問題ない。
+                return {
+                  mainPoint: null, // このテストでは使わないが、構造として存在
+                  parkingLot: { point: new google.maps.LatLng(wp.point) }
+                };
+              })
+            };
 
-          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));
+            const result = await window.carDrawRoute();
+            done(result);
+          }).catch(e => done(e.message));
         JS
-        start.lat,
-        start.lng,
-        destination.lat,
-        destination.lng,
-        parking.lat,
-        parking.lng
       )
 
       expect(result).to eq('OK')
