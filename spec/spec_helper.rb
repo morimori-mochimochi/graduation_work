@@ -33,6 +33,12 @@ Capybara.register_driver :remote_chrome do |app|
   options.add_argument('disable-dev-shm-usage')
   options.add_argument('window-size=1400,1400')
   # 位置情報利用の許可を求めるアラートを自動的に承認する
+  # CI環境で http://172.17.0.1 のようなIPアドレスでテストを実行すると、
+  # Geolocation APIが "Only secure origins are allowed" エラーを出すため、
+  # このオプションでテストサーバーのオリジンを安全なものとして明示的に許可します。
+  # Capybara.app_host は rails_helper.rb で設定されています。
+  # ローカル環境では Capybara.app_host が nil のため、このオプションは追加されません。
+  options.add_argument("--unsafely-treat-insecure-origin-as-secure=#{Capybara.app_host}") if Capybara.app_host
   options.add_argument('--use-fake-ui-for-media-stream')
 
   Capybara::Selenium::Driver.new(
