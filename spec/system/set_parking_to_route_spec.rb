@@ -42,8 +42,8 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
             }))
           };
 
-          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));
-        JS,
+          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));,
+        JS
         route_data
       )
 
