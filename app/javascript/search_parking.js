@@ -117,12 +117,12 @@ function openParkingInfoWindow(marker, place, pointIndex) {
   }
 
   // テンプレートからコンテンツを生成
-  const template = document.getElementById('parking-info-wondow-template');
+  const template = document.getElementById('parking-info-window-template');
   const content = template.content.cloneNode(true);
 
   // プレースホルダーに動的な値を設定
   content.querySelector('.parking-info-window-name').textContent = place.displayName;
-  content.querySelector('.parking-info-window.address').textContent = place.formattedAddress || "住所情報なし";
+  content.querySelector('.parking-info-window-address').textContent = place.formattedAddress || "住所情報なし";
 
   // templateをセット
   const infoWindow = new google.maps.InfoWindow({
@@ -152,7 +152,7 @@ function openParkingInfoWindow(marker, place, pointIndex) {
 
       // UIを書き換える用の変数
       if (infoDiv) {
-        infoDiv.textContent = `P: ${place.displayName}`;
+        infoDiv.textContent = `P: ${place.displayName || '選択した駐車場'}`;
       }
 
       // 他の駐車場マーカーを消す

@@ -56,7 +56,7 @@ export async function carDrawRoute() {
     const response = await directionsService.route(request);
     
     // 車ルートを描画
-    const carRenderer = new google.maps.DirectionsRenderer({ map: window.map, polylineOptions: { strokeColor: 'blue' } });
+    const carRenderer = new google.maps.DirectionsRenderer({ map: window.map, polylineOptions: { strokeColor: 'green' } });
     carRenderer.setDirections(response);
     window.carRouteRenderers.push(carRenderer);
 
@@ -76,7 +76,7 @@ export async function carDrawRoute() {
     // 各徒歩ルートを非同期で取得して描画
     walkingRoutes.forEach(async (walk) => {
       const walkResponse = await directionsService.route({ ...walk, travelMode: 'WALKING' });
-      const walkRenderer = new google.maps.DirectionsRenderer({ map: window.map, preserveViewport: true, polylineOptions: { strokeColor: 'green', strokeOpacity: 0.7, strokeWeight: 5 } });
+      const walkRenderer = new google.maps.DirectionsRenderer({ map: window.map, preserveViewport: true, polylineOptions: { strokeColor: 'blue', strokeOpacity: 0.7, strokeWeight: 5 } });
       walkRenderer.setDirections(walkResponse);
       window.carRouteRenderers.push(walkRenderer);
     });
