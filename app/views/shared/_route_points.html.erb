@@ -53,6 +53,7 @@
           <% end %>
         </div>
       </div>
+      <div class="parking-info text-xs text-gray-600"></div>
     </div>
   </template>
 
@@ -81,5 +82,14 @@
         </button>
       <% end %>
     </div>
+    <div id="destinationParkingInfo" class="text-xs text-gray-600 text-center mt-1"></div>
   </div>
 </div>
+
+<template id="parking-info-wondow-template">
+  <div style="min-width:200px">
+    <div class="parking-info-window-name" style="font-weight:bold;"></div>
+    <div class="parking-info-window-address" style="font-size:0.9em;color:#555;margin-bottom:8px;"></div>
+    <button class="set-parking-btn btn btn-sm btn-primary">ここに駐車する</button>
+  </div>
+</template>

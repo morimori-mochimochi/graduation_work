@@ -1,21 +1,17 @@
-import { openInfoWindow, renderRelayPoints, createRelayPointElement } from './info_window';
+import { openInfoWindow } from './set_marker.js';
 
 // クリックしたマーカーが大きくなる
-export function highlightMarker(marker, duration = 1500) {
+export function highlightMarker(marker, place, duration = 1500) {
   if (!marker) return;
-  // 施設の名前を取り出す
-  let facilityName = marker.getTitle ? marker.getTitle() : "";
-  // 施設の住所を取り出す
-  let facilityAddress = marker.placeResult && marker.placeResult.formattedAddress
-    ? marker.placeResult.formattedAddress
-    : (marker.formattedAddress || "");
-    
-  // フォールバック: データの種類が足りない時に備えて代替フィールドを順に探す
-  if (!facilityAddress && marker.address) facilityAddress = marker.address;
-  if (!facilityAddress && marker.label) facilityAddress = marker.label;
 
   // InfoWindowを開く
-  openInfoWindow(marker, facilityName, facilityAddress);
+  // set_marker.jsからインポートした関数を呼び出す
+  const placeData = {
+    name: place.displayName,
+    address: place.formattedAddress,
+    point: place.location
+  };
+  openInfoWindow(marker, placeData);
 
   marker.setAnimation(google.maps.Animation.BOUNCE);
 
@@ -131,7 +127,7 @@ function displayPlaces(places) {
     // マーカークリックで対応するリストへ移動
     // window.markerにすることでこの処理の外からマーカーを消すことが可能。
     window.markers[index].addListener("click", () => {
-      highlightMarker(window.markers[index]);
+      highlightMarker(window.markers[index], place);
 
       // 対応するリスト要素までスクロール
       const listItem = container.children[index];
@@ -205,7 +201,7 @@ function displayPlaces(places) {
     //クリックでマップを移動
     item.addEventListener("click", () => {
       map.panTo(place.location);
-      highlightMarker(window.markers[index]);
+      highlightMarker(window.markers[index], place);
     });
   });
 
