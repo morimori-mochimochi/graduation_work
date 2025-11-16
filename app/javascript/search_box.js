@@ -1,6 +1,5 @@
 import { openInfoWindow } from './set_marker.js';
 
-// クリックしたマーカーが大きくなる
 export function highlightMarker(marker, place, duration = 1500) {
   if (!marker) return;
 
@@ -211,31 +210,50 @@ function displayPlaces(places) {
   }
 }
 
-export function initSearchBox() {
-  const btn = document.getElementById("searchBtn");
-  const input = document.getElementById("address");
+export function initSearchBox(container = document) {
+  const btn = container.querySelector("#searchBtn");
+  const input = container.querySelector("#address");
 
-  if (btn && input) {
-    const performSearch = () => {
-      // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
-      const value = input.value.trim();
-      // #valueに値があればsearchExactPlace関数を実行
-      if (value) {
-        searchExactPlace(value);
-      }
-    };
+  console.log("initSearchBox呼ばれた.1⚡️");
 
-    // 検索ボタンクリックで検索実行
-    btn.addEventListener("click", performSearch);
-
-    // Enterキーで検索実行
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault(); // フォームのデフォルト送信を防止
-        performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
-      }
-    });
+  if (!btn || !input) {
+    console.warn("検索ボックスの要素が見つかりません");
+    return;
   }
+  
+  console.log("initSearchBox呼ばれた.2⚡️");
+
+  // イベントリスナーの重複登録を防止
+  if(btn.dataset.searchEventAttached) {
+    return;
+  }
+  btn.dataset.searchEventAttached = "true";
+  input.dataset.searchEventAttached ='true';
+
+  console.log("initSearchBox呼ばれた.3⚡️");
+
+  const performSearch = () => {
+    // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
+    const value = input.value.trim();
+    // #valueに値があればsearchExactPlace関数を実行
+    if (value) {
+      searchExactPlace(value);
+    }
+  };
+
+  console.log("initSearchBox呼ばれた.4⚡️");
+
+  // 検索ボタンクリックで検索実行
+  btn.addEventListener("click", performSearch);
+
+  // Enterキーで検索実行
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // フォームのデフォルト送信を防止
+      performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
+    }
+    console.log("initSearchBox呼ばれた.5⚡️");
+  });
 }
 
 export function clearSearchMarkersOnRouteDraw() {

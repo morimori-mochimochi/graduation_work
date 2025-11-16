@@ -80,7 +80,7 @@ async function fetchPlaceDetails(latLng, callback) {
   callback({ name, address, point: latLng });
 }
 
-function openInfoWindow(marker, place) {
+export function openInfoWindow(marker, place) {
   if (window.activeInfoWindow) {
     window.activeInfoWindow.close();
   }
@@ -96,13 +96,19 @@ function openInfoWindow(marker, place) {
   window.activeInfoWindow = infoWindow;
 
   google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
-    const root = infoWindow.content;
-    root.querySelector('.info-window-route-btn').addEventListener('click', () => {
-      root.querySelector('.info-window-dropdown-menu').hidden = !root.querySelector('.info-window-dropdown-menu').hidden;
-    });
+    // domreadyイベントが発火した時点では、infowindowのコンテンツはdocumentに追加されているため、
+    // document.querySelectorで要素を取得できます。
+    const routeBtn = document.querySelector('.info-window-route-btn');
+    const dropdownMenu = document.querySelector('.info-window-dropdown-menu');
+
+    if (routeBtn && dropdownMenu) {
+      routeBtn.addEventListener('click', () => {
+        dropdownMenu.hidden = !dropdownMenu.hidden;
+      });
+    }
 
     // 出発地に設定
-    root.querySelector('.info-window-set-start').addEventListener('click', () => {
+    document.querySelector('.info-window-set-start').addEventListener('click', () => {
       window.routeData.start = { point: place.point, name: place.name };
       document.getElementById('startPoint').textContent = place.name;
       infoWindow.close();
@@ -110,7 +116,7 @@ function openInfoWindow(marker, place) {
     });
 
     // 目的地に設定
-    root.querySelector('.info-window-set-destination').addEventListener('click', () => {
+    document.querySelector('.info-window-set-destination').addEventListener('click', () => {
       window.routeData.destination.mainPoint = { point: place.point, name: place.name };
       document.getElementById('destinationPoint').textContent = place.name;
       infoWindow.close();
@@ -118,7 +124,7 @@ function openInfoWindow(marker, place) {
     });
 
     // 中継地に設定
-    root.querySelector('.info-window-set-relay-point').addEventListener('click', () => {
+    document.querySelector('.info-window-set-relay-point').addEventListener('click', () => {
       const newWaypoint = {
         mainPoint: { point: place.point, name: place.name }, // 本来の中継点
         parkingLot: null // そのための駐車場
