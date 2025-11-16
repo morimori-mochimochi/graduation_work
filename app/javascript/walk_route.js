@@ -5,17 +5,22 @@ function isValidLatLng(point) {
 }
 
 export async function walkDrawRoute(start, destination){
-  console.log("ルートを作ります");
   await window.mapApiLoaded;
-  console.log("await終了");
 
   // 引数でstartが渡されていない場合のみ、現在地を取得する
-  const originPos = start || window.routeStart || await fetchCurrentPos();
-  const finalDestination = destination || window.routeDestination;
+  const originPos = window.routeData.start.point || await fetchCurrentPos();
+  const finalDestination = window.routeData.destination.mainPoint.point;
+
+  if (!finalDestination || !isValidLatLng(finalDestination)) {
+    const errorMessage = "目的地を選択してください";
+    alert(errorMessage);
+    throw new Error(errorMessage);
+  }
 
   // #DirectionsAPIで使うオブジェクトの生成
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
   const directionsService = new google.maps.DirectionsService();
+
   // #取得したルートをマップに表示
   // #DirectionsRendererは検索したルートをマップに描画するクラス
   if (!window.directionsRenderer) {
@@ -29,22 +34,18 @@ export async function walkDrawRoute(start, destination){
   // #どのマップにルートを描画するかを指定
   window.directionsRenderer.setMap(window.map);
 
-  // waypoints配列を作り、そこに中継点を入れていく
+  // 新しいデータ構造から徒歩ルートの経由地リストを作成
   const waypoints = [];
-  // 中継地点が存在する場合、リクエストに追加
-  // Array.isArray(): () の中に入っているものが配列かtrue/falseで教えてくれる
-  if (Array.isArray(window.relayPoints)) {
-    window.relayPoints.forEach(relayPoint => {
-      // point =>: 配列から取り出した一つ一つの経由地データにpointと名付けて後の処理で使えるように
-      const point = relayPoint.position;
-      if (isValidLatLng(point)) {
-        waypoints.push({
-          location: point, // 正しくは point.position
-          stopover: true // 立ち寄り地点として設定
-        });
-      }
-    });
-  }
+  window.routeData.waypoints.forEach(wp => {
+    // 徒歩ルートなので、駐車場の有無に関わらず本来の地点(mainPoint)を経由地とする
+    const location = wp.mainPoint?.point;
+    if (location && isValidLatLng(location)) {
+      waypoints.push({
+        location: location,
+        stopover: true
+      });
+    }
+  });
 
   const request = {
     origin: originPos,
@@ -56,7 +57,6 @@ export async function walkDrawRoute(start, destination){
 
   console.log("⚫︎requestの中身:", request);
   console.log("⚫︎waypointsの中身:", waypoints);
-  console.log("⚫︎relayPointsの中身:", window.relayPoints);
 
   return new Promise((resolve, reject) => {
     directionsService.route(request,

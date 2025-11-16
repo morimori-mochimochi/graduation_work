@@ -40,7 +40,7 @@ function initializePage(container) {
 
       if (id === 'map') {
         initMarkerEvents();
-        initSearchBox();
+        initSearchBox(container);
         searchParking();
         walkRouteBtn();
         carRouteBtn();
