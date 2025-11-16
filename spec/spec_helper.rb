@@ -40,6 +40,8 @@ Capybara.register_driver :remote_chrome do |app|
   # ローカル環境では Capybara.app_host が nil のため、このオプションは追加されません。
   options.add_argument("--unsafely-treat-insecure-origin-as-secure=#{Capybara.app_host}") if Capybara.app_host
   options.add_argument('--use-fake-ui-for-media-stream')
+  # CI環境で位置情報APIを擬似的に使用できるようにする
+  options.add_argument('--use-fake-device-for-media-stream')
 
   Capybara::Selenium::Driver.new(
     app,
