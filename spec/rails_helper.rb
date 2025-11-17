@@ -28,7 +28,7 @@ if ENV['SELENIUM_URL']
                # `docker network inspect`でネットワーク情報をJSON形式で取得し、
                # `jq`コマンドでホストのIPアドレス（Gateway）を抽出する
                # この方法は `host.docker.internal` が使えない環境でも安定して動作します
-               docker_network_id = ENV.fetch('DOCKER_NETWORK', nil) # rubocop:disable Style/FetchEnvVar
+               docker_network_id = ENV.fetch('DOCKER_NETWORK')
                if docker_network_id.present?
                  `docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'`.strip
                end
@@ -39,9 +39,6 @@ if ENV['SELENIUM_URL']
              else
                'localhost' # Dockerを使わないローカル環境
              end
-
-  # app_hostがnilの場合のフォールバック
-  app_host ||= 'host.docker.internal'
 
   Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
 
