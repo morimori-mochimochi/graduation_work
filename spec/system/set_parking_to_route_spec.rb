@@ -35,7 +35,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
         <<~JS, # 非同期処理の完了を待つ
           const routeDataFromRuby = JSON.parse(arguments[0]);
           const done = arguments[1];
- 
+
            window.mapApiLoaded.then(async () => {
              // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
              window.routeData = {
@@ -48,7 +48,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
                  parkingLot: { point: new google.maps.LatLng(wp.parkingLot.point) }
                }))
              };
- 
+
              try {
                const result = await window.carDrawRoute();
                done(result); // 成功したら"OK"が返る
