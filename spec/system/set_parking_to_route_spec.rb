@@ -21,28 +21,41 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       # evaluate_script: 非同期（promiseを使うもの)を待つ時に使う
       # 上記どちらも任意のJSを実行するメソッド
       # carDrawRouteが参照するwindow.routeDataの構造に合わせてRubyでハッシュを作成
+      # car_route.jsの実装に合わせ、駐車場はparkingLotとして設定する
       route_data = {
         start: { point: { lat: start.lat, lng: start.lng } },
         destination: { mainPoint: { point: { lat: destination.lat, lng: destination.lng } } },
-        waypoints: [{ point: { lat: parking.lat, lng: parking.lng }, isParking: true }]
+        waypoints: [{
+          mainPoint: { point: { lat: destination.lat, lng: destination.lng } }, # 駐車場に紐づく本来の地点
+          parkingLot: { point: { lat: parking.lat, lng: parking.lng } } # 駐車場
+        }]
       }.to_json
 
       result = page.evaluate_async_script(
         <<~JS, # 非同期処理の完了を待つ
           const routeDataFromRuby = JSON.parse(arguments[0]);
           const done = arguments[1];
-
-          // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換してwindow.routeDataを構築
-          window.routeData = {
-            start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
-            destination: { mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) } },
-            waypoints: routeDataFromRuby.waypoints.map(wp => ({
-              point: new google.maps.LatLng(wp.point),
-              isParking: wp.isParking
-            }))
-          };
-
-          window.carDrawRoute().then(result => done(result)).catch(e => done(e.message));,
+ 
+           window.mapApiLoaded.then(async () => {
+             // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
+             window.routeData = {
+               start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+               destination: {
+                 mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) }
+               },
+               waypoints: routeDataFromRuby.waypoints.map(wp => ({
+                 mainPoint: { point: new google.maps.LatLng(wp.mainPoint.point) },
+                 parkingLot: { point: new google.maps.LatLng(wp.parkingLot.point) }
+               }))
+             };
+ 
+             try {
+               const result = await window.carDrawRoute();
+               done(result); // 成功したら"OK"が返る
+             } catch (e) {
+               done("Error in carDrawRoute: " + e.message);
+             }
+           });
         JS
         route_data
       )
