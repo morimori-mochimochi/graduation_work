@@ -6,6 +6,9 @@ on:
 
 jobs:
   rspec:
+    # このジョブのアウトプットを定義
+    outputs:
+      DOCKER_NETWORK: ${{ steps.get-docker-network.outputs.DOCKER_NETWORK }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -66,12 +69,28 @@ jobs:
           bundle exec rails db:create RAILS_ENV=test
           bundle exec rails db:migrate RAILS_ENV=test
 
+      - name: Get Docker network ID
+        id: get-docker-network
+        run: |
+          # GitHub Actionsのサービスコンテナが接続されているネットワーク名を取得する。
+          # `docker network ls`でジョブ固有のネットワーク（例: "github_network_...")を特定する。
+          DOCKER_NETWORK_ID=$(docker network ls --filter "name=github_network" --format "{{.Name}}")
+          echo "DOCKER_NETWORK=${DOCKER_NETWORK_ID}" >> $GITHUB_ENV
+          echo "--- Debug from get-docker-network step ---"
+          echo "DOCKER_NETWORK_ID is: ${DOCKER_NETWORK_ID}"
+          echo "------------------------------------------"
+
       - name: Run rspec
         env: 
           RAILS_ENV: test
           SELENIUM_URL:  http://localhost:4444/wd/hub 
+          DOCKER_NETWORK: ${{ env.DOCKER_NETWORK }}
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bundle exec rspec
+        run: |
+          echo "--- Debug from rspec step ---"
+          echo "DOCKER_NETWORK env is: $DOCKER_NETWORK"
+          echo "-----------------------------"
+          bundle exec rspec
 
       - name: Upload test failure artifacts
         if: failure()

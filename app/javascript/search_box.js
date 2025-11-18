@@ -1,21 +1,16 @@
-import { openInfoWindow, renderRelayPoints, createRelayPointElement } from './info_window';
+import { openInfoWindow } from './set_marker.js';
 
-// クリックしたマーカーが大きくなる
-export function highlightMarker(marker, duration = 1500) {
+export function highlightMarker(marker, place, duration = 1500) {
   if (!marker) return;
-  // 施設の名前を取り出す
-  let facilityName = marker.getTitle ? marker.getTitle() : "";
-  // 施設の住所を取り出す
-  let facilityAddress = marker.placeResult && marker.placeResult.formattedAddress
-    ? marker.placeResult.formattedAddress
-    : (marker.formattedAddress || "");
-    
-  // フォールバック: データの種類が足りない時に備えて代替フィールドを順に探す
-  if (!facilityAddress && marker.address) facilityAddress = marker.address;
-  if (!facilityAddress && marker.label) facilityAddress = marker.label;
 
   // InfoWindowを開く
-  openInfoWindow(marker, facilityName, facilityAddress);
+  // set_marker.jsからインポートした関数を呼び出す
+  const placeData = {
+    name: place.displayName,
+    address: place.formattedAddress,
+    point: place.location
+  };
+  openInfoWindow(marker, placeData);
 
   marker.setAnimation(google.maps.Animation.BOUNCE);
 
@@ -131,7 +126,7 @@ function displayPlaces(places) {
     // マーカークリックで対応するリストへ移動
     // window.markerにすることでこの処理の外からマーカーを消すことが可能。
     window.markers[index].addListener("click", () => {
-      highlightMarker(window.markers[index]);
+      highlightMarker(window.markers[index], place);
 
       // 対応するリスト要素までスクロール
       const listItem = container.children[index];
@@ -205,7 +200,7 @@ function displayPlaces(places) {
     //クリックでマップを移動
     item.addEventListener("click", () => {
       map.panTo(place.location);
-      highlightMarker(window.markers[index]);
+      highlightMarker(window.markers[index], place);
     });
   });
 
@@ -215,31 +210,50 @@ function displayPlaces(places) {
   }
 }
 
-export function initSearchBox() {
-  const btn = document.getElementById("searchBtn");
-  const input = document.getElementById("address");
+export function initSearchBox(container = document) {
+  const btn = container.querySelector("#searchBtn");
+  const input = container.querySelector("#address");
 
-  if (btn && input) {
-    const performSearch = () => {
-      // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
-      const value = input.value.trim();
-      // #valueに値があればsearchExactPlace関数を実行
-      if (value) {
-        searchExactPlace(value);
-      }
-    };
+  console.log("initSearchBox呼ばれた.1⚡️");
 
-    // 検索ボタンクリックで検索実行
-    btn.addEventListener("click", performSearch);
-
-    // Enterキーで検索実行
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault(); // フォームのデフォルト送信を防止
-        performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
-      }
-    });
+  if (!btn || !input) {
+    console.warn("検索ボックスの要素が見つかりません");
+    return;
   }
+  
+  console.log("initSearchBox呼ばれた.2⚡️");
+
+  // イベントリスナーの重複登録を防止
+  if(btn.dataset.searchEventAttached) {
+    return;
+  }
+  btn.dataset.searchEventAttached = "true";
+  input.dataset.searchEventAttached ='true';
+
+  console.log("initSearchBox呼ばれた.3⚡️");
+
+  const performSearch = () => {
+    // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
+    const value = input.value.trim();
+    // #valueに値があればsearchExactPlace関数を実行
+    if (value) {
+      searchExactPlace(value);
+    }
+  };
+
+  console.log("initSearchBox呼ばれた.4⚡️");
+
+  // 検索ボタンクリックで検索実行
+  btn.addEventListener("click", performSearch);
+
+  // Enterキーで検索実行
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // フォームのデフォルト送信を防止
+      performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
+    }
+    console.log("initSearchBox呼ばれた.5⚡️");
+  });
 }
 
 export function clearSearchMarkersOnRouteDraw() {

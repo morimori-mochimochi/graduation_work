@@ -15,6 +15,7 @@ require 'rspec/rails'
 require 'capybara/rails'
 
 # Dockerコンテナでテストを実行する場合（SELENIUM_URLが設定されている場合）
+# seleniumコンテナから見たテストサーバーのホスト名
 if ENV['SELENIUM_URL']
   # Capybaraがテスト用サーバーを起動する際の設定
   Capybara.server_host = '0.0.0.0' # すべてのIPアドレスからの接続を許可
@@ -23,9 +24,30 @@ if ENV['SELENIUM_URL']
   # - Docker Compose 環境では `web`
   # - GitHub Actions では `host.docker.internal`
   app_host = if ENV['CI'] # GitHub Actions環境
-               '172.17.0.1' # ホストランナーのIPアドレスを直接指定
+               # GitHub Actionsのサービスネットワーク内でホストOSのIPアドレスを動的に取得する
+               # `docker network inspect`でネットワーク情報をJSON形式で取得し、
+               # `jq`コマンドでホストのIPアドレス（Gateway）を抽出する
+               # この方法は `host.docker.internal` が使えない環境でも安定して動作します
+               docker_network_id = ENV.fetch('DOCKER_NETWORK')
+               # --- ここからデバッグコード ---
+               puts "[DEBUG] DOCKER_NETWORK from ENV: #{docker_network_id.inspect}"
+               if docker_network_id.present?
+                 command = "docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'"
+                 puts "[DEBUG] Executing command: #{command}"
+                 result = `#{command}`.strip
+                 puts "[DEBUG] Command result: #{result.inspect}"
+                 result
+               else
+                 puts "[DEBUG] DOCKER_NETWORK is not present."
+                 nil
+               end
+               # --- ここまでデバッグコード ---
+             elsif ENV['DOCKER_CONTAINER'] # ローカルのDocker環境
+               # テスト実行中のコンテナ自身のホスト名（コンテナID）を取得する
+               # これにより、seleniumコンテナが正しいテストサーバーに接続できる
+               `hostname`.strip
              else
-               'web'
+               'localhost' # Dockerを使わないローカル環境
              end
 
   Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
@@ -33,6 +55,46 @@ if ENV['SELENIUM_URL']
   puts "[DEBUG] ENV['CI']: #{ENV['CI'].inspect}"
   puts "[DEBUG] Capybara.app_host: #{Capybara.app_host}"
 end
+
+# spec_helper.rbから移動
+# Capybara に対して、Docker 上の Selenium（ブラウザ実行コンテナ）を使うリモートドライバを登録する
+# :remote_selenium_chrome が今回のドライバ名（好きな名前でOK）。do |app| ... end の中でどう動かすか定義
+Capybara.register_driver :remote_chrome do |app|
+  logging_prefs = { browser: 'ALL' }
+  options = Selenium::WebDriver::Options.chrome(logging_prefs: logging_prefs)
+  # セキュリティサンドボックスを無効にする
+  options.add_argument('no-sandbox')
+  # ブラウザを「画面表示なし（ヘッドレス）」で起動します。CI や Docker では普通これにする
+  options.add_argument('headless')
+  #	GPU 関連の機能を無効化します。ヘッドレスでの互換性用オプション。
+  options.add_argument('disable-gpu')
+  # /dev/shm（共有メモリ）が小さい環境（Docker の一部設定など）でブラウザがクラッシュするのを防ぐためのオプション
+  options.add_argument('disable-dev-shm-usage')
+  options.add_argument('window-size=1400,1400')
+  # 位置情報利用の許可を求めるアラートを自動的に承認する
+  # CI環境で http://172.17.0.1 のようなIPアドレスでテストを実行すると、
+  # Geolocation APIが "Only secure origins are allowed" エラーを出すため、
+  # このオプションでテストサーバーのオリジンを安全なものとして明示的に許可します。
+  # Capybara.app_host はこのファイル内で設定されています。
+  options.add_argument("--unsafely-treat-insecure-origin-as-secure=#{Capybara.app_host}") if Capybara.app_host
+  options.add_argument('--use-fake-ui-for-media-stream')
+  # CI環境で位置情報APIを擬似的に使用できるようにする
+  options.add_argument('--use-fake-device-for-media-stream')
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :remote,
+    url: ENV.fetch('SELENIUM_URL'),
+    options: options
+  )
+end
+
+# spec_helper.rbから移動
+Capybara.javascript_driver = if ENV['SELENIUM_URL']
+                               :remote_chrome
+                             else
+                               :selenium_chrome_headless
+                             end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are

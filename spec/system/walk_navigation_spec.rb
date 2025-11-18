@@ -38,8 +38,14 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
           const start = new google.maps.LatLng(start_location);
           const destination = new google.maps.LatLng(destination_location);
 
+          // walkDrawRouteが参照するwindow.routeDataをセットアップ
+          window.routeData = {
+            start: { point: start },
+            destination: { mainPoint: { point: destination } },
+            waypoints: []
+          };
           // walkDrawRouteが完了するのを待ってからテストを再開する
-          await walkDrawRoute(start, destination);
+          await walkDrawRoute();
           done();
       });
     JS
