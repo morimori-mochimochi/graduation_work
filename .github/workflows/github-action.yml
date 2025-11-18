@@ -72,11 +72,9 @@ jobs:
       - name: Get Docker network ID
         id: get-docker-network
         run: |
-          # GitHub Actionsのサービスコンテナが使用するネットワークIDを取得し、
-          # 環境変数 DOCKER_NETWORK として設定する。CIのサービスコンテナには
-          # `job` ラベルが付与されるため、それを利用してコンテナを特定する。
-          # `head -n 1` で複数コンテナが見つかった場合でも最初の1つに限定する。
-          DOCKER_NETWORK_ID=$(docker ps --filter "label=job" --format "{{.Networks}}" | head -n 1)
+          # GitHub Actionsのサービスコンテナが接続されているネットワーク名を取得する。
+          # `docker network ls`でジョブ固有のネットワーク（例: "github_network_...")を特定する。
+          DOCKER_NETWORK_ID=$(docker network ls --filter "name=github_network" --format "{{.Name}}")
           echo "DOCKER_NETWORK=${DOCKER_NETWORK_ID}" >> $GITHUB_ENV
           echo "--- Debug from get-docker-network step ---"
           echo "DOCKER_NETWORK_ID is: ${DOCKER_NETWORK_ID}"
