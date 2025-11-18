@@ -83,6 +83,7 @@ jobs:
         env: 
           RAILS_ENV: test
           SELENIUM_URL:  http://localhost:4444/wd/hub 
+          DOCKER_NETWORK: ${{ env.DOCKER_NETWORK }}
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: bundle exec rspec
 
