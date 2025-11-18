@@ -35,27 +35,27 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       # arguments[0]：1番目の引数、つまりRubyから渡されたroute_data(JSON文字列) が入り、JSON.parse()でJSのオブジェクトに変換
       # arguments[1]：Capybaraが非同期処理完了検知のために自動挿入する done コールバック関数。これを呼び出すと、RSpecのテストが次のステップに進む
       result = page.evaluate_async_script(<<~JS, route_data)
-          const routeDataFromRuby = JSON.parse(arguments[0]);
-          const done = arguments[1];
+        const routeDataFromRuby = JSON.parse(arguments[0]);
+        const done = arguments[1];
 
-          window.mapApiLoaded.then(async () => {
-            // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
-            window.routeData = {
-              start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
-              destination: {
-                mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) },
-                parkingLot: { point: new google.maps.LatLng(routeDataFromRuby.destination.parkingLot.point) },
-              },
-              waypoints: [] // 中継点がない場合でも空の配列を定義
-            };
+        window.mapApiLoaded.then(async () => {
+          // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
+          window.routeData = {
+            start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+            destination: {
+              mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) },
+              parkingLot: { point: new google.maps.LatLng(routeDataFromRuby.destination.parkingLot.point) },
+            },
+            waypoints: [] // 中継点がない場合でも空の配列を定義
+          };
 
-            try {
-              const result = await window.carDrawRoute();
-              done(result); // 成功したら"OK"が返る
-            } catch (e) {
-              done("Error in carDrawRoute: " + e.message);
-            }
-          });
+          try {
+            const result = await window.carDrawRoute();
+            done(result); // 成功したら"OK"が返る
+          } catch (e) {
+            done("Error in carDrawRoute: " + e.message);
+          }
+        });
       JS
 
       expect(result).to eq('OK')

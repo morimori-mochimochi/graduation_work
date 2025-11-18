@@ -29,9 +29,19 @@ if ENV['SELENIUM_URL']
                # `jq`コマンドでホストのIPアドレス（Gateway）を抽出する
                # この方法は `host.docker.internal` が使えない環境でも安定して動作します
                docker_network_id = ENV.fetch('DOCKER_NETWORK')
+               # --- ここからデバッグコード ---
+               puts "[DEBUG] DOCKER_NETWORK from ENV: #{docker_network_id.inspect}"
                if docker_network_id.present?
-                 `docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'`.strip
+                 command = "docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'"
+                 puts "[DEBUG] Executing command: #{command}"
+                 result = `#{command}`.strip
+                 puts "[DEBUG] Command result: #{result.inspect}"
+                 result
+               else
+                 puts "[DEBUG] DOCKER_NETWORK is not present."
+                 nil
                end
+               # --- ここまでデバッグコード ---
              elsif ENV['DOCKER_CONTAINER'] # ローカルのDocker環境
                # テスト実行中のコンテナ自身のホスト名（コンテナID）を取得する
                # これにより、seleniumコンテナが正しいテストサーバーに接続できる
