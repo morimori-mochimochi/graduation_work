@@ -16,7 +16,6 @@ require 'capybara/rails'
 
 # Dockerコンテナでテストを実行する場合（SELENIUM_URLが設定されている場合）
 # seleniumコンテナから見たテストサーバーのホスト名
-selenium_app_host = "http://web:3001"
 if ENV['SELENIUM_URL']
   # Capybaraがテスト用サーバーを起動する際の設定
   Capybara.server_host = '0.0.0.0' # すべてのIPアドレスからの接続を許可
@@ -28,9 +27,11 @@ if ENV['SELENIUM_URL']
                # GitHub Actionsのサービスネットワーク内でホストOSのIPアドレスを動的に取得する
                # `docker network inspect`でネットワーク情報をJSON形式で取得し、
                # `jq`コマンドでホストのIPアドレス（Gateway）を抽出する
-               # この方法は `host.docker.internal` が使えない環境でも安定して動作する
-               docker_network_id = ENV['DOCKER_NETWORK']
-               `docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'`.strip if docker_network_id.present?
+               # この方法は `host.docker.internal` が使えない環境でも安定して動作します
+               docker_network_id = ENV.fetch('DOCKER_NETWORK')
+               if docker_network_id.present?
+                 `docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'`.strip
+               end
              elsif ENV['DOCKER_CONTAINER'] # ローカルのDocker環境
                # テスト実行中のコンテナ自身のホスト名（コンテナID）を取得する
                # これにより、seleniumコンテナが正しいテストサーバーに接続できる
