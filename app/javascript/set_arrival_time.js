@@ -85,8 +85,8 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       const minuteId = `relayMinute_${index}`;
       console.log(`検索するID: ${hourId}, ${minuteId}`);
 
-      const relayHourEl = document.getElementById(`relayHour_${index}`);
-      const relayMinuteEl = document.getElementById(`relayMinute_${index}`);
+      const relayHourEl = document.getElementById(hourId);
+      const relayMinuteEl = document.getElementById(minuteId);
 
       console.log("relayHourEl", relayHourEl);
       console.log("relayMinuteEl", relayMinuteEl);
