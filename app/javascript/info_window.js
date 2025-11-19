@@ -159,12 +159,16 @@ export function createRelayPointElement(relayPoint, index) {
 
   return itemDiv;
 }
-
-// ルートが描画されたら、中継点UIも再描画する
-// これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
-document.addEventListener('routeDrawn', () => {
-  if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
-    console.log("renderRelayPointを実行します");
-    renderRelayPoints();
-  }
-});
+// 他のファイルから呼び出して使う部品のような関数にaddEventListenerは不安定
+// なのでinitにして末尾に入れる
+export function initInfoWindow() {
+  console.log("initInfoWindowが呼ばれました。イベントリスナーを登録します。");
+  // ルートが描画されたら、中継点UIも再描画する
+  // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
+  document.addEventListener('routeDrawn', () => {
+    console.log("info_window.jsがrouteDrawnイベントを検知しました。");
+    if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
+      renderRelayPoints();
+    }
+  });
+}

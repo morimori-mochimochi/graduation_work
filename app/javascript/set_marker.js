@@ -73,11 +73,18 @@ async function fetchPlaceDetails(latLng, callback) {
   const address = (geoResults.results && geoResults.results[0]) ? geoResults.results[0].formatted_address : "住所不明";
 
   // 次に最も近い施設名を取得
-  const placesRequest = { location: latLng, radius: 50, rankby: 'distance' };
-  const { results: places } = await placesService.nearbySearch(placesRequest);
-  const name = (places && places.length > 0) ? places[0].name : address.split(' ')[0]; // 施設がなければ住所の一部
-
-  callback({ name, address, point: latLng });
+  // rankBy: 'distance' を使う場合、radiusは使えず、keyword, name, typeのいずれかが必要
+  const placesRequest = { location: latLng, rankBy: google.maps.places.RankBy.DISTANCE, keyword: 'point of interest' };
+  
+  placesService.nearbySearch(placesRequest, (places, status) => {
+    let name = address.split(' ')[0]; // デフォルトは住所の一部
+    if (status === google.maps.places.PlacesServiceStatus.OK && places && places.length > 0) {
+      // 検索結果から最も近い、'establishment' または 'point_of_interest' の名前を取得
+      const nearestPlace = places.find(p => p.types.includes('establishment') || p.types.includes('point_of_interest'));
+      if (nearestPlace) name = nearestPlace.name;
+    }
+    callback({ name, address, point: latLng });
+  });
 }
 
 export function openInfoWindow(marker, place) {
