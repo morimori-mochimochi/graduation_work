@@ -158,3 +158,11 @@ export function createRelayPointElement(relayPoint, index) {
 
   return itemDiv;
 }
+
+// ルートが描画されたら、中継点UIも再描画する
+// これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
+document.addEventListener('routeDrawn', () => {
+  if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
+    renderRelayPoints();
+  }
+});
