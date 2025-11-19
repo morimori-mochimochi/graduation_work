@@ -9,7 +9,10 @@ export function initSetTime() {
   // 'routeDrawn' カスタムイベントをリッスンする
   document.addEventListener('routeDrawn', (e) => {
     console.log('routeDrawnイベントを検知。時刻を計算します。', e.detail);
-    calculateTimes();
+    // DOMの更新を待つために、処理を少し遅らせる
+    setTimeout(() => {
+      calculateTimes();
+    }, 0);
   });
 
   // 時刻が手動で変更された場合も再計算を実行
