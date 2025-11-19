@@ -66,25 +66,11 @@ export async function initMarkerEvents() {
 // クリックした場所の住所を取得
 async function fetchPlaceDetails(latLng, callback) {
   const geocoder = new google.maps.Geocoder();
-  const placesService = new google.maps.places.PlacesService(window.map);
-
   // まず住所を取得
   const geoResults = await geocoder.geocode({ location: latLng });
   const address = (geoResults.results && geoResults.results[0]) ? geoResults.results[0].formatted_address : "住所不明";
-
-  // 次に最も近い施設名を取得
-  // rankBy: 'distance' を使う場合、radiusは使えず、keyword, name, typeのいずれかが必要
-  const placesRequest = { location: latLng, rankBy: google.maps.places.RankBy.DISTANCE, keyword: 'point of interest' };
-  
-  placesService.nearbySearch(placesRequest, (places, status) => {
-    let name = address.split(' ')[0]; // デフォルトは住所の一部
-    if (status === google.maps.places.PlacesServiceStatus.OK && places && places.length > 0) {
-      // 検索結果から最も近い、'establishment' または 'point_of_interest' の名前を取得
-      const nearestPlace = places.find(p => p.types.includes('establishment') || p.types.includes('point_of_interest'));
-      if (nearestPlace) name = nearestPlace.name;
-    }
-    callback({ name, address, point: latLng });
-  });
+  // 施設名ではなく住所を常に表示するため、nameにもaddressを渡す
+  callback({ name: address, address, point: latLng });
 }
 
 export function openInfoWindow(marker, place) {
