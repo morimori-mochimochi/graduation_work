@@ -11,7 +11,7 @@ export function initSetTime() {
     console.log('routeDrawnイベントを検知。時刻を計算します。', e.detail);
     // DOMの更新を待つために、処理を少し遅らせる
     setTimeout(() => {
-      calculateTimes();
+      calculateAndSetArrivalTime();
     }, 0);
   });
 
