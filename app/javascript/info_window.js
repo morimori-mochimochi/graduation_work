@@ -114,6 +114,7 @@ export function renderRelayPoints() {
   if (!container) return;
 
   // コンテナをクリア
+  console.log("コンテナをリセットします");
   container.innerHTML = '';
   // 保持しているすべての中継点を描画
   window.relayPoints.forEach((relayPoint, index) => {
@@ -163,6 +164,7 @@ export function createRelayPointElement(relayPoint, index) {
 // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
 document.addEventListener('routeDrawn', () => {
   if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
+    console.log("renderRelayPointを実行します");
     renderRelayPoints();
   }
 });
