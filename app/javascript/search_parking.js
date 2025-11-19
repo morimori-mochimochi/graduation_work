@@ -1,4 +1,3 @@
-// app/javascript/search_parking.js
 export async function searchParking() {
   console.log("searchParkingが呼ばれました");
   

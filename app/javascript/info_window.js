@@ -114,12 +114,14 @@ export function renderRelayPoints() {
   if (!container) return;
 
   // コンテナをクリア
+  console.log("コンテナをリセットします");
   container.innerHTML = '';
   // 保持しているすべての中継点を描画
   window.relayPoints.forEach((relayPoint, index) => {
     const relayPointElement = createRelayPointElement(relayPoint, index);
     container.appendChild(relayPointElement);
   });
+  console.log("renderRelayPoints終了です");
 }
 
 // 中継点要素をひな形から生成するヘルパー関数
@@ -131,8 +133,17 @@ export function createRelayPointElement(relayPoint, index) {
   // 動的な値を設定
   itemDiv.dataset.index = index;
   clone.querySelector('.relay-point-name').textContent = relayPoint.name;
-  clone.querySelector('.relay-hour-select').id = `relayHour_${index}`;
-  clone.querySelector('.relay-minute-select').id = `relayMinute_${index}`;
+
+  // ヘルパー関数でselect要素をセットアップ
+  const setupSelect = (selector, id, placeholder) => {
+    const selectEl = clone.querySelector(selector);
+    selectEl.id = id;
+    selectEl.innerHTML = JSON.parse(selectEl.dataset.options);
+    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`);
+  };
+
+  setupSelect('.relay-hour-select', `relayHour_${index}`, '時');
+  setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
 
   // 削除ボタンのイベントリスナーを設定
   const removeBtn = clone.querySelector('.remove-relay-point-btn');
@@ -147,4 +158,17 @@ export function createRelayPointElement(relayPoint, index) {
   });
 
   return itemDiv;
+}
+// 他のファイルから呼び出して使う部品のような関数にaddEventListenerは不安定
+// なのでinitにして末尾に入れる
+export function initInfoWindow() {
+  console.log("initInfoWindowが呼ばれました。イベントリスナーを登録します。");
+  // ルートが描画されたら、中継点UIも再描画する
+  // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
+  document.addEventListener('routeDrawn', () => {
+    console.log("info_window.jsがrouteDrawnイベントを検知しました。");
+    if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
+      renderRelayPoints();
+    }
+  });
 }

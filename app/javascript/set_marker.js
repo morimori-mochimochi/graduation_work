@@ -66,18 +66,11 @@ export async function initMarkerEvents() {
 // クリックした場所の住所を取得
 async function fetchPlaceDetails(latLng, callback) {
   const geocoder = new google.maps.Geocoder();
-  const placesService = new google.maps.places.PlacesService(window.map);
-
   // まず住所を取得
   const geoResults = await geocoder.geocode({ location: latLng });
   const address = (geoResults.results && geoResults.results[0]) ? geoResults.results[0].formatted_address : "住所不明";
-
-  // 次に最も近い施設名を取得
-  const placesRequest = { location: latLng, radius: 50, rankby: 'distance' };
-  const { results: places } = await placesService.nearbySearch(placesRequest);
-  const name = (places && places.length > 0) ? places[0].name : address.split(' ')[0]; // 施設がなければ住所の一部
-
-  callback({ name, address, point: latLng });
+  // 施設名ではなく住所を常に表示するため、nameにもaddressを渡す
+  callback({ name: address, address, point: latLng });
 }
 
 export function openInfoWindow(marker, place) {

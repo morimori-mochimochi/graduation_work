@@ -27,17 +27,17 @@ async function searchExactPlace(query) {
   try {
     const response = await fetch (`/locations/search?query=${encodeURIComponent(query)}`);
     if (response.ok) {
-      const locations = await response.json();
-      if (locations.length > 0) {
-      // Google Places APIの結果と同じ形式に変換
-      const places = locations.map(loc => ({
-        location: new google.maps.LatLng(loc.latitude, loc.longitude),
-        displayName: loc.name,
-        formattedAddress: loc.address,
-        isCustom: true // 自前DBからの結果であることを示すフラグ
-      }));
-      displayPlaces(places);
-      return;
+      const dbLocations = await response.json();
+      if (dbLocations.length > 0) {
+        // Google Places APIの結果と同じ形式に変換
+        const places = dbLocations.map(loc => ({
+          location: new google.maps.LatLng(loc.latitude, loc.longitude),
+          displayName: loc.name,
+          formattedAddress: loc.address,
+          isCustom: true // 自前DBからの結果であることを示すフラグ
+        }));
+        displayPlaces(places);
+        return;
       }
     }
   } catch (error) {
