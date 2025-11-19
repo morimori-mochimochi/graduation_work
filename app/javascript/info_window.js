@@ -62,7 +62,7 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
           });
 
           // UIを再描画
-          renderRelayPoints();
+          //renderRelayPoints();
           infoWindow.close();
         });
       } 
@@ -132,6 +132,7 @@ export function createRelayPointElement(relayPoint, index) {
 
   // 動的な値を設定
   itemDiv.dataset.index = index;
+  // templateをクローンして作った中継点UIから.relay-point-nameを探す
   clone.querySelector('.relay-point-name').textContent = relayPoint.name;
 
   // ヘルパー関数でselect要素をセットアップ
@@ -146,15 +147,19 @@ export function createRelayPointElement(relayPoint, index) {
   setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
 
   // 削除ボタンのイベントリスナーを設定
+  console.log("削除ボタンを登録します");
   const removeBtn = clone.querySelector('.remove-relay-point-btn');
   removeBtn.dataset.index = index;
+
+  console.log("中継点削除ボタンのイベントリスナー登録を行います");
 
   removeBtn.addEventListener('click', (e) => {
     const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
     // 配列から該当する中継点を削除
     window.relayPoints.splice(indexToRemove, 1);
     // UIを再描画
-    renderRelayPoints();
+    //renderRelayPoints();
+    console.log("中継点を削除します");
   });
 
   return itemDiv;

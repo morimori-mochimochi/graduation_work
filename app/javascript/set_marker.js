@@ -141,6 +141,7 @@ function createRelayPointElement(name) {
   clone.querySelector('.relay-point-name').textContent = name;
 
   // 削除ボタンの処理
+  console.log("削除ボタンのイベントリスナーを登録します");
   clone.querySelector('.remove-relay-point-btn').addEventListener('click', () => {
     const index = Array.from(container.children).indexOf(relayPointItem);
     if (index > -1) {
@@ -150,5 +151,6 @@ function createRelayPointElement(name) {
     }
   });
 
+  console.log("中継点templateを再描画");
   container.appendChild(clone);
 }
