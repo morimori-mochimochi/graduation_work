@@ -131,8 +131,17 @@ export function createRelayPointElement(relayPoint, index) {
   // 動的な値を設定
   itemDiv.dataset.index = index;
   clone.querySelector('.relay-point-name').textContent = relayPoint.name;
-  clone.querySelector('.relay-hour-select').id = `relayHour_${index}`;
-  clone.querySelector('.relay-minute-select').id = `relayMinute_${index}`;
+
+  // ヘルパー関数でselect要素をセットアップ
+  const setupSelect = (selector, id, placeholder) => {
+    const selectEl = clone.querySelector(selector);
+    selectEl.id = id;
+    selectEl.innerHTML = JSON.parse(selectEl.dataset.options);
+    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`);
+  };
+
+  setupSelect('.relay-hour-select', `relayHour_${index}`, '時');
+  setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
 
   // 削除ボタンのイベントリスナーを設定
   const removeBtn = clone.querySelector('.remove-relay-point-btn');
