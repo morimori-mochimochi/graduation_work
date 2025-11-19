@@ -120,6 +120,7 @@ export function renderRelayPoints() {
     const relayPointElement = createRelayPointElement(relayPoint, index);
     container.appendChild(relayPointElement);
   });
+  console.log("renderRelayPoints終了です");
 }
 
 // 中継点要素をひな形から生成するヘルパー関数
