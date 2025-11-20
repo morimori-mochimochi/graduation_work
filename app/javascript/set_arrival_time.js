@@ -105,15 +105,13 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
     console.error("ルート情報が見つかりません");
     return;
   }
-  const directionsResult = JSON.parse(storedDirections);
-  const route = directionsResult.routes[0];
 
   const destinationHour = parseInt(destinationHourEl.value, 10);
   const destinationMinute = parseInt(destinationMinuteEl.value, 10);
 
   const arrivalTime = new Date();
   arrivalTime.setHours(destinationHour, destinationMinute, 0, 0);
-
+  
   let cumulativeDuration = 0;
   // reverseでlegsをゴールから近い順に並べ替え
   // ループが回るたびにゴールからの所要時間がcumulativeDurationに累積していく
@@ -138,12 +136,13 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       console.log(`検索するID: ${hourId}, ${minuteId}`);
       console.log("relayHourEl", relayHourEl);
       console.log("relayMinuteEl", relayMinuteEl);
-      console.log("中継点計算：", relayHourEl.value);
-      console.log("中継点計算：", relayMinuteEl.value);
 
       if (relayHourEl && relayMinuteEl) {
         relayHourEl.value = String(departureTime.getHours()).padStart(2, '0');
         relayMinuteEl.value = String(departureTime.getMinutes()).padStart(2, '0');
+
+        console.log("中継点計算：", relayHourEl.value);
+        console.log("中継点計算：", relayMinuteEl.value);
       }
     }
   });
