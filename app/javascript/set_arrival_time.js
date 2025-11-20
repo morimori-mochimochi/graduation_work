@@ -29,7 +29,7 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
   // ルート情報がなければ何もしない
   const storedDirections = sessionStorage.getItem("directionsResult");
   if (!storedDirections) {
-    console.error("ルート情報が見つかりません");
+    console.log("ルート情報がないため、時刻計算をスキップします。");
     return;
   }
   const directionsResult = JSON.parse(storedDirections);

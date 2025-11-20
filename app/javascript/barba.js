@@ -95,10 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("barbaが完了しました");
           });
         },
-        async afterEnter({ next }) {
-          await window.mapApiLoaded; // 念のため遷移後もAPI読み込みを待つ
-          initializePage(next.container);
-        }
       }
     ]
   });
