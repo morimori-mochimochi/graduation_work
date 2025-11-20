@@ -9,24 +9,21 @@ export function initSetTime() {
   // 'routeDrawn' カスタムイベントをリッスンする
   document.addEventListener('routeDrawn', (e) => {
     console.log('routeDrawnイベントを検知。時刻を計算します。', e.detail);
+    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl); // ルート描画完了時に時刻を計算
   });
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
-    startHourEl.addEventListener('change', () => calculateTimes({ changed: 'start' }));
-    startMinuteEl.addEventListener('change', () => calculateTimes({ changed: 'start' }));
-    destinationHourEl.addEventListener('change', () => calculateTimes({ changed: 'destination' }));
-    destinationMinuteEl.addEventListener('change', () => calculateTimes({ changed: 'destination' }));
+    const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+    startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+    destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+    destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
   }
 }
 
-function calculateTimes(options = {}) {
-  const startHourEl = document.getElementById("startHour");
-  const startMinuteEl = document.getElementById("startMinute");
-  const destinationHourEl = document.getElementById("destinationHour");
-  const destinationMinuteEl = document.getElementById("destinationMinute");
-
-  const isStartSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
+function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
+  const isStartSet = startHourEl && startMinuteEl && startHourEl.value !== "時" && startMinuteEl.value !== "分";
   const isDestinationSet = destinationHourEl.value !== "時" && destinationMinuteEl.value !== "分";
 
   // ルート情報がなければ何もしない

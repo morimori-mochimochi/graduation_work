@@ -46,6 +46,7 @@ export async function initMarkerEvents() {
       }
 
     // #新しいマーカーを配置
+    // クリックした位置のlatlngをマーカーに入れる
       selectedMarker = new google.maps.marker.AdvancedMarkerElement({
         position: event.latLng,
         map: map,
