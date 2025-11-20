@@ -111,6 +111,11 @@ export function renderRelayPoints() {
     const relayPointElement = createRelayPointElement(waypoint, index);
     container.appendChild(relayPointElement);
   });
+
+  // UI描画完了を通知するカスタムイベントを発行
+  const event = new CustomEvent('relayPointsRendered');
+  document.dispatchEvent(event);
+
   console.log("renderRelayPoints終了です");
 }
 
@@ -162,8 +167,12 @@ export function initInfoWindow() {
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {
     console.log("info_window.jsがrouteDrawnイベントを検知しました。中継点を再描画します。");
-    if (Array.isArray(window.routeData.waypoints) && window.routeData.waypoints.length > 0) {
+    if (window.routeData?.waypoints?.length > 0) {
       renderRelayPoints();
+    } else {
+      // 中継点がない場合でも、時刻計算をトリガーするためにイベントを発行
+      const event = new CustomEvent('relayPointsRendered');
+      document.dispatchEvent(event);
     }
   });
 }

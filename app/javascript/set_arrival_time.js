@@ -6,9 +6,9 @@ export function initSetTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 'routeDrawn' カスタムイベントをリッスンする
-  document.addEventListener('routeDrawn', (e) => {
-    console.log('routeDrawnイベントを検知。時刻を計算します。', e.detail);
+  // 中継点UIの描画完了を待ってから時刻計算を実行する
+  document.addEventListener('relayPointsRendered', (e) => {
+    console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
     calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl); // ルート描画完了時に時刻を計算
   });
 
@@ -86,8 +86,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
       console.log("relayHourEl", relayHourEl);
       console.log("relayMinuteEl", relayMinuteEl);
-
-      console.log("取得した要素:", { relayHourEl, relayMinuteEl });
       
       if (relayHourEl && relayMinuteEl) {
         relayHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
