@@ -1,4 +1,4 @@
-import { openInfoWindow } from './set_marker.js';
+import { openInfoWindow } from './info_window.js';
 
 export function highlightMarker(marker, place, duration = 1500) {
   if (!marker) return;

@@ -6,27 +6,24 @@ export function initSetTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 'routeDrawn' カスタムイベントをリッスンする
-  document.addEventListener('routeDrawn', (e) => {
-    console.log('routeDrawnイベントを検知。時刻を計算します。', e.detail);
+  // 中継点UIの描画完了を待ってから時刻計算を実行する
+  document.addEventListener('relayPointsRendered', (e) => {
+    console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
+    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl); // ルート描画完了時に時刻を計算
   });
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
-    startHourEl.addEventListener('change', () => calculateTimes({ changed: 'start' }));
-    startMinuteEl.addEventListener('change', () => calculateTimes({ changed: 'start' }));
-    destinationHourEl.addEventListener('change', () => calculateTimes({ changed: 'destination' }));
-    destinationMinuteEl.addEventListener('change', () => calculateTimes({ changed: 'destination' }));
+    const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+    startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+    destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+    destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
   }
 }
 
-function calculateTimes(options = {}) {
-  const startHourEl = document.getElementById("startHour");
-  const startMinuteEl = document.getElementById("startMinute");
-  const destinationHourEl = document.getElementById("destinationHour");
-  const destinationMinuteEl = document.getElementById("destinationMinute");
-
-  const isStartSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
+function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
+  const isStartSet = startHourEl && startMinuteEl && startHourEl.value !== "時" && startMinuteEl.value !== "分";
   const isDestinationSet = destinationHourEl.value !== "時" && destinationMinuteEl.value !== "分";
 
   // ルート情報がなければ何もしない
@@ -89,8 +86,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
       console.log("relayHourEl", relayHourEl);
       console.log("relayMinuteEl", relayMinuteEl);
-
-      console.log("取得した要素:", { relayHourEl, relayMinuteEl });
       
       if (relayHourEl && relayMinuteEl) {
         relayHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
