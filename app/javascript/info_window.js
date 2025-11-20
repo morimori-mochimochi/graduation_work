@@ -1,6 +1,6 @@
 console.log("infoWindowが呼ばれました");
 
-export function openInfoWindow(marker, facilityName, facilityAddress) {
+export function openInfoWindow(marker, place) {
   // <template>からInfoWindowのコンテンツを作成
   // cloneNode(false) → 要素自体だけコピー（中身の子要素はコピーしない）
   // cloneNode(true) → 要素 とその子要素すべて を再帰的にコピー
@@ -8,7 +8,7 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
   const content = template.content.cloneNode(true);
 
   //動的な値を埋め込む
-  content.querySelector('.info-window-facility-name').textContent = facilityName;
+  content.querySelector('.info-window-facility-name').textContent = place.name;
 
   // 既存のInfoWindowを閉じる
   if (window.activeInfoWindow) {
@@ -35,35 +35,29 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
 
     if (start_btn) {
       start_btn.addEventListener("click", function() {
-        window.routeStart = marker.getPosition ? marker.getPosition() : marker.position;
-  
-        const uiStart = document.getElementById("startPoint"); 
-        if (uiStart) {
-          uiStart.textContent = facilityName || "選択した場所";
-        }
+        window.routeData.start = { point: place.point, name: place.name };
+        document.getElementById('startPoint').textContent = place.name;
         infoWindow.close();
+        marker.setMap(null); // マーカーを地図から削除
       });
     }
 
-    // 出発/到着地の設定があるときのみ
-    if (window.routeDestination) {
+    // 目的地が設定されているときのみ中継点ボタンを表示
+    if (window.routeData.destination.mainPoint.point) {
       console.log("relayPointボタンを表示します");
       if (relay_point_btn) {
         relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
         relay_point_btn.addEventListener("click", () => {
-          // window.relayPointsが配列でなければ初期化
-          if (!Array.isArray(window.relayPoints)) {
-            window.relayPoints = [];
-          }
-          // 新しい中継点（位置情報と名前）を配列に追加
-          window.relayPoints.push({
-            position: marker.getPosition ? marker.getPosition() : marker.position,
-            name: facilityName || "選択した場所"
-          });
+          const newWaypoint = {
+            mainPoint: { point: place.point, name: place.name },
+            parkingLot: null
+          };
+          window.routeData.waypoints.push(newWaypoint);
 
           // UIを再描画
-          //renderRelayPoints();
+          renderRelayPoints();
           infoWindow.close();
+          marker.setMap(null); // マーカーを地図から削除
         });
       } 
     } else {
@@ -74,13 +68,10 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
 
     if (destination_btn) {
       destination_btn.addEventListener("click", function() {
-        window.routeDestination = marker.getPosition ? marker.getPosition() : marker.position;
-  
-        const uiDest = document.getElementById("destinationPoint");
-        if (uiDest) {
-          uiDest.textContent = facilityName || "選択した場所";
-        }
+        window.routeData.destination.mainPoint = { point: place.point, name: place.name };
+        document.getElementById('destinationPoint').textContent = place.name;
         infoWindow.close();
+        marker.setMap(null); // マーカーを地図から削除
       });
     }
 
@@ -94,9 +85,8 @@ export function openInfoWindow(marker, facilityName, facilityAddress) {
     if (save_btn) {
       save_btn.addEventListener("click", function() {
         const position = marker.getPosition ? marker.getPosition() : marker.position;
-        // URLのクエリパラメータを作成
         const params = new URLSearchParams({
-          'location[address]': facilityAddress,
+          'location[address]': place.address,
           'location[lat]': position.lat(),
           'location[lng]': position.lng()
         });
@@ -116,16 +106,16 @@ export function renderRelayPoints() {
   // コンテナをクリア
   console.log("コンテナをリセットします");
   container.innerHTML = '';
-  // 保持しているすべての中継点を描画
-  window.relayPoints.forEach((relayPoint, index) => {
-    const relayPointElement = createRelayPointElement(relayPoint, index);
+  // routeDataから中継点を描画
+  window.routeData.waypoints.forEach((waypoint, index) => {
+    const relayPointElement = createRelayPointElement(waypoint, index);
     container.appendChild(relayPointElement);
   });
   console.log("renderRelayPoints終了です");
 }
 
 // 中継点要素をひな形から生成するヘルパー関数
-export function createRelayPointElement(relayPoint, index) {
+export function createRelayPointElement(waypoint, index) {
   const template = document.getElementById('relay-point-template');
   const clone = template.content.cloneNode(true);
   const itemDiv = clone.querySelector('.relay-point-item');
@@ -133,7 +123,7 @@ export function createRelayPointElement(relayPoint, index) {
   // 動的な値を設定
   itemDiv.dataset.index = index;
   // templateをクローンして作った中継点UIから.relay-point-nameを探す
-  clone.querySelector('.relay-point-name').textContent = relayPoint.name;
+  clone.querySelector('.relay-point-name').textContent = waypoint.mainPoint.name;
 
   // ヘルパー関数でselect要素をセットアップ
   const setupSelect = (selector, id, placeholder) => {
@@ -155,11 +145,11 @@ export function createRelayPointElement(relayPoint, index) {
 
   removeBtn.addEventListener('click', (e) => {
     const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
-    // 配列から該当する中継点を削除
-    window.relayPoints.splice(indexToRemove, 1);
+    // waypoints配列から該当する中継点を削除
+    window.routeData.waypoints.splice(indexToRemove, 1);
     // UIを再描画
-    //renderRelayPoints();
-    console.log("中継点を削除します");
+    renderRelayPoints();
+    console.log(`中継点 ${indexToRemove} を削除しました`);
   });
 
   return itemDiv;
@@ -171,8 +161,8 @@ export function initInfoWindow() {
   // ルートが描画されたら、中継点UIも再描画する
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {
-    console.log("info_window.jsがrouteDrawnイベントを検知しました。");
-    if (Array.isArray(window.relayPoints) && window.relayPoints.length > 0) {
+    console.log("info_window.jsがrouteDrawnイベントを検知しました。中継点を再描画します。");
+    if (Array.isArray(window.routeData.waypoints) && window.routeData.waypoints.length > 0) {
       renderRelayPoints();
     }
   });

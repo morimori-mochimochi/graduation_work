@@ -1,21 +1,18 @@
 console.log("set_marker module loaded");
+import { openInfoWindow } from './info_window.js';
 
 export async function initMarkerEvents() {
   console.log("マーカーイベントが発火しました");
 
   // 新しいデータ構造をグローバルに初期化
   window.routeData = {
-    start: { point: null, name: "現在地" },
+    start: { point: null, name: null },
     waypoints: [], // { mainPoint: { point, name }, parkingLot: { point, name } }
     destination: {
       mainPoint: { point: null, name: "目的地" },
       parkingLot: null
     }
   };
-  // 古いグローバル変数の後方互換性のため（徐々に廃止）
-  window.relayPoints = []; 
-  window.routeStart = null;
-  window.routeDestination = null;
 
   // マップ生成完了まで待機
   await window.mapApiLoaded;
@@ -71,86 +68,4 @@ async function fetchPlaceDetails(latLng, callback) {
   const address = (geoResults.results && geoResults.results[0]) ? geoResults.results[0].formatted_address : "住所不明";
   // 施設名ではなく住所を常に表示するため、nameにもaddressを渡す
   callback({ name: address, address, point: latLng });
-}
-
-export function openInfoWindow(marker, place) {
-  if (window.activeInfoWindow) {
-    window.activeInfoWindow.close();
-  }
-  // infowindowが開かれたらクリックした位置の住所を表示して
-  // ポイント設置ボタンを表示
-  const template = document.getElementById('info-window-template');
-  const content = template.content.cloneNode(true);
-
-  content.querySelector('.info-window-facility-name').textContent = place.name;
-
-  const infoWindow = new google.maps.InfoWindow({ content });
-  infoWindow.open(marker.map, marker);
-  window.activeInfoWindow = infoWindow;
-
-  google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
-    // domreadyイベントが発火した時点では、infowindowのコンテンツはdocumentに追加されているため、
-    // document.querySelectorで要素を取得できます。
-    const routeBtn = document.querySelector('.info-window-route-btn');
-    const dropdownMenu = document.querySelector('.info-window-dropdown-menu');
-
-    if (routeBtn && dropdownMenu) {
-      routeBtn.addEventListener('click', () => {
-        dropdownMenu.hidden = !dropdownMenu.hidden;
-      });
-    }
-
-    // 出発地に設定
-    document.querySelector('.info-window-set-start').addEventListener('click', () => {
-      window.routeData.start = { point: place.point, name: place.name };
-      document.getElementById('startPoint').textContent = place.name;
-      infoWindow.close();
-      marker.setMap(null);
-    });
-
-    // 目的地に設定
-    document.querySelector('.info-window-set-destination').addEventListener('click', () => {
-      window.routeData.destination.mainPoint = { point: place.point, name: place.name };
-      document.getElementById('destinationPoint').textContent = place.name;
-      infoWindow.close();
-      marker.setMap(null);
-    });
-
-    // 中継地に設定
-    document.querySelector('.info-window-set-relay-point').addEventListener('click', () => {
-      const newWaypoint = {
-        mainPoint: { point: place.point, name: place.name }, // 本来の中継点
-        parkingLot: null // そのための駐車場
-      };
-      window.routeData.waypoints.push(newWaypoint);
-      
-      createRelayPointElement(place.name);
-      infoWindow.close();
-      marker.setMap(null);
-    });
-  });
-}
-
-function createRelayPointElement(name) {
-  const template = document.getElementById('relay-point-template');
-  const container = document.getElementById('relayPointsContainer');
-  const clone = template.content.cloneNode(true);
-
-  // relay-point-itemは中継点の時間指定のこと
-  const relayPointItem = clone.querySelector('.relay-point-item');
-  clone.querySelector('.relay-point-name').textContent = name;
-
-  // 削除ボタンの処理
-  console.log("削除ボタンのイベントリスナーを登録します");
-  clone.querySelector('.remove-relay-point-btn').addEventListener('click', () => {
-    const index = Array.from(container.children).indexOf(relayPointItem);
-    if (index > -1) {
-      window.routeData.waypoints.splice(index, 1);
-      window.relayPoints.splice(index, 1); // 古い配列も更新
-      container.removeChild(relayPointItem);
-    }
-  });
-
-  console.log("中継点templateを再描画");
-  container.appendChild(clone);
 }
