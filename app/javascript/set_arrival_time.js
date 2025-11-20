@@ -99,6 +99,15 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
 //【逆算】到着時刻から出発時刻を計算
 function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
+  // ルート情報がなければ何もしない
+  const storedDirections = sessionStorage.getItem("directionsResult");
+  if (!storedDirections) {
+    console.error("ルート情報が見つかりません");
+    return;
+  }
+  const directionsResult = JSON.parse(storedDirections);
+  const route = directionsResult.routes[0];
+
   const destinationHour = parseInt(destinationHourEl.value, 10);
   const destinationMinute = parseInt(destinationMinuteEl.value, 10);
 
@@ -106,6 +115,8 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
   arrivalTime.setHours(destinationHour, destinationMinute, 0, 0);
 
   let cumulativeDuration = 0;
+  // reverseでlegsをゴールから近い順に並べ替え
+  // ループが回るたびにゴールからの所要時間がcumulativeDurationに累積していく
   [...route.legs].reverse().forEach((leg, index) => {
     cumulativeDuration += leg.duration.value; // 秒単位の所要時間を累積
     const departureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
@@ -117,8 +128,19 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       startHourEl.value = String(departureTime.getHours()).padStart(2, '0');
       startMinuteEl.value = String(departureTime.getMinutes()).padStart(2, '0');
     } else { // 途中は中継点（この時刻はその中継点への到着時刻）
-      const relayHourEl = document.getElementById(`relayHour_${legIndex - 1}`);
-      const relayMinuteEl = document.getElementById(`relayMinute_${legIndex - 1}`);
+      console.log("出発時刻を逆算します👾");
+      const hourId = `relayHour_${legIndex - 1}`;
+      const minuteId = `relayMinute_${legIndex - 1}`;
+
+      const relayHourEl = document.getElementById(hourId);// legsとindexは１ずれている
+      const relayMinuteEl = document.getElementById(minuteId);
+
+      console.log(`検索するID: ${hourId}, ${minuteId}`);
+      console.log("relayHourEl", relayHourEl);
+      console.log("relayMinuteEl", relayMinuteEl);
+      console.log("中継点計算：", relayHourEl.value);
+      console.log("中継点計算：", relayMinuteEl.value);
+
       if (relayHourEl && relayMinuteEl) {
         relayHourEl.value = String(departureTime.getHours()).padStart(2, '0');
         relayMinuteEl.value = String(departureTime.getMinutes()).padStart(2, '0');
