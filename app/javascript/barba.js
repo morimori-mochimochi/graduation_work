@@ -36,24 +36,25 @@ function initializePage(container) {
   mapIds.forEach(id => {
     const mapDiv = container.querySelector(`#${id}`);
     if (mapDiv && !mapDiv.dataset.mapInitialized) {
-      initMap(mapDiv);
       mapDiv.dataset.mapInitialized = "true";
+      initMap(mapDiv);
 
       if (id === 'map') {
         initMarkerEvents();
-        initSearchBox(container);
         searchParking();
         walkRouteBtn();
         carRouteBtn();
-        initSetTime();
-        initInfoWindow();
-        initResetRouteBtn();
-        // clearSearchMarkersOnRouteDraw(); // この関数は定義が見当たらないためコメントアウト
         initCurrentPosBtn();
       } else if (id === 'naviMap' || id === 'carNaviMap') {
-        // fetchCurrentPos(); // startNavigation内で呼ばれるなら不要かもしれません
         startNavigation();
       }
+    }
+    // マップの初期化状態に関わらず、毎回実行したい処理
+    if (mapDiv && id === 'map') {
+      initSearchBox(container);
+      initSetTime();
+      initInfoWindow();
+      initResetRouteBtn();
     }
   });
 }
