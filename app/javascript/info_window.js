@@ -134,7 +134,7 @@ export function createRelayPointElement(waypoint, index) {
   const setupSelect = (selector, id, placeholder) => {
     const selectEl = clone.querySelector(selector);
     selectEl.id = id;
-    selectEl.innerHTML = JSON.parse(selectEl.dataset.options);
+    selectEl.innerHTML = selectEl.dataset.options;
     selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`);
   };
 
