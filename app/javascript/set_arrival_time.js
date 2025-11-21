@@ -12,6 +12,11 @@ export function initSetTime() {
     calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl); // ルート描画完了時に時刻を計算
   });
 
+  // ルートが描画された直後も時刻計算を実行する
+  document.addEventListener('routeDrawn', (e) => {
+    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+  });
+
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
     const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);

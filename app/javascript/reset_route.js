@@ -1,6 +1,7 @@
 import { renderRelayPoints } from './info_window.js';
 
 export function resetRoute() {
+  console.trace("resetRoute が呼び出されました"); // トレースログを追加
   console.log("ルート情報をリセットします。");
 
   // 1. グローバルなルートデータを初期化
