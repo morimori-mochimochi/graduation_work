@@ -6,6 +6,9 @@ export function initSetTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
+  setupSelect('.stay-hour-select', `stayHour_${index}`, '時');
+  setupSelect('.stay-minute-select', `stayMinute_${index}`, '分');
+
   // 中継点UIの描画完了を待ってから時刻計算を実行する
   document.addEventListener('relayPointsRendered', (e) => {
     console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
