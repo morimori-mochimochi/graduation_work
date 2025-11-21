@@ -95,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("barbaが完了しました");
           });
         },
+        async afterEnter({ next }) {
+          await window.mapApiLoaded; // APIの読み込みを待つ
+          initializePage(next.container);
+          console.log("afterEnter hook: ページ初期化完了");
+        },
       }
     ]
   });
