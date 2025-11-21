@@ -173,6 +173,7 @@ export function initInfoWindow() {
       // 中継点がない場合でも、時刻計算をトリガーするためにイベントを発行
       const event = new CustomEvent('relayPointsRendered');
       document.dispatchEvent(event);
+      console.log("relayPointsRenderedイベントを発行しました。");
     }
   });
 }
