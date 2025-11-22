@@ -115,7 +115,7 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
       console.log("到着時刻：", destinationHourEl.value);
       console.log("到着時刻：", destinationMinuteEl.value);
-      
+
     } else { // 中継点
       console.log(`中継点[${index}]の計算します🧮`);
 
@@ -182,6 +182,10 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
       startMinuteEl.value = String(legDepartureTime.getMinutes()).padStart(2, '0');
+
+      console.log("出発時刻計算：", startHourEl.value);
+      console.log("出発時刻計算：", startMinuteEl.value
+        
     } else { // 途中は中継点（この時刻はその中継点への到着時刻）
       console.log("出発時刻を逆算します👾");
       const hourId = `relayHour_${legIndex - 1}`;
