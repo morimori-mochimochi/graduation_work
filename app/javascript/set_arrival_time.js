@@ -67,15 +67,15 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
 function getStayDuration(index) {
   const stayHourEl = document.getElementById(`relayHour_${index}`);
   const stayMinuteEl = document.getElementById(`relayMinute_${index}`);
-  let duration = 0;
+  let stayDuration = 0;
 
   if (stayHourEl && stayHourEl.value !== "時") {
-    duration += parseInt(stayHourEl.value, 10) * 3600; // 時間を秒に変換
+    stayDuration += parseInt(stayHourEl.value, 10) * 3600; // 時間を秒に変換
   }
   if (stayMinuteEl && stayMinuteEl.value !== "分") {
-    duration += parseInt(stayMinuteEl.value, 10) * 60; // 分を秒に変換
+    stayDuration += parseInt(stayMinuteEl.value, 10) * 60; // 分を秒に変換
   }
-  return duration;
+  return stayDuration;
 }
 
 //【順算】出発時刻から到着時刻を計算
@@ -102,6 +102,7 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
     const arrivalTime = new Date(departureTime.getTime() + cumulativeDuration * 1000);
 
     if (index === route.legs.length - 1) { // 最終目的地
+      console.log(`最終目的地の計算します➕`);
       destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
     } else { // 中継点
@@ -122,6 +123,11 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
         console.log("中継点計算：", relayHourEl.value);
         console.log("中継点計算：", relayMinuteEl.value);
       }
+
+      // 次の区間の計算のために、この中継点での滞在時間を加算する
+      // legは次の区間を指すため、現在の到着地点（中継点）のインデックスは index となる
+      console.log(`中継点 ${index} の滞在時間を加算します`);
+      cumulativeDuration += getStayDuration(index);
     }
   });
 }
@@ -150,13 +156,13 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
     // index: 時刻計算のために並べ変えた後のindex
     const legIndex = route.legs.length - 1 - index; // 逆順にしたindexを元に戻す
 
-    // この区間の出発時刻（＝前の中継点への到着時刻）
-    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
-
-    // 次のループのために、この中継点での滞在時間を加算する
+    // この区間の出発時刻（＝前の中継点への到着時刻）を計算するために、
+    // この区間の「出発地点」での滞在時間を加算する
     if (legIndex > 0) {
       cumulativeDuration += getStayDuration(legIndex - 1);
     }
+
+    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
 
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
