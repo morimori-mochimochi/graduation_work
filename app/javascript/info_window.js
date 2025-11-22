@@ -137,18 +137,28 @@ export function createRelayPointElement(waypoint, index) {
   arrivalTimeEl.classList.add('bg-gray-200', 'text-gray-500', 'px-2', 'py-1', 'rounded', 'text-sm');
   arrivalTimeEl.textContent = '--:--'; // 初期値
 
+  // 出発時刻表示用のspanを動的に生成し、IDを割り当て
+  const departureTimeEl = document.createElement('span');
+  departureTimeEl.id = `relayDepartureTime_${index}`;
+  departureTimeEl.classList.add('text-gray-500', 'text-sm', 'ml-1'); // スタイル調整
+  // 到着時刻要素の直後に出発時刻要素を挿入
+  arrivalTimeEl.parentNode.insertBefore(departureTimeEl, arrivalTimeEl.nextSibling);
+
   // 滞在時間設定用のプルダウンにIDを割り当て
   const stayHourEl = clone.querySelector('.stay-hour-select');
   if (stayHourEl) {
     stayHourEl.id = `stayHour_${index}`;
+    // data-options 属性から値を取り出して select 要素の中身を生成する処理
     const options = JSON.parse(stayHourEl.dataset.options);
-    stayHourEl.innerHTML += options;
+    stayHourEl.innerHTML = `<option value="">時</option>${options}`; // 「時」を先頭に追加
+    stayHourEl.value = '00'; // デフォルト値を00時に設定
   }
   const stayMinuteEl = clone.querySelector('.stay-minute-select');
   if (stayMinuteEl) {
     stayMinuteEl.id = `stayMinute_${index}`;
     const options = JSON.parse(stayMinuteEl.dataset.options);
-    stayMinuteEl.innerHTML += options;
+    stayMinuteEl.innerHTML = `<option value="">分</option>${options}`; // 「分」を先頭に追加
+    stayMinuteEl.value = '00'; // デフォルト値を00分に設定
   }
 
   // 削除ボタンのイベントリスナーを設定
