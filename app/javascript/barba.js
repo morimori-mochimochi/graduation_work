@@ -12,6 +12,7 @@ import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
 import { initSetTime } from "./set_arrival_time";
 import { initInfoWindow } from "./info_window";
+import { initResetRouteBtn } from "./reset_route";
 
 // ページ初期化のための共通関数
 function initializePage(container) {
@@ -35,23 +36,25 @@ function initializePage(container) {
   mapIds.forEach(id => {
     const mapDiv = container.querySelector(`#${id}`);
     if (mapDiv && !mapDiv.dataset.mapInitialized) {
-      initMap(mapDiv);
       mapDiv.dataset.mapInitialized = "true";
+      initMap(mapDiv);
 
       if (id === 'map') {
         initMarkerEvents();
-        initSearchBox(container);
         searchParking();
         walkRouteBtn();
         carRouteBtn();
-        initSetTime();
-        initInfoWindow();
-        // clearSearchMarkersOnRouteDraw(); // この関数は定義が見当たらないためコメントアウト
         initCurrentPosBtn();
       } else if (id === 'naviMap' || id === 'carNaviMap') {
-        // fetchCurrentPos(); // startNavigation内で呼ばれるなら不要かもしれません
         startNavigation();
       }
+    }
+    // マップの初期化状態に関わらず、毎回実行したい処理
+    if (mapDiv && id === 'map') {
+      initSearchBox(container);
+      initSetTime();
+      initInfoWindow();
+      initResetRouteBtn();
     }
   });
 }
@@ -94,9 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         async afterEnter({ next }) {
-          await window.mapApiLoaded; // 念のため遷移後もAPI読み込みを待つ
+          await window.mapApiLoaded; // APIの読み込みを待つ
           initializePage(next.container);
-        }
+          console.log("afterEnter hook: ページ初期化完了");
+        },
       }
     ]
   });

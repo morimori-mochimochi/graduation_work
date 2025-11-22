@@ -130,16 +130,13 @@ export function createRelayPointElement(waypoint, index) {
   // templateをクローンして作った中継点UIから.relay-point-nameを探す
   clone.querySelector('.relay-point-name').textContent = waypoint.mainPoint.name;
 
-  // ヘルパー関数でselect要素をセットアップ
-  const setupSelect = (selector, id, placeholder) => {
-    const selectEl = clone.querySelector(selector);
-    selectEl.id = id;
-    selectEl.innerHTML = JSON.parse(selectEl.dataset.options);
-    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`);
-  };
+  // 到着時刻表示用のspanにIDを割り当て、スタイルを適用
+  const arrivalTimeEl = clone.querySelector('.relay-arrival-time');
+  arrivalTimeEl.id = `relayArrivalTime_${index}`;
+  // Tailwind CSSのクラスを追加して見た目を調整
+  arrivalTimeEl.classList.add('bg-gray-200', 'text-gray-500', 'px-2', 'py-1', 'rounded', 'text-sm');
+  arrivalTimeEl.textContent = '--:--'; // 初期値
 
-  setupSelect('.relay-hour-select', `relayHour_${index}`, '時');
-  setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
 
   // 削除ボタンのイベントリスナーを設定
   console.log("削除ボタンを登録します");
@@ -173,6 +170,7 @@ export function initInfoWindow() {
       // 中継点がない場合でも、時刻計算をトリガーするためにイベントを発行
       const event = new CustomEvent('relayPointsRendered');
       document.dispatchEvent(event);
+      console.log("relayPointsRenderedイベントを発行しました。");
     }
   });
 }
