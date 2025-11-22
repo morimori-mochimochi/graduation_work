@@ -93,6 +93,9 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
   } else {
     startHour = parseInt(startHourEl.value, 10);
     startMinute = parseInt(startMinuteEl.value, 10);
+
+    console.log("出発時刻：",  startHourEl.value);
+    console.log("出発時刻：",  startMinuteEl.value);
   }
 
   const departureTime = new Date();
@@ -109,6 +112,10 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       // 到着時刻の表示
       destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
+
+      console.log("到着時刻：", destinationHourEl.value);
+      console.log("到着時刻：", destinationMinuteEl.value);
+      
     } else { // 中継点
       console.log(`中継点[${index}]の計算します🧮`);
 
