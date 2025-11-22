@@ -146,21 +146,17 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
   // ループが回るたびにゴールからの所要時間がcumulativeDurationに累積していく
   [...route.legs].reverse().forEach((leg, index) => {
     cumulativeDuration += leg.duration.value; // 秒単位の所要時間を累積
-    const departureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
     // legIndex: 道順そのもののindex
     // index: 時刻計算のために並べ変えた後のindex
     const legIndex = route.legs.length - 1 - index; // 逆順にしたindexを元に戻す
 
-    // この区間の出発時刻を計算するために滞在時間を考慮する
+    // この区間の出発時刻（＝前の中継点への到着時刻）
+    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
+
+    // 次のループのために、この中継点での滞在時間を加算する
     if (legIndex > 0) {
       cumulativeDuration += getStayDuration(legIndex - 1);
     }
-
-    // この区間の移動時間を加算
-    cumulativeDuration += leg.duration.value;
-
-    // この区間の出発時間を計算
-    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
 
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
@@ -177,12 +173,9 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       console.log("relayHourEl", relayHourEl);
       console.log("relayMinuteEl", relayMinuteEl);
 
-      // この中継点への到着時刻は、この区間の出発時刻と同じ
-      const relayArrivalTime = legDepartureTime;
-
       if (relayHourEl && relayMinuteEl) {
-        relayHourEl.value = String(departureTime.getHours()).padStart(2, '0');
-        relayMinuteEl.value = String(departureTime.getMinutes()).padStart(2, '0');
+        relayHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
+        relayMinuteEl.value = String(legDepartureTime.getMinutes()).padStart(2, '0');
 
         console.log("中継点計算：", relayHourEl.value);
         console.log("中継点計算：", relayMinuteEl.value);
