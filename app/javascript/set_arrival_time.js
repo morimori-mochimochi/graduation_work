@@ -86,6 +86,8 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
     const now = new Date();
     startHour = now.getHours();
     startMinute = now.getMinutes();
+
+    // 出発時刻表示
     startHourEl.value = String(startHour).padStart(2, '0');
     startMinuteEl.value = String(startMinute).padStart(2, '0');
   } else {
@@ -103,10 +105,14 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
     if (index === route.legs.length - 1) { // 最終目的地
       console.log(`最終目的地の計算します➕`);
+
+      // 到着時刻の表示
       destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
     } else { // 中継点
       console.log(`中継点[${index}]の計算します🧮`);
+
+      // 中継点の動的要素の定義
       const hourId = `relayHour_${index}`;
       const minuteId = `relayMinute_${index}`;
       console.log(`検索するID: ${hourId}, ${minuteId}`);
@@ -118,6 +124,8 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       console.log("relayMinuteEl", relayMinuteEl);
       
       if (relayHourEl && relayMinuteEl) {
+
+        // 中継点到着時刻の表示
         relayHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
         relayMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
         console.log("中継点計算：", relayHourEl.value);
