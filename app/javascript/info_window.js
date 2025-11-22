@@ -137,6 +137,15 @@ export function createRelayPointElement(waypoint, index) {
   arrivalTimeEl.classList.add('bg-gray-200', 'text-gray-500', 'px-2', 'py-1', 'rounded', 'text-sm');
   arrivalTimeEl.textContent = '--:--'; // 初期値
 
+  // 滞在時間設定用のプルダウンにIDを割り当て
+  const stayHourEl = clone.querySelector('.stay-hour-select');
+  if (stayHourEl) {
+    stayHourEl.id = `stayHour_${index}`;
+  }
+  const stayMinuteEl = clone.querySelector('.stay-minute-select');
+  if (stayMinuteEl) {
+    stayMinuteEl.id = `stayMinute_${index}`;
+  }
 
   // 削除ボタンのイベントリスナーを設定
   console.log("削除ボタンを登録します");
