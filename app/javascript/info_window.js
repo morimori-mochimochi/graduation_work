@@ -141,10 +141,14 @@ export function createRelayPointElement(waypoint, index) {
   const stayHourEl = clone.querySelector('.stay-hour-select');
   if (stayHourEl) {
     stayHourEl.id = `stayHour_${index}`;
+    const options = JSON.parse(stayHourEl.dataset.options);
+    stayHourEl.innerHTML += options;
   }
   const stayMinuteEl = clone.querySelector('.stay-minute-select');
   if (stayMinuteEl) {
     stayMinuteEl.id = `stayMinute_${index}`;
+    const options = JSON.parse(stayMinuteEl.dataset.options);
+    stayMinuteEl.innerHTML += options;
   }
 
   // 削除ボタンのイベントリスナーを設定
