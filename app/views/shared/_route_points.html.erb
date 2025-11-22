@@ -30,10 +30,7 @@
         <div class="flex items-center gap-1">
           <div class="flex flex-col gap-1">
             <span class="font-bold text-[#624007]">中継点到着</span>
-            <select id="relayArrivalHour_${index}" class="relay-hour-select select select-bordered select-sm w-20 bg-white border-[#9A6812]" disabled
-                    data-options="<%= options_for_select((0..23).map { |h| format('%02d', h) }).to_json %>"></select>
-            <select id="relayArrivalMinute_${index}" class="relay-minute-select select select-bordered select-sm w-20 bg-white border-[#9A6812]" disabled
-                    data-options="<%= options_for_select((0..59).map { |m| format('%02d', m) }).to_json %>"></select>
+            <span class="relay-arrival-time"></span>
           </div>
           <div class="flex flex-col gap-1">
             <span class="font-bold text-[#624007]">滞在時間</span>

@@ -130,23 +130,12 @@ export function createRelayPointElement(waypoint, index) {
   // templateをクローンして作った中継点UIから.relay-point-nameを探す
   clone.querySelector('.relay-point-name').textContent = waypoint.mainPoint.name;
 
-  // ヘルパー関数でselect要素をセットアップ
-  const setupSelect = (selector, id, placeholder) => {
-    const selectEl = clone.querySelector(selector); // select要素を取得
-    selectEl.id = id; // idを設定
-    selectEl.innerHTML = ''; // 既存のoptionをクリア
-    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`); // placeholderを追加
-
-    const max = selector.includes('hour') ? 23 : 59;
-    for (let i = 0; i <= max; i++) {
-      const value = String(i).padStart(2, '0');
-      const option = new Option(value, value);
-      selectEl.add(option);
-    }
-  };
-
-  setupSelect('.relay-hour-select', `relayHour_${index}`, '時');
-  setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
+  // 到着時刻表示用のspanにIDを割り当て、スタイルを適用
+  const arrivalTimeEl = clone.querySelector('.relay-arrival-time');
+  arrivalTimeEl.id = `relayArrivalTime_${index}`;
+  // Tailwind CSSのクラスを追加して見た目を調整
+  arrivalTimeEl.classList.add('bg-gray-200', 'text-gray-500', 'px-2', 'py-1', 'rounded', 'text-sm');
+  arrivalTimeEl.textContent = '--:--'; // 初期値
 
 
   // 削除ボタンのイベントリスナーを設定
