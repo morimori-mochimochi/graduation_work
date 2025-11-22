@@ -184,8 +184,8 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       startMinuteEl.value = String(legDepartureTime.getMinutes()).padStart(2, '0');
 
       console.log("出発時刻計算：", startHourEl.value);
-      console.log("出発時刻計算：", startMinuteEl.value
-        
+      console.log("出発時刻計算：", startMinuteEl.value);
+
     } else { // 途中は中継点（この時刻はその中継点への到着時刻）
       console.log("出発時刻を逆算します👾");
       const hourId = `relayHour_${legIndex - 1}`;

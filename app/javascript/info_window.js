@@ -132,14 +132,22 @@ export function createRelayPointElement(waypoint, index) {
 
   // ヘルパー関数でselect要素をセットアップ
   const setupSelect = (selector, id, placeholder) => {
-    const selectEl = clone.querySelector(selector);
-    selectEl.id = id;
-    selectEl.innerHTML = selectEl.dataset.options;
-    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`);
+    const selectEl = clone.querySelector(selector); // select要素を取得
+    selectEl.id = id; // idを設定
+    selectEl.innerHTML = ''; // 既存のoptionをクリア
+    selectEl.insertAdjacentHTML('afterbegin', `<option disabled selected>${placeholder}</option>`); // placeholderを追加
+
+    const max = selector.includes('hour') ? 23 : 59;
+    for (let i = 0; i <= max; i++) {
+      const value = String(i).padStart(2, '0');
+      const option = new Option(value, value);
+      selectEl.add(option);
+    }
   };
 
   setupSelect('.relay-hour-select', `relayHour_${index}`, '時');
   setupSelect('.relay-minute-select', `relayMinute_${index}`, '分');
+
 
   // 削除ボタンのイベントリスナーを設定
   console.log("削除ボタンを登録します");
