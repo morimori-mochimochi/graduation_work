@@ -149,20 +149,15 @@ export function createRelayPointElement(waypoint, index) {
   if (stayHourEl) {
     stayHourEl.id = `stayHour_${index}`;
     // data-options 属性から値を取り出して select 要素の中身を生成する処理
-    const options = JSON.parse(stayHourEl.dataset.options);
-    stayHourEl.innerHTML = `<option value="">時</option>${options}`; // 「時」を先頭に追加
-    // ユーザーが入力した値を復元。未入力の場合は'00'をデフォルト値とする。
-    // waypoint.stayDuration.hourが空文字('')の場合はそれを、存在しない(undefined)場合は'00'を設定
-    stayHourEl.value = waypoint.stayDuration?.hour === '' ? '' : (waypoint.stayDuration?.hour || '00');
+    stayHourEl.innerHTML = `<option value="">時</option>${JSON.parse(stayHourEl.dataset.options)}`;
+    // 保存された値があれば復元
+    stayHourEl.value = waypoint.stayDuration?.hour || '';
   }
   const stayMinuteEl = clone.querySelector('.stay-minute-select');
   if (stayMinuteEl) {
     stayMinuteEl.id = `stayMinute_${index}`;
-    const options = JSON.parse(stayMinuteEl.dataset.options);
-    stayMinuteEl.innerHTML = `<option value="">分</option>${options}`; // 「分」を先頭に追加
-    // ユーザーが入力した値を復元。未入力の場合は'00'をデフォルト値とする。
-    // waypoint.stayDuration.minuteが空文字('')の場合はそれを、存在しない(undefined)場合は'00'を設定
-    stayMinuteEl.value = waypoint.stayDuration?.minute === '' ? '' : (waypoint.stayDuration?.minute || '00');
+    stayMinuteEl.innerHTML = `<option value="">分</option>${JSON.parse(stayMinuteEl.dataset.options)}`;
+    stayMinuteEl.value = waypoint.stayDuration?.minute || '';
   }
 
   // 削除ボタンのイベントリスナーを設定
@@ -190,6 +185,21 @@ export function initInfoWindow() {
   // ルートが描画されたら、中継点UIも再描画する
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {
+    // 滞在時間プルダウンの変更を監視し、`window.routeData`に保存する
+    const relayPointsContainer = document.getElementById('relayPointsContainer');
+    if (relayPointsContainer) {
+      relayPointsContainer.addEventListener('change', (e) => {
+        if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
+          const item = e.target.closest('.relay-point-item');
+          const index = parseInt(item.dataset.index, 10);
+          const waypoint = window.routeData.waypoints[index];
+          if (!waypoint.stayDuration) waypoint.stayDuration = {};
+          waypoint.stayDuration.hour = item.querySelector('.stay-hour-select').value;
+          waypoint.stayDuration.minute = item.querySelector('.stay-minute-select').value;
+        }
+      });
+    }
+
     console.log("info_window.jsがrouteDrawnイベントを検知しました。中継点を再描画します。");
     if (window.routeData?.waypoints?.length > 0) {
       renderRelayPoints();
