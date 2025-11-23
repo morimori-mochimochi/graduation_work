@@ -2,7 +2,6 @@ import { renderRelayPoints } from './info_window.js';
 
 export function resetRoute() {
   console.trace("resetRoute が呼び出されました"); // トレースログを追加
-  console.log("ルート情報をリセットします。");
 
   // 1. グローバルなルートデータを初期化
   if (window.routeData) {
@@ -63,24 +62,18 @@ export function resetRoute() {
 }
 
 export function initResetRouteBtn() {
-  console.log("ルートリセットを開始します");
   const btn = document.getElementById("resetRouteBtn");
 
   if (btn) {
-    console.log("リセットボタンが見つかりました:", btn);
-
     // イベントの重複登録を防ぐためのチェック
     if (btn.dataset.resetEventAttached) {
-      console.log("リセットボタンのイベントは既に登録済みです。");
       return;
     }
     btn.dataset.resetEventAttached = 'true';
 
     btn.addEventListener("click", () => {
-      console.log("リセットボタンがクリックされました。");
       resetRoute();
     });
-    console.log("リセットボタンにクリックイベントを登録しました。");
   } else {
     console.warn("リセットボタン(#resetRouteBtn)が見つかりませんでした。");
   }
