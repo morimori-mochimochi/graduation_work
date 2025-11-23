@@ -203,15 +203,8 @@ export function initInfoWindow() {
         }
       });
     }
-
-    console.log("info_window.jsがrouteDrawnイベントを検知しました。中継点を再描画します。");
-    if (window.routeData?.waypoints?.length > 0) {
-      renderRelayPoints();
-    } else {
-      // 中継点がない場合でも、時刻計算をトリガーするためにイベントを発行
-      const event = new CustomEvent('relayPointsRendered');
-      document.dispatchEvent(event);
-      console.log("relayPointsRenderedイベントを発行しました。");
-    }
+    // ルートが描画されたら、中継点UIを再描画する。
+    // これにより、時刻計算の起点となる relayPointsRendered イベントが発行される。
+    renderRelayPoints();
   });
 }

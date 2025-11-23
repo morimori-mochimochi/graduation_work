@@ -9,14 +9,12 @@ export function initSetTime() {
   // 中継点UIの描画完了を待ってから時刻計算を実行する
   document.addEventListener('relayPointsRendered', (e) => {
     console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
-    // sessionStorageにルート情報がある場合のみ計算を実行する
-    if (sessionStorage.getItem("directionsResult")) {
-      calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    // sessionStorageにルート情報がない場合は何もしない
+    if (!sessionStorage.getItem("directionsResult")) {
+      console.log("ルート情報がないため、時刻計算をスキップします。");
+      return;
     }
-  });
-
-  // ルートが描画された直後も時刻計算を実行する
-  document.addEventListener('routeDrawn', (e) => {
+    // ルート情報があれば時刻を計算
     calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   });
 
@@ -84,12 +82,15 @@ function getStayDuration(index) {
 function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
   let startHour, startMinute;
 
+  console.log("順算を始めます");
+  
+  // 出発時刻が未設定の場合は現時刻を取得
   if (startHourEl.value === "時" || startMinuteEl.value === "分") {
     const now = new Date();
     startHour = now.getHours();
     startMinute = now.getMinutes();
 
-    // 出発時刻表示
+    // 出発時刻を時刻表記に
     startHourEl.value = String(startHour).padStart(2, '0');
     startMinuteEl.value = String(startMinute).padStart(2, '0');
   } else {
