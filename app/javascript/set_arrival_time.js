@@ -1,5 +1,3 @@
-console.log("set_arrival_time.jsを読み込みました");
-
 export function initSetTime() {
   const startHourEl = document.getElementById("startHour");
   const startMinuteEl = document.getElementById("startMinute");
@@ -8,10 +6,8 @@ export function initSetTime() {
 
   // 中継点UIの描画完了を待ってから時刻計算を実行する
   document.addEventListener('relayPointsRendered', (e) => {
-    console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
     // sessionStorageにルート情報がない場合は何もしない
     if (!sessionStorage.getItem("directionsResult")) {
-      console.log("ルート情報がないため、時刻計算をスキップします。");
       return;
     }
     // ルート情報があれば時刻を計算
@@ -43,7 +39,6 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
   // ルート情報がなければ何もしない
   const storedDirections = sessionStorage.getItem("directionsResult");
   if (!storedDirections) {
-    console.log("ルート情報がないため、時刻計算をスキップします。");
     return;
   }
   const directionsResult = JSON.parse(storedDirections);
@@ -52,13 +47,11 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
   // ユーザーがどちらの時刻も設定していない場合、または出発時刻を変更した場合
   // → 出発時刻を基準に順算する
   if ((!isStartSet && !isDestinationSet) || isStartSet) {
-    console.log("出発時刻を基準に、到着時刻を計算します。");
     calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   } 
   // 到着時刻が設定されている場合（または変更された場合）
   // → 到着時刻を基準に逆算する
   else if (isDestinationSet && !isStartSet) {
-    console.log("到着時刻を基準に、出発時刻を逆算します。");
     calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   }
 }
@@ -81,8 +74,6 @@ function getStayDuration(index) {
 //【順算】出発時刻から到着時刻を計算
 function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
   let startHour, startMinute;
-
-  console.log("順算を始めます");
   
   // 出発時刻が未設定の場合は現時刻を取得
   if (startHourEl.value === "時" || startMinuteEl.value === "分") {
@@ -96,9 +87,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
   } else {
     startHour = parseInt(startHourEl.value, 10);
     startMinute = parseInt(startMinuteEl.value, 10);
-
-    console.log("出発時刻：",  startHourEl.value);
-    console.log("出発時刻：",  startMinuteEl.value);
   }
 
   const departureTime = new Date();
@@ -110,17 +98,10 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
     const arrivalTime = new Date(departureTime.getTime() + cumulativeDuration * 1000);
 
     if (index === route.legs.length - 1) { // 最終目的地
-      console.log(`最終目的地の計算します➕`);
-
       // 到着時刻の表示
       destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
-
-      console.log("到着時刻：", destinationHourEl.value);
-      console.log("到着時刻：", destinationMinuteEl.value);
-
     } else { // 中継点
-      console.log(`中継点[${index}]の計算します🧮`);
 
       // 中継点到着時刻を表示するspan要素を取得
       const arrivalTimeEl = document.getElementById(`relayArrivalTime_${index}`);
@@ -130,7 +111,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
         const arrivalMinute = String(arrivalTime.getMinutes()).padStart(2, '0');
         const timeString = `${arrivalHour}:${arrivalMinute}`;
         arrivalTimeEl.textContent = timeString;
-        console.log(`中継点[${index}] 到着時刻: ${timeString}`);
       } else {
         console.warn(`中継点[${index}]の到着時刻表示要素が見つかりません。`);
       }
@@ -152,7 +132,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
       // 次の区間の計算のために、この中継点での滞在時間を加算する
       // legは次の区間を指すため、現在の到着地点（中継点）のインデックスは index となる
-      console.log(`中継点 ${index} の滞在時間を加算します`);
       cumulativeDuration += getStayDuration(index);
     }
   });
@@ -193,12 +172,7 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
       startMinuteEl.value = String(legDepartureTime.getMinutes()).padStart(2, '0');
-
-      console.log("出発時刻計算：", startHourEl.value);
-      console.log("出発時刻計算：", startMinuteEl.value);
-
     } else { // 途中は中継点（この時刻はその中継点への到着時刻）
-      console.log("出発時刻を逆算します👾");
       const arrivalTimeEl = document.getElementById(`relayArrivalTime_${legIndex - 1}`);
 
       if (arrivalTimeEl) {
@@ -206,7 +180,6 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
         const arrivalMinute = String(legDepartureTime.getMinutes()).padStart(2, '0');
         const timeString = `${arrivalHour}:${arrivalMinute}`;
         arrivalTimeEl.textContent = timeString;
-        console.log(`中継点[${legIndex - 1}] 到着時刻: ${timeString}`);
       } else {
         console.warn(`中継点[${legIndex - 1}]の到着時刻表示要素が見つかりません。`);
       }
