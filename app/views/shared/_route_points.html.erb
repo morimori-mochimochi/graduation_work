@@ -29,7 +29,7 @@
       <div class="flex items-center gap-1">
         <div class="flex items-center gap-1">
           <div class="flex flex-col gap-1">
-            <span class="font-bold text-[#624007]">中継点到着</span>
+            <span class="font-bold text-[#624007]">中継点(着)</span>
             <span class="relay-arrival-time"></span>
           </div>
           <div class="flex flex-col gap-1">
@@ -37,13 +37,6 @@
             <select id="stayHour_${index}" class="stay-hour-select select select-bordered select-sm w-20 bg-white border-[#9A6812]"
                     data-options="<%= options_for_select((0..23).map { |h| format('%02d', h) }).to_json %>"></select>
             <select id="stayMinute_${index}" class="stay-minute-select select select-bordered select-sm w-20 bg-white border-[#9A6812]"
-                    data-options="<%= options_for_select((0..59).map { |m| format('%02d', m) }).to_json %>"></select>
-          </div>
-          <div class="flex flex-col gap-1">
-            <span class="font-bold text-[#624007]">中継点出発</span>
-            <select id="relayDeptHour_${index}" class="relay-dept-hour-select select select-bordered select-sm w-20 bg-white border-[#9A6812]" disabled
-                    data-options="<%= options_for_select((0..23).map { |h| format('%02d', h) }).to_json %>"></select>
-            <select id="relayDeptMinute_${index}" class="relay-dept-minute-select select select-bordered select-sm w-20 bg-white border-[#9A6812]" disabled
                     data-options="<%= options_for_select((0..59).map { |m| format('%02d', m) }).to_json %>"></select>
           </div>
           <div class="flex flex-col gap-1">

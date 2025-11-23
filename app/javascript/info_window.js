@@ -137,6 +137,28 @@ export function createRelayPointElement(waypoint, index) {
   arrivalTimeEl.classList.add('bg-gray-200', 'text-gray-500', 'px-2', 'py-1', 'rounded', 'text-sm');
   arrivalTimeEl.textContent = '--:--'; // 初期値
 
+  // 出発時刻表示用のspanを動的に生成し、IDを割り当て
+  const departureTimeEl = document.createElement('span');
+  departureTimeEl.id = `relayDepartureTime_${index}`;
+  departureTimeEl.classList.add('text-gray-500', 'text-sm', 'ml-1'); // スタイル調整
+  // 到着時刻要素の直後に出発時刻要素を挿入
+  arrivalTimeEl.parentNode.insertBefore(departureTimeEl, arrivalTimeEl.nextSibling);
+
+  // 滞在時間設定用のプルダウンにIDを割り当て
+  const stayHourEl = clone.querySelector('.stay-hour-select');
+  if (stayHourEl) {
+    stayHourEl.id = `stayHour_${index}`;
+    // data-options 属性から値を取り出して select 要素の中身を生成する処理
+    stayHourEl.innerHTML = `<option value="">時</option>${JSON.parse(stayHourEl.dataset.options)}`;
+    // 保存された値があれば復元
+    stayHourEl.value = waypoint.stayDuration?.hour || '';
+  }
+  const stayMinuteEl = clone.querySelector('.stay-minute-select');
+  if (stayMinuteEl) {
+    stayMinuteEl.id = `stayMinute_${index}`;
+    stayMinuteEl.innerHTML = `<option value="">分</option>${JSON.parse(stayMinuteEl.dataset.options)}`;
+    stayMinuteEl.value = waypoint.stayDuration?.minute || '';
+  }
 
   // 削除ボタンのイベントリスナーを設定
   console.log("削除ボタンを登録します");
@@ -163,14 +185,26 @@ export function initInfoWindow() {
   // ルートが描画されたら、中継点UIも再描画する
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {
-    console.log("info_window.jsがrouteDrawnイベントを検知しました。中継点を再描画します。");
-    if (window.routeData?.waypoints?.length > 0) {
-      renderRelayPoints();
-    } else {
-      // 中継点がない場合でも、時刻計算をトリガーするためにイベントを発行
-      const event = new CustomEvent('relayPointsRendered');
-      document.dispatchEvent(event);
-      console.log("relayPointsRenderedイベントを発行しました。");
+    // 滞在時間プルダウンの変更を監視し、`window.routeData`に保存する
+    const relayPointsContainer = document.getElementById('relayPointsContainer');
+    // if (e.target.classList.contains(...)):イベントを発生させた要素が、
+    // 滞在時間の時、または分のプルダウンかをチェック
+    if (relayPointsContainer) {
+      relayPointsContainer.addEventListener('change', (e) => {
+        if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
+          const item = e.target.closest('.relay-point-item');
+          const index = parseInt(item.dataset.index, 10);
+          // ルート情報を保持しているwindow.routeData.waypoints配列から対応する中継点のデータオブジェクトを取得
+          const waypoint = window.routeData.waypoints[index];
+          // 一度も滞在時間が設定されていない場合stayDurationプロパティが存在しないため空オブジェクト{}を作成して初期化
+          if (!waypoint.stayDuration) waypoint.stayDuration = {};
+          waypoint.stayDuration.hour = item.querySelector('.stay-hour-select').value;
+          waypoint.stayDuration.minute = item.querySelector('.stay-minute-select').value;
+        }
+      });
     }
+    // ルートが描画されたら、中継点UIを再描画する。
+    // これにより、時刻計算の起点となる relayPointsRendered イベントが発行される。
+    renderRelayPoints();
   });
 }
