@@ -1,5 +1,3 @@
-console.log("infoWindowが呼ばれました");
-
 export function openInfoWindow(marker, place) {
   // <template>からInfoWindowのコンテンツを作成
   // cloneNode(false) → 要素自体だけコピー（中身の子要素はコピーしない）
@@ -31,8 +29,6 @@ export function openInfoWindow(marker, place) {
     const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
     const save_btn = document.querySelector(".info-window-save-location");
 
-    console.log("中継点クリックイベント: ", relay_point_btn);
-
     if (start_btn) {
       start_btn.addEventListener("click", function() {
         window.routeData.start = { point: place.point, name: place.name };
@@ -44,7 +40,6 @@ export function openInfoWindow(marker, place) {
 
     // 目的地が設定されているときのみ中継点ボタンを表示
     if (window.routeData.destination.mainPoint.point) {
-      console.log("relayPointボタンを表示します");
       if (relay_point_btn) {
         relay_point_btn.parentElement.style.display = 'list-item'; // ボタンを表示
         relay_point_btn.addEventListener("click", () => {
@@ -104,7 +99,6 @@ export function renderRelayPoints() {
   if (!container) return;
 
   // コンテナをクリア
-  console.log("コンテナをリセットします");
   container.innerHTML = '';
   // routeDataから中継点を描画
   window.routeData.waypoints.forEach((waypoint, index) => {
@@ -115,8 +109,6 @@ export function renderRelayPoints() {
   // UI描画完了を通知するカスタムイベントを発行
   const event = new CustomEvent('relayPointsRendered');
   document.dispatchEvent(event);
-
-  console.log("renderRelayPoints終了です");
 }
 
 // 中継点要素をひな形から生成するヘルパー関数
@@ -161,11 +153,8 @@ export function createRelayPointElement(waypoint, index) {
   }
 
   // 削除ボタンのイベントリスナーを設定
-  console.log("削除ボタンを登録します");
   const removeBtn = clone.querySelector('.remove-relay-point-btn');
   removeBtn.dataset.index = index;
-
-  console.log("中継点削除ボタンのイベントリスナー登録を行います");
 
   removeBtn.addEventListener('click', (e) => {
     const indexToRemove = parseInt(e.currentTarget.dataset.index, 10);
@@ -173,7 +162,6 @@ export function createRelayPointElement(waypoint, index) {
     window.routeData.waypoints.splice(indexToRemove, 1);
     // UIを再描画
     renderRelayPoints();
-    console.log(`中継点 ${indexToRemove} を削除しました`);
   });
 
   return itemDiv;
@@ -181,7 +169,6 @@ export function createRelayPointElement(waypoint, index) {
 // 他のファイルから呼び出して使う部品のような関数にaddEventListenerは不安定
 // なのでinitにして末尾に入れる
 export function initInfoWindow() {
-  console.log("initInfoWindowが呼ばれました。イベントリスナーを登録します。");
   // ルートが描画されたら、中継点UIも再描画する
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {
