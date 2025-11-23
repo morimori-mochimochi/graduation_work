@@ -151,14 +151,18 @@ export function createRelayPointElement(waypoint, index) {
     // data-options 属性から値を取り出して select 要素の中身を生成する処理
     const options = JSON.parse(stayHourEl.dataset.options);
     stayHourEl.innerHTML = `<option value="">時</option>${options}`; // 「時」を先頭に追加
-    stayHourEl.value = '00'; // デフォルト値を00時に設定
+    // ユーザーが入力した値を復元。未入力の場合は'00'をデフォルト値とする。
+    // waypoint.stayDuration.hourが空文字('')の場合はそれを、存在しない(undefined)場合は'00'を設定
+    stayHourEl.value = waypoint.stayDuration?.hour === '' ? '' : (waypoint.stayDuration?.hour || '00');
   }
   const stayMinuteEl = clone.querySelector('.stay-minute-select');
   if (stayMinuteEl) {
     stayMinuteEl.id = `stayMinute_${index}`;
     const options = JSON.parse(stayMinuteEl.dataset.options);
     stayMinuteEl.innerHTML = `<option value="">分</option>${options}`; // 「分」を先頭に追加
-    stayMinuteEl.value = '00'; // デフォルト値を00分に設定
+    // ユーザーが入力した値を復元。未入力の場合は'00'をデフォルト値とする。
+    // waypoint.stayDuration.minuteが空文字('')の場合はそれを、存在しない(undefined)場合は'00'を設定
+    stayMinuteEl.value = waypoint.stayDuration?.minute === '' ? '' : (waypoint.stayDuration?.minute || '00');
   }
 
   // 削除ボタンのイベントリスナーを設定

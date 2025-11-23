@@ -9,7 +9,10 @@ export function initSetTime() {
   // 中継点UIの描画完了を待ってから時刻計算を実行する
   document.addEventListener('relayPointsRendered', (e) => {
     console.log('relayPointsRenderedイベントを検知したので時刻を計算します。', e.detail);
-    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl); // ルート描画完了時に時刻を計算
+    // sessionStorageにルート情報がある場合のみ計算を実行する
+    if (sessionStorage.getItem("directionsResult")) {
+      calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    }
   });
 
   // ルートが描画された直後も時刻計算を実行する
