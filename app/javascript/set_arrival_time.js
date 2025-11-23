@@ -51,13 +51,13 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
 
   // ユーザーがどちらの時刻も設定していない場合、または出発時刻を変更した場合
   // → 出発時刻を基準に順算する
-  if ((!isStartSet && !isDestinationSet) || options.changed === 'start') {
+  if ((!isStartSet && !isDestinationSet) || isStartSet) {
     console.log("出発時刻を基準に、到着時刻を計算します。");
     calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   } 
   // 到着時刻が設定されている場合（または変更された場合）
   // → 到着時刻を基準に逆算する
-  else if (isDestinationSet) {
+  else if (isDestinationSet && !isStartSet) {
     console.log("到着時刻を基準に、出発時刻を逆算します。");
     calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   }
