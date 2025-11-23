@@ -187,12 +187,16 @@ export function initInfoWindow() {
   document.addEventListener('routeDrawn', () => {
     // 滞在時間プルダウンの変更を監視し、`window.routeData`に保存する
     const relayPointsContainer = document.getElementById('relayPointsContainer');
+    // if (e.target.classList.contains(...)):イベントを発生させた要素が、
+    // 滞在時間の時、または分のプルダウンかをチェック
     if (relayPointsContainer) {
       relayPointsContainer.addEventListener('change', (e) => {
         if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
           const item = e.target.closest('.relay-point-item');
           const index = parseInt(item.dataset.index, 10);
+          // ルート情報を保持しているwindow.routeData.waypoints配列から対応する中継点のデータオブジェクトを取得
           const waypoint = window.routeData.waypoints[index];
+          // 一度も滞在時間が設定されていない場合stayDurationプロパティが存在しないため空オブジェクト{}を作成して初期化
           if (!waypoint.stayDuration) waypoint.stayDuration = {};
           waypoint.stayDuration.hour = item.querySelector('.stay-hour-select').value;
           waypoint.stayDuration.minute = item.querySelector('.stay-minute-select').value;
