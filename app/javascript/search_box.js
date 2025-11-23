@@ -45,8 +45,6 @@ async function searchExactPlace(query) {
   }
 
   // 2. 自前DBになければGoogle Places APIで検索
-  console.log("自前DBにないため、Google Places APIで検索します。");
-
   const {Place} = await google.maps.importLibrary("places");
   const center = map.getCenter();
 
@@ -214,14 +212,10 @@ export function initSearchBox(container = document) {
   const btn = container.querySelector("#searchBtn");
   const input = container.querySelector("#address");
 
-  console.log("initSearchBox呼ばれた.1⚡️");
-
   if (!btn || !input) {
     console.warn("検索ボックスの要素が見つかりません");
     return;
   }
-  
-  console.log("initSearchBox呼ばれた.2⚡️");
 
   // イベントリスナーの重複登録を防止
   if(btn.dataset.searchEventAttached) {
@@ -229,8 +223,6 @@ export function initSearchBox(container = document) {
   }
   btn.dataset.searchEventAttached = "true";
   input.dataset.searchEventAttached ='true';
-
-  console.log("initSearchBox呼ばれた.3⚡️");
 
   const performSearch = () => {
     // #入力欄に入れられた文字を取得し、前後の空白を削除してvalueに入れる
@@ -241,8 +233,6 @@ export function initSearchBox(container = document) {
     }
   };
 
-  console.log("initSearchBox呼ばれた.4⚡️");
-
   // 検索ボタンクリックで検索実行
   btn.addEventListener("click", performSearch);
 
@@ -252,7 +242,6 @@ export function initSearchBox(container = document) {
       event.preventDefault(); // フォームのデフォルト送信を防止
       performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
     }
-    console.log("initSearchBox呼ばれた.5⚡️");
   });
 }
 
