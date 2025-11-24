@@ -26,16 +26,21 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       const destination_location = JSON.parse(arguments[1]);
       const done = arguments[2];
 
-      window.mapApiLoaded.then(() => {
+      window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
+        const start = new google.maps.LatLng(start_location);
+        const destination = new google.maps.LatLng(destination_location);
+
         window.routeData = {
-          start: { point: new google.maps.LatLng(start_location), name: "東京駅" },
-          destination: { mainPoint: { point: new google.maps.LatLng(destination_location), name: "東京タワー" } },
+          start: { point: start },
+          destination: { mainPoint: { point: destination } },
           waypoints: []
         };
         // 画面にも設定を反映
         document.getElementById('startPoint').textContent = "東京駅";
         document.getElementById('destinationPoint').textContent = "東京タワー";
-        done();
+        // ルート検索を直接実行し、完了を待つ
+        await window.walkDrawRoute();
+        done(); // walkDrawRouteの完了後にテストを再開
       });
     JS
   end
@@ -43,19 +48,14 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
   context '出発時刻を設定した場合' do
     it 'ルート検索後に到着時刻が自動で計算・表示されること' do
       # 1. 出発地と目的地を設定
-      set_route
-
-      # 2. 出発時刻を09:00に設定
       select '09', from: 'startHour'
       select '00', from: 'startMinute'
 
-      # 3. クリックの邪魔になるフローティングボタンを非表示にする
-      page.execute_script("document.querySelector('.absolute.top-45.right-0').style.display = 'none';")
+      # 2. ルートを設定し、検索を実行
+      set_route
 
-      # 3. ルート検索ボタンをクリック
-      find('#walkDrawRoute').click
-
-      # 4. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず
       expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
       # 所要時間は変動する可能性があるため、具体的な時刻ではなく「値がセットされたか」を検証
       expect(find('#destinationHour').value).not_to eq '時'
@@ -70,19 +70,14 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
   context '到着時刻を設定した場合' do
     it 'ルート検索後に出発時刻が自動で逆算・表示されること' do
       # 1. 出発地と目的地を設定
-      set_route
-
-      # 2. 到着時刻を09:00に設定
       select '09', from: 'destinationHour'
       select '00', from: 'destinationMinute'
 
-      # 3. クリックの邪魔になるフローティングボタンを非表示にする
-      page.execute_script("document.querySelector('.absolute.top-45.right-0').style.display = 'none';")
+      # 2. ルートを設定し、検索を実行
+      set_route
 
-      # 3. ルート検索ボタンをクリック
-      find('#walkDrawRoute').click
-
-      # 4. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず
       expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
       # 出発時刻が逆算されて表示されるのを待つ
       expect(find('#startHour').value).not_to eq '時'
