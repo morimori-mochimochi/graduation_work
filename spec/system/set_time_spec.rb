@@ -49,6 +49,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       select '09', from: 'startHour'
       select '00', from: 'startMinute'
 
+      # 3. クリックの邪魔になるフローティングボタンを非表示にする
+      page.execute_script("document.querySelector('.absolute.top-45.right-0').style.display = 'none';")
+
       # 3. ルート検索ボタンをクリック
       find('#walkDrawRoute').click
 
@@ -71,6 +74,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 2. 到着時刻を09:00に設定
       select '09', from: 'destinationHour'
       select '00', from: 'destinationMinute'
+
+      # 3. クリックの邪魔になるフローティングボタンを非表示にする
+      page.execute_script("document.querySelector('.absolute.top-45.right-0').style.display = 'none';")
 
       # 3. ルート検索ボタンをクリック
       find('#walkDrawRoute').click
