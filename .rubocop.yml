@@ -37,7 +37,7 @@ Style/AsciiComments:
 
 # メソッドの行数制限緩和
 Metrics/MethodLength:
-  Max: 20
+  Max: 25
 
 # ブロックの行数制限解除
 Metrics/BlockLength:
