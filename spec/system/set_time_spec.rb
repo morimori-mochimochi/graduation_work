@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe '時刻設定機能', type: :system, js: true do
   before do
-
     visit root_path
     find("a[href='#{new_route_path}']").click
     find("a[href='#{walk_routes_path}']").click
@@ -15,7 +14,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
   end
-  
+
   # 共通のルート設定処理をヘルパーメソッドに切り出し
   def set_route
     start_location = { lat: 35.6812, lng: 139.7671 }.to_json
