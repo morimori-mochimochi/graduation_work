@@ -55,9 +55,10 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 3. ルート検索ボタンをクリック
       find('#walkDrawRoute').click
 
-      # 4. ルート検索と時刻計算が完了し、到着時刻が表示されるのを待つ
+      # 4. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
       # 所要時間は変動する可能性があるため、具体的な時刻ではなく「値がセットされたか」を検証
-      expect(find('#destinationHour').value).not_to_eq  '時'
+      expect(find('#destinationHour').value).not_to eq '時'
       expect(find('#destinationMinute').value).not_to eq '分'
 
       # 5. 念の為、出発時刻が変更されていないことも確認
@@ -81,7 +82,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 3. ルート検索ボタンをクリック
       find('#walkDrawRoute').click
 
-      # 4. ルート検索と時計計算が完了し、出発時刻が逆算されて表示されるのを待つ
+      # 4. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
+      expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
+      # 出発時刻が逆算されて表示されるのを待つ
       expect(find('#startHour').value).not_to eq '時'
       expect(find('#startMinute').value).not_to eq '分'
 
