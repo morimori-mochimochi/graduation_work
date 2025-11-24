@@ -16,23 +16,26 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
   end
 
   # 共通のルート設定処理をヘルパーメソッドに切り出し
-  def set_route
+  def set_route(waypoints: [])
     start_location = { lat: 35.6812, lng: 139.7671 }.to_json
     destination_location = { lat: 35.6586, lng: 139.7454 }.to_json
+    waypoints_json = waypoints.to_json
 
-    page.evaluate_async_script(<<~JS, start_location, destination_location)
+    page.evaluate_async_script(<<~JS, start_location, destination_location, waypoints_json)
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
-      const done = arguments[2];
+      const waypoints_from_ruby = JSON.parse(arguments[2]);
+      const done = arguments[3];
 
       window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
         const start = new google.maps.LatLng(start_location);
         const destination = new google.maps.LatLng(destination_location);
 
+        const waypoints = waypoints_from_ruby.map(wp => ({ mainPoint: { point: new google.maps.LatLng(wp.point), name: wp.name } }));
         window.routeData = {
           start: { point: start },
           destination: { mainPoint: { point: destination } },
-          waypoints: []
+          waypoints: waypoints
         };
         // 画面にも設定を反映
         document.getElementById('startPoint').textContent = "東京駅";
@@ -85,6 +88,38 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 5. 念の為、到着時刻が変更されていないことも確認
       expect(find('#destinationHour').value).to eq '09'
       expect(find('#destinationMinute').value).to eq '00'
+    end
+  end
+
+  context '中継点を追加した場合' do
+    let(:parking) { attributes_for(:location, :parking_near_tower) }
+
+    it '滞在時間を考慮して各地点の時刻が計算・表示されること' do
+      # 1. 出発時刻を09:00に設定
+      select '09', from: 'startHour'
+      select '00', from: 'startMinute'
+
+      # 2. ルートを設定し、検索を実行（東京タワー駐車場を中継点として渡す）
+      waypoints = [{ point: { lat: parking[:lat], lng: parking[:lng] }, name: parking[:name] }]
+      set_route(waypoints: waypoints)
+
+      # 3. ルート検索完了後、中継点のUIが表示されるのを待つ
+      expect(page).to have_selector('#relayPointsContainer .relay-point-item')
+
+      # 4. 中継点の滞在時間を1時間に設定
+      select '1', from: 'stayHour_0'
+
+      # 5. 再度ルート検索を実行
+      find('#walkDrawRoute').click
+
+      # 6. 時刻計算が完了するのを待つ
+      # 中継点の出発時刻が表示されれば計算完了とみなす
+      expect(find('#relayDepartureTime_0')).to have_text(/発/, wait: 10)
+
+      # 7. 各時刻が計算されていることを確認
+      expect(find('#relayArrivalTime_0').text).not_to eq '--:--'
+      expect(find('#destinationHour').value).not_to eq '時'
+      expect(find('#destinationMinute').value).not_to eq '分'
     end
   end
 end
