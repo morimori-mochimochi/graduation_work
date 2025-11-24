@@ -8,6 +8,7 @@ class User < ApplicationRecord # :nodoc:
          :recoverable, :rememberable, :validatable, :omniauthable, omniauth_providers: [:line]
 
   has_many :locations, dependent: :destroy
+  has_many :save_routes, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true
