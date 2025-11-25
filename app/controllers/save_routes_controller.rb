@@ -44,13 +44,10 @@ class SaveRoutesController < ApplicationController
   private
 
   def save_route_params
-    permitten_params = params.require(:save_route).permit(:name, :travel_mode)
-    # JSON形式の文字列で送られてくることを想定
-    # digを使うことで値がなくてもエラーで止まらずnilを返す
-    permitted_params[:start_point] = JSON.parse(params[:save_rotue][:start_point]) if params.dig(:save_route, :start_point)
-    permitted_params[:end_point] = JSON.parse(params[:save_route][:end_point]) if params.dig(:save_route, :end_point)
-    permitted_params[:waypoints] = JSON.parse(params[:save_route][:waypoints]) if params.dig(:save_route, :waypoints)
-    permitted_params
+    params.require(:save_route).permit(
+      :name, :travel_mode,
+      start_point: [:lat, :lng], end_point: [:lat, :lng], waypoints: [:lat, :lng]
+    )
   end
 
   def set_save_route
