@@ -16,14 +16,12 @@ class SaveRoutesController < ApplicationController
 
   def create
     @save_route = current_user.save_routes.build(save_route_params)
-    respond_to do |format|
-      if @save_route.save
-        format.html { redirect_to save_routes_path, notice: t('.notice') }
-        format.json { render json: { message: t('.notice') }, status: :created }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @save_route.errors, status: :unprocessable_entity }
-      end
+    if @save_route.save
+      # 成功した場合はメッセージをJSONで返す
+      render json: { message: t('.notice') }, status: :created
+    else
+      # 失敗した場合はエラー内容をJSONで返す
+      render json: @save_route.errors, status: :unprocessable_entity
     end
   end
 
@@ -55,6 +53,7 @@ class SaveRoutesController < ApplicationController
   end
 
   def save_route_params_for_new
+    # save_routeがあればそれを使い、ないときは空のハッシュを返す
     params.fetch(:save_route, {}).permit(:name, :travel_mode, :start_point, :end_point, :waypoints)
   end
 end
