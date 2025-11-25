@@ -8,6 +8,10 @@
       <h2 class="card-title">ルートの情報</h2>
       <div class="space-y-2">
 
+        <% if @save_route.execution_date.present? %>
+          <p><strong>実行日:</strong> <%= @save_route.execution_date.strftime('%Y年%m月%d日') %></p>
+        <% end %>
+
         <p><strong>出発点:</strong> 緯度: <%= @save_route.start_point['lat'] %>, 経度: <%= @save_route.start_point['lng'] %></p>
 
         <% if @save_route.waypoints.present? %>
