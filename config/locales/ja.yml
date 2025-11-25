@@ -8,3 +8,10 @@ ja:
       notice: "場所を削除しました。"
   defaults:
     location_already_registered: "はすでに登録されています"
+  save_routes:
+    create:
+      notice: "ルートを保存しました"
+    update:
+      notice: "ルートを更新しました"
+    destroy:
+      notice: "ルートを削除しました
