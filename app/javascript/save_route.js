@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       console.log("routeDataの内容:", routeData);
 
-      if (!routeData || !routeData.start?.point || !routeData.destinaiton?.mainPoint?.point || !routeData.travel_mode) {
+      if (!routeData || !routeData.start?.point || !routeData.destination?.mainPoint?.point || !routeData.travel_mode) {
         console.error('ルート情報が見つかりません');
         return;
       }
@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lng: routeData.start.point.lng()
       };
       const endPoint = {
-        lat: routeData.destinaiton.mainPoint.point.lat(),
-        lng: routeData.destinaiton.mainPoint.point.lng()
+        lat: routeData.destination.mainPoint.point.lat(),
+        lng: routeData.destination.mainPoint.point.lng()
       };
 
       // waypointも緯度経度のみを抽出

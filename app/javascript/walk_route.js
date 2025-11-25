@@ -64,6 +64,7 @@ export async function walkDrawRoute(start, destination){
         if (status === "OK"){
           window.directionsRenderer.setDirections(response);
           // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
+          window.routeData.travel_mode = 'WALKING';
           window.directionsResult = response;
 
           // ルート情報から所要時間を取得して表示

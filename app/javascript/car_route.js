@@ -82,6 +82,7 @@ export async function carDrawRoute() {
     });
 
     // ナビゲーション用にメインの車ルートを保存
+    window.routeData.travel_mode = 'DRIVING';
     window.directionsResult = response;
     sessionStorage.setItem("directionsResult", JSON.stringify(response));
     const event = new CustomEvent('routeDrawn', { detail: { status: 'OK', response: response } });
