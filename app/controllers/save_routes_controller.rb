@@ -16,10 +16,14 @@ class SaveRoutesController < ApplicationController
 
   def create
     @save_route = current_user.save_routes.build(save_route_params)
-    if @save_route.save!
-      redirect_to save_routes_path, notice: t('.notice')
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |format|
+      if @save_route.save
+        format.html { redirect_to save_routes_path, notice: t('.notice') }
+        format.json { render json: { message: t('.notice') }, status: :created }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @save_route.errors, status: :unprocessable_entity }
+      end
     end
   end
 

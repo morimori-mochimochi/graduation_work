@@ -16,7 +16,7 @@
         <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %>
       <% end %>
     <% end %>
-    <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+    <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
       <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-10 -mt-1" %>
     </button>
   </div>
