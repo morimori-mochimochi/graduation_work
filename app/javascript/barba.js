@@ -13,6 +13,7 @@ import { carRouteBtn } from "./car_route";
 import { initSetTime } from "./set_arrival_time";
 import { initInfoWindow } from "./info_window";
 import { initResetRouteBtn } from "./reset_route";
+import "./save_route"
 
 // ページ初期化のための共通関数
 function initializePage(container) {
