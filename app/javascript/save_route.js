@@ -1,3 +1,7 @@
+function showToast(message) {
+  alert(message);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const saveRouteBtn = document.getElementById('saveRouteBtn');
 
@@ -13,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const today = new Data();
+      const today = new Date();
       const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
       const defaultRouteName = `${formattedDate}のルート`;
 
@@ -29,8 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // waypointも緯度経度のみを抽出
       const waypointsToSave =  (routeData.waypoints || []).map(wp => ({
-        lat: wp.mainPoint.point.lat(),
-        lng: wp.mainPoint.point.lng()
+        lat: wp.mainPoint?.point?.lat(),
+        lng: wp.mainPoint?.point?.lng()
       }));
 
       const saveData = {
@@ -66,8 +70,5 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('エラーが発生しました');
       }
     });
-  }
-  function showToast(message) {
-    alert(message);
   }
 });
