@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
   const saveRouteBtn = document.getElementById('saveRouteBtn');
+
   if (saveRouteBtn) {
     saveRouteBtn.addEventListener('click', async() => {
       // 'window.routeData'からルート情報を取得
       const routeData = window.routeData;
-      if (!routeData || !routeData.start_point || !routeData.end_point) {
+      
+      console.log("routeDataの内容:", routeData);
+
+      if (!routeData || !routeData.start?.point || !routeData.destinaiton?.mainPoint?.point || !routeData.travel_mode) {
         console.error('ルート情報が見つかりません');
         return;
       }
@@ -13,13 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
       const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
       const defaultRouteName = `${formattedDate}のルート`;
 
+      // LatLngオブジェクトから緯度経度を抽出
+      const startPoint = {
+        lat: routeData.start.point.lat(),
+        lng: routeData.start.point.lng()
+      };
+      const endPoint = {
+        lat: routeData.destinaiton.mainPoint.point.lat(),
+        lng: routeData.destinaiton.mainPoint.point.lng()
+      };
+
+      // waypointも緯度経度のみを抽出
+      const waypointsToSave =  (routeData.waypoints || []).map(wp => ({
+        lat: wp.mainPoint.point.lat(),
+        lng: wp.mainPoint.point.lng()
+      }));
+
       const saveData = {
         save_route: {
           name: defaultRouteName,
           travel_mode: routeData.travel_mode,
-          start_point: JSON.stringify(routeData.start_point),
-          end_point: JSON.stringify(routeData.end_point),
-          waypoints: JSON.stringify(routeData.waypoints || [])
+          start_point: JSON.stringify(startPoint),
+          end_point: JSON.stringify(endPoint),
+          waypoints: JSON.stringify(waypointsToSave)
         }
       };
 
