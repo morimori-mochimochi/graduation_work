@@ -55,9 +55,6 @@ export async function walkDrawRoute(start, destination){
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
-  console.log("⚫︎requestの中身:", request);
-  console.log("⚫︎waypointsの中身:", waypoints);
-
   return new Promise((resolve, reject) => {
     directionsService.route(request,
       (response, status) => {
@@ -66,7 +63,6 @@ export async function walkDrawRoute(start, destination){
         }
         if (status === "OK"){
           window.directionsRenderer.setDirections(response);
-          console.log("★ directionsService OK", response);
           // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
           window.directionsResult = response;
 
@@ -78,7 +74,6 @@ export async function walkDrawRoute(start, destination){
           }
 
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
-          console.log("★ window.directionsResult set", window.directionsResult);
 
           // ルート描画完了のカスタムイベントを発行
           // イベントにデータを含めたいときはdetailに入れるのがルール
