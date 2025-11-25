@@ -1,0 +1,33 @@
+<%= render 'layouts/header' %>  
+<div class="container cute-title mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">保存したルート一覧</h1>
+    <%= link_to 'マップへ戻る', new_route_path, class: "btn btn-outline" %>
+  </div>
+
+  <% if @save_routes.empty? %>
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <p>保存されているルートはありません。</p>
+        <p>地図ページからルートを検索し、「ルート保存」ボタンを押して登録してください。</p>
+      </div>
+    </div>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render @save_routes %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+  <% unless @save_routes.empty? %>
+    <div id="map"></div>
+  <% end %>
+</div>
