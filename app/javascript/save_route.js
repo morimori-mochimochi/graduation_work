@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
         save_route: {
           name: defaultRouteName,
           travel_mode: routeData.travel_mode,
-          start_point: JSON.stringify(startPoint),
-          end_point: JSON.stringify(endPoint),
-          waypoints: JSON.stringify(waypointsToSave)
+          start_point: startPoint,
+          end_point: endPoint,
+          waypoints: waypointsToSave
         }
       };
 
