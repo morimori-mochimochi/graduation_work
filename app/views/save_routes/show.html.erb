@@ -8,7 +8,7 @@
       <h2 class="card-title">ルートの情報</h2>
       <div class="space-y-2">
 
-        <p><strong>出発点:</strong> <%= @save_route.start_location %></p>
+        <p><strong>出発点:</strong> 緯度: <%= @save_route.start_point['lat'] %>, 経度: <%= @save_route.start_point['lng'] %></p>
 
         <% if @save_route.waypoints.present? %>
           <p><strong>経由地:</strong></p>
@@ -19,7 +19,7 @@
           </ul>
         <% end %>
 
-        <p><strong>到着点:</strong> <%= @save_route.end_location %></p>
+        <p><strong>到着点:</strong> 緯度: <%= @save_route.end_point['lat'] %>, 経度: <%= @save_route.end_point['lng'] %></p>
       </div>
     </div>
   </div>
