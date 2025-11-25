@@ -21,6 +21,7 @@ class SaveRoutesController < ApplicationController
       render json: { message: t('.notice') }, status: :created
     else
       # 失敗した場合はエラー内容をJSONで返す
+      logger.error "ルートの保存に失敗しました: #{@save_route.errors.full_messages.join(', ')}"
       render json: @save_route.errors, status: :unprocessable_entity
     end
   end

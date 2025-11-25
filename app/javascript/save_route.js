@@ -60,11 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
           const data = await response.json();
           showToast(data.message);
-          // フォームを閉じる（非表示にする）
-          const routeFormHeader = document.getElementById('routeFormHeader');
-          if (routeFormHeader) {
-            routeFormHeader.style.display = 'none';
-          }
         } else {
           const errorData = await response.json();
           console.error('ルートの保存に失敗しました:', errorData);
