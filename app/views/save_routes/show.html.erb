@@ -1,0 +1,32 @@
+<div class="container cute-title mx-auto px-4 py-8">
+  <div class="flex justify-between items-center md-6">
+    <h1 class="text-2xl font-bold"><%= @save_route.name %>の詳細</h1>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">ルートの情報</h2>
+      <div class="space-y-2">
+
+        <p><strong>出発点:</strong> <%= @save_route.start_location %></p>
+
+        <% if @save_route.waypoints.present? %>
+          <p><strong>経由地:</strong></p>
+          <ul class="list-disc list-inside pl-4">
+            <% @save_route.waypoints.each do |waypoint| %>
+              <li><%= waypoint %></li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <p><strong>到着点:</strong> <%= @save_route.end_location %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center space-x-2">
+    <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
+    <%= button_to '削除', @save_route, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
+    <%= link_to '一覧に戻る', save_routes_path, class: "btn btn-ghost" %>
+  </div>
+</div>
