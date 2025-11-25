@@ -14,4 +14,4 @@ ja:
     update:
       notice: "ルートを更新しました"
     destroy:
-      notice: "ルートを削除しました
+      notice: "ルートを削除しました"
