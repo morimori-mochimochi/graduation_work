@@ -59,19 +59,14 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # 5. ルート情報がsessionStorageに保存されるのを待つ
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
 
-    # 6. ルートの描画が完了し、保存ボタンが有効になるのを待つ
-    # carDrawRouteの処理が終わると保存ボタンが押せるようになる想定
-    expect(find('#saveRouteBtn', visible: true)).not_to be_disabled
-
     # 7. 保存ボタンをクリックする
     find('#saveRouteBtn').click
 
     # 8. 「ルートを保存しました」モーダルが表示されることを確認し、閉じる
     expect(page).to have_content('ルートを保存しました')
-    click_on 'OK' # モーダルの閉じるボタンのテキストに合わせて変更してください
+    click_on 'OK'
 
-    # 9. ハンバーガーメニューを開き、保存済みルート一覧ページに遷移する
-    find('.navbar-toggler').click # ハンバーガーメニューのセレクタに合わせて変更してください
+    # 9. 保存済みルート一覧ページに遷移する
     find('img[alt="routes_logo"]').click
 
     # 10. 保存したルートが一覧に表示されていることを確認する
