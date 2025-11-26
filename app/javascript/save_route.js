@@ -23,16 +23,19 @@ export function initSaveRoute(container) {
 
       // LatLngオブジェクトから緯度経度を抽出
       const startPoint = {
+        name: routeData.start.name,
         lat: routeData.start.point.lat(),
         lng: routeData.start.point.lng()
       };
       const endPoint = {
+        name: routeData.destination.mainPoint.name,
         lat: routeData.destination.mainPoint.point.lat(),
         lng: routeData.destination.mainPoint.point.lng()
       };
 
       // waypointも緯度経度のみを抽出
       const waypointsToSave =  (routeData.waypoints || []).map(wp => ({
+        name: wp.mainPoint?.name,
         lat: wp.mainPoint?.point?.lat(),
         lng: wp.mainPoint?.point?.lng()
       }));
