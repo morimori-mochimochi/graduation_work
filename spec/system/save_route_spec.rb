@@ -66,12 +66,18 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     begin
       expect(page).to have_content('ルートを保存しました')
     rescue Selenium::WebDriver::Error::UnexpectedAlertOpenError => e
-      # 予期せぬアラートが表示された場合の処理
-      alert_text = page.driver.browser.switch_to.alert.text
-      puts "\n--- Unexpected Alert Text: ---\n#{alert_text}\n---------------------------\n"
-      page.driver.browser.switch_to.alert.accept
-      # アラートを閉じた後、コンソールログを出力してテストを失敗させる
-      raise e, "予期せぬアラートが表示されました: #{alert_text}", e.backtrace
+      # 予期せぬアラートが表示された場合の処理。
+      # このrescueブロックに来た時点で、何らかのアラートが原因でテストが失敗している。
+      begin
+        # アラートがまだ存在すれば、テキストを取得して閉じる
+        alert_text = page.driver.browser.switch_to.alert.text
+        puts "\n--- Unexpected Alert Text: ---\n#{alert_text}\n---------------------------\n"
+        page.driver.browser.switch_to.alert.accept
+      rescue Selenium::WebDriver::Error::NoSuchAlertError
+        # rescueブロックに来るまでの間にアラートが消えてしまった場合。何もしない。
+      end
+      # 元の例外を再度発生させ、コンソールログを出力させる
+      raise e, '予期せぬアラートが原因でテストが失敗しました。', e.backtrace
     end
     click_on 'OK'
 
