@@ -3,7 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'ルート保存機能', type: :system, js: true do
+  let(:user) { create(:user) }
+
   it '車ルートを設定し、ルートを保存できること' do
+    sign_in user
     visit root_path
     find("a[href='#{new_route_path}']").click
     find("a[href='#{car_routes_path}']").click
