@@ -7,8 +7,13 @@ function isValidLatLng(point) {
 export async function walkDrawRoute(start, destination){
   await window.mapApiLoaded;
 
-  // 引数でstartが渡されていない場合のみ、現在地を取得する
-  const originPos = window.routeData.start.point || await fetchCurrentPos();
+  let originPos;
+  if (window.routeData.start && window.routeData.start.point) {
+    originPos = window.routeData.start.point;
+  } else {
+    originPos = await fetchCurrentPos();
+    window.routeData.start = { point: originPos, name: "現在地" }; // 現在地をrouteDataに保存
+  }
   const finalDestination = window.routeData.destination.mainPoint.point;
 
   if (!finalDestination || !isValidLatLng(finalDestination)) {
@@ -55,9 +60,6 @@ export async function walkDrawRoute(start, destination){
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
-  console.log("⚫︎requestの中身:", request);
-  console.log("⚫︎waypointsの中身:", waypoints);
-
   return new Promise((resolve, reject) => {
     directionsService.route(request,
       (response, status) => {
@@ -66,19 +68,30 @@ export async function walkDrawRoute(start, destination){
         }
         if (status === "OK"){
           window.directionsRenderer.setDirections(response);
-          console.log("★ directionsService OK", response);
           // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
+          window.routeData.travel_mode = 'WALKING';
           window.directionsResult = response;
 
-          // ルート情報から所要時間を取得して表示
+          // ルート情報から総距離と総所要時間を計算して表示
           const route = response.routes[0];
           if (route && route.legs && route.legs.length > 0) {
-            const duration = route.legs[0].duration;
-            console.log(`所要時間: ${duration.text} (${duration.value}秒)`);
+            let totalDistance = 0;
+            let totalDuration = 0;
+
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value; // 距離をメートルで加算
+              totalDuration += leg.duration.value; // 所要時間を秒で加算
+            });
+
+            // 計算結果をグローバルなルート情報に保存
+            window.routeData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+
+            console.log(`総移動距離: ${totalDistance}メートル`);
+            console.log(`総所要時間: ${totalDuration}秒`);
           }
 
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
-          console.log("★ window.directionsResult set", window.directionsResult);
 
           // ルート描画完了のカスタムイベントを発行
           // イベントにデータを含めたいときはdetailに入れるのがルール
