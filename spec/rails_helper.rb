@@ -56,12 +56,22 @@ if ENV['SELENIUM_URL']
   puts "[DEBUG] Capybara.app_host: #{Capybara.app_host}"
 end
 
+# ローカル実行用のドライバ設定
+Capybara.register_driver :selenium_chrome_headless do |app|
+  options = Selenium::WebDriver::Options.chrome
+  options.add_argument('--headless')
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-dev-shm-usage')
+  options.add_argument('--window-size=1400,1400')
+  options.add_preference('goog:loggingPrefs', { browser: 'ALL' })
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
+
 # spec_helper.rbから移動
 # Capybara に対して、Docker 上の Selenium（ブラウザ実行コンテナ）を使うリモートドライバを登録する
 # :remote_selenium_chrome が今回のドライバ名（好きな名前でOK）。do |app| ... end の中でどう動かすか定義
 Capybara.register_driver :remote_chrome do |app|
-  logging_prefs = { browser: 'ALL' }
-  options = Selenium::WebDriver::Options.chrome(logging_prefs: logging_prefs)
+  options = Selenium::WebDriver::Options.chrome
   # セキュリティサンドボックスを無効にする
   options.add_argument('no-sandbox')
   # ブラウザを「画面表示なし（ヘッドレス）」で起動します。CI や Docker では普通これにする
@@ -80,6 +90,8 @@ Capybara.register_driver :remote_chrome do |app|
   options.add_argument('--use-fake-ui-for-media-stream')
   # CI環境で位置情報APIを擬似的に使用できるようにする
   options.add_argument('--use-fake-device-for-media-stream')
+  # ブラウザログを有効にするための設定
+  options.add_preference('goog:loggingPrefs', { browser: 'ALL' })
 
   Capybara::Selenium::Driver.new(
     app,
