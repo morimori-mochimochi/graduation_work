@@ -166,37 +166,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
-
-  # テスト失敗時にブラウザのコンソールログを出力する設定
-  config.after(:each, type: :system, js: true) do |example|
-    if example.exception
-      # アラートが開いているとログ取得やスクリーンショットでエラーになるため、
-      # 先にアラートを閉じる試みを行う。
-      begin
-        alert = page.driver.browser.switch_to.alert
-        if alert
-          puts "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
-          alert.accept # アラートを閉じる
-        end
-      rescue Selenium::WebDriver::Error::NoSuchAlertError
-        # アラートがなければ何もしない
-      end
-
-      logs = page.driver.browser.logs.get(:browser)
-      if logs.present?
-        puts "\n--- Browser Console Logs: ---"
-        logs.each do |log|
-          # 深刻なエラーのみ赤色で表示
-          if log.level == 'SEVERE'
-            puts "\e[31m[#{log.level}] #{log.message}\e[0m"
-          else
-            puts "[#{log.level}] #{log.message}"
-          end
-        end
-        puts "---------------------------\n"
-      end
-    end
-  end
+  
+  # システムテスト用のヘルパーをインクルード
+  config.include SystemTestHelpers, type: :system
 end
 
 RSpec.configure do |config|
