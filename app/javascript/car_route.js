@@ -60,6 +60,22 @@ export async function carDrawRoute() {
     carRenderer.setDirections(response);
     window.carRouteRenderers.push(carRenderer);
 
+    // 車ルートの総距離と総所要時間を計算
+    const route = response.routes[0];
+    if (route && route.legs && route.legs.length > 0) {
+      let totalDistance = 0;
+      let totalDuration = 0;
+
+      route.legs.forEach(leg => {
+        totalDistance += leg.distance.value; // 距離をメートルで加算
+        totalDuration += leg.duration.value; // 所要時間を秒で加算
+      });
+
+      // 計算結果をグローバルなルート情報に保存
+      window.routeData.total_distance = totalDistance;
+      window.routeData.total_duration = totalDuration;
+    }
+
     // 駐車場から目的地までの徒歩ルートを別途描画
     const walkingRoutes = [];
     // 中継点の徒歩ルート

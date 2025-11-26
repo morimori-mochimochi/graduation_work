@@ -46,7 +46,9 @@ export function initSaveRoute(container) {
           travel_mode: routeData.travel_mode,
           start_point: startPoint,
           end_point: endPoint,
-          waypoints: waypointsToSave
+          waypoints: waypointsToSave,
+          total_distance: routeData.total_distance,
+          total_duration: routeData.total_duration
         }
       };
 
