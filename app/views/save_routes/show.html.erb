@@ -24,6 +24,15 @@
         <% end %>
 
         <p><strong>到着点:</strong><%= @save_route.end_point['name'] %></p>
+
+        <% if @save_route.total_distance.present? %>
+          <p><strong>総移動距離:</strong> <%= (@save_route.total_distance / 1000.0).round(2) %> km</p>
+        <% end %>
+
+        <% if @save_route.total_duration.present? %>
+          <p><strong>所要時間:</strong> <%= (@save_route.total_duration / 60.0).ceil %> 分</p>
+        <% end %>
+
       </div>
     </div>
   </div>

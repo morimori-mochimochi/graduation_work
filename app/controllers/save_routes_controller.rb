@@ -45,7 +45,8 @@ class SaveRoutesController < ApplicationController
   def save_route_params
     params.require(:save_route).permit(
       :name, :travel_mode, :execution_date,
-      start_point: [:lat, :lng, :name], end_point: [:lat, :lng, :name], waypoints: [:lat, :lng, :name]
+      :total_distance, :total_duration,
+      start_point: %i[lat lng name], end_point: %i[lat lng name], waypoints: %i[lat lng name]
     )
   end
 
