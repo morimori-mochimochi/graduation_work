@@ -11,7 +11,7 @@
     <script type="module" src="/assets/builds/application.js" data-turbo-track="reload"></script>
   </head>
 
-  <body>
+  <body data-csrf-token="<%= form_authenticity_token %>">
     <% flash.each do |message_type, message| %>
       <div class="flash_message <%= message_type %>"><%= message %></div>
     <% end %>
