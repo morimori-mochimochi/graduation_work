@@ -21,8 +21,8 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # 3.Javascriptを実行して出発地と目的地を擬似的に設定
     # 実際のマップクリックは不安定になりやすいのでこの方法が堅実
     route_data = {
-      start: { point: { lat: 35.6812, lng: 139.7671 } }, # 東京駅
-      destination: { mainPoint: { point: { lat: 35.6586, lng: 139.7454 } } }, # 東京タワー
+      start: { point: { lat: 35.6812, lng: 139.7671 }, name: '東京駅' },
+      destination: { mainPoint: { point: { lat: 35.6586, lng: 139.7454 }, name: '東京タワー' } },
       waypoints: []
     }.to_json
 
@@ -38,9 +38,15 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
           // carDrawRouteが参照するwindow.routeDataをセットアップ
           // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
           window.routeData = {
-            start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+            start: {
+              point: new google.maps.LatLng(routeDataFromRuby.start.point),
+              name: routeDataFromRuby.start.name
+            },
             destination: {
-              mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) }
+              mainPoint: {
+                point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point),
+                name: routeDataFromRuby.destination.mainPoint.name
+              }
             },
             waypoints: routeDataFromRuby.waypoints
           };
