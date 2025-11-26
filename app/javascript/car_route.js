@@ -7,8 +7,13 @@ function isValidLatLng(point) {
 export async function carDrawRoute() {
   await window.mapApiLoaded;
 
-  // routeDataはルートの出発、到着、中継点
-  const originPos = window.routeData.start.point || await fetchCurrentPos();
+  let originPos;
+  if (window.routeData.start && window.routeData.start.point) {
+    originPos = window.routeData.start.point;
+  } else {
+    originPos = await fetchCurrentPos();
+    window.routeData.start = { point: originPos, name: "現在地" }; // 現在地をrouteDataに保存
+  }
   const finalDestination = window.routeData.destination.mainPoint.point;
 
   if (!finalDestination || !isValidLatLng(finalDestination)) {

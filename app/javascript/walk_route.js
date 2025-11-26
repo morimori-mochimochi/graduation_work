@@ -7,8 +7,13 @@ function isValidLatLng(point) {
 export async function walkDrawRoute(start, destination){
   await window.mapApiLoaded;
 
-  // 引数でstartが渡されていない場合のみ、現在地を取得する
-  const originPos = window.routeData.start.point || await fetchCurrentPos();
+  let originPos;
+  if (window.routeData.start && window.routeData.start.point) {
+    originPos = window.routeData.start.point;
+  } else {
+    originPos = await fetchCurrentPos();
+    window.routeData.start = { point: originPos, name: "現在地" }; // 現在地をrouteDataに保存
+  }
   const finalDestination = window.routeData.destination.mainPoint.point;
 
   if (!finalDestination || !isValidLatLng(finalDestination)) {
