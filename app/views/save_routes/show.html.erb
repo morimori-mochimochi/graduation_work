@@ -12,7 +12,7 @@
           <p><strong>実行日:</strong> <%= @save_route.execution_date.strftime('%Y年%m月%d日') %></p>
         <% end %>
 
-        <p><strong>出発点:</strong> 緯度: <%= @save_route.start_point['lat'] %>, 経度: <%= @save_route.start_point['lng'] %></p>
+        <p><strong>出発点:</strong><%= @save_route.startPoint.name %></p>
 
         <% if @save_route.waypoints.present? %>
           <p><strong>経由地:</strong></p>
@@ -23,7 +23,7 @@
           </ul>
         <% end %>
 
-        <p><strong>到着点:</strong> 緯度: <%= @save_route.end_point['lat'] %>, 経度: <%= @save_route.end_point['lng'] %></p>
+        <p><strong>到着点:</strong><%= @save_route.endPoint.name%></p>
       </div>
     </div>
   </div>

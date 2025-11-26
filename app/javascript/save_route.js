@@ -23,12 +23,12 @@ export function initSaveRoute(container) {
 
       // LatLngオブジェクトから緯度経度を抽出
       const startPoint = {
-        name: routeData.start.name,
+        name: routeData.start?.name,
         lat: routeData.start.point.lat(),
         lng: routeData.start.point.lng()
       };
       const endPoint = {
-        name: routeData.destination.mainPoint.name,
+        name: routeData.destination?.mainPoint?.name,
         lat: routeData.destination.mainPoint.point.lat(),
         lng: routeData.destination.mainPoint.point.lng()
       };
