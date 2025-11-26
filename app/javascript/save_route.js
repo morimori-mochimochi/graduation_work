@@ -2,6 +2,11 @@ function showToast(message) {
   alert(message);
 }
 
+// CSRFトークンをbodyのdata属性から取得するヘルパー関数
+function getCsrfToken() {
+  return document.body.dataset.csrfToken;
+}
+
 export function initSaveRoute(container) {
   const saveRouteBtn = container.querySelector('#saveRouteBtn');
 
@@ -57,7 +62,7 @@ export function initSaveRoute(container) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-Token': getCsrfToken()
           },
           body: JSON.stringify(saveData)
         });
