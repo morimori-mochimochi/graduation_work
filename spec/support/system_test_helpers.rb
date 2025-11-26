@@ -3,32 +3,45 @@
 # システムテスト用のヘルパーモジュール
 # テスト失敗時にブラウザのコンソールログを出力する設定などを集約
 module SystemTestHelpers
+  # RSpecのフックをセットアップ
   def self.included(base)
     base.after(:each, type: :system, js: true) do |example|
-      if example.exception
-        # アラートが開いているとログ取得やスクリーンショットでエラーになるため、
-        # 先にアラートを閉じる試みを行う。
-        begin
-          alert = page.driver.browser.switch_to.alert
-          if alert
-            puts "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
-            alert.accept # アラートを閉じる
-          end
-        rescue Selenium::WebDriver::Error::NoSuchAlertError
-          # アラートがなければ何もしない
-        end
+      handle_failed_example(page) if example.exception
+    end
+  end
 
-        logs = page.driver.browser.logs.get(:browser)
-        if logs.present?
-          puts "\n--- Browser Console Logs: ---"
-          logs.each do |log|
-            # 深刻なエラーのみ赤色で表示
-            puts "\e[31m[#{log.level}] #{log.message}\e[0m" if log.level == 'SEVERE'
-            puts "[#{log.level}] #{log.message}" unless log.level == 'SEVERE'
-          end
-          puts "---------------------------\n"
-        end
+  # クラスメソッドとしてプライベートメソッドを定義
+  class << self
+    private
+
+    # テスト失敗時の処理をまとめたメソッド
+    def handle_failed_example(page)
+      close_alert_if_present(page)
+      print_browser_logs(page)
+    end
+
+    # アラートが開いている場合に閉じる
+    def close_alert_if_present(page)
+      alert = page.driver.browser.switch_to.alert
+      return unless alert
+
+      puts "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
+      alert.accept
+    rescue Selenium::WebDriver::Error::NoSuchAlertError
+      # アラートがなければ何もしない
+    end
+
+    # ブラウザのコンソールログを出力する
+    def print_browser_logs(page)
+      logs = page.driver.browser.logs.get(:browser)
+      return if logs.blank?
+
+      puts "\n--- Browser Console Logs: ---"
+      logs.each do |log|
+        message = "[#{log.level}] #{log.message}"
+        puts log.level == 'SEVERE' ? "\e[31m#{message}\e[0m" : message
       end
+      puts "---------------------------\n"
     end
   end
 end
