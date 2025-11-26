@@ -184,16 +184,16 @@ RSpec.configure do |config|
 
       logs = page.driver.browser.logs.get(:browser)
       if logs.present?
-        Rails.logger.info "\n--- Browser Console Logs: ---"
+        puts "\n--- Browser Console Logs: ---"
         logs.each do |log|
           # 深刻なエラーのみ赤色で表示
           if log.level == 'SEVERE'
-            Rails.logger.info "\e[31m#{log.message}\e[0m"
+            puts "\e[31m[#{log.level}] #{log.message}\e[0m"
           else
-            Rails.logger.info log.message
+            puts "[#{log.level}] #{log.message}"
           end
         end
-        Rails.logger.info "---------------------------\n"
+        puts "---------------------------\n"
       end
     end
   end
