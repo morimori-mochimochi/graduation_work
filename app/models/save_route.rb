@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SaveRoute < ApplicationRecord
   belongs_to :user
 

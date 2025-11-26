@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SaveRoutesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_save_route, only: %i[show edit update destroy]
@@ -6,7 +8,8 @@ class SaveRoutesController < ApplicationController
     @save_routes = current_user.save_routes.order(created_at: :desc)
   end
 
-  def show; end # set_save_route で @save_route がセットされる
+  # set_save_route で @save_route がセットされる
+  def show; end
 
   def new
     @save_route = current_user.save_routes.new(save_route_params_for_new)
