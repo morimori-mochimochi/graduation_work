@@ -158,6 +158,18 @@ RSpec.configure do |config|
   # テスト失敗時にブラウザのコンソールログを出力する設定
   config.after(:each, type: :system, js: true) do |example|
     if example.exception
+      # アラートが開いているとログ取得やスクリーンショットでエラーになるため、
+      # 先にアラートを閉じる試みを行う。
+      begin
+        alert = page.driver.browser.switch_to.alert
+        if alert
+          puts "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
+          alert.accept # アラートを閉じる
+        end
+      rescue Selenium::WebDriver::Error::NoSuchAlertError
+        # アラートがなければ何もしない
+      end
+
       logs = page.driver.browser.logs.get(:browser)
       if logs.present?
         Rails.logger.info "\n--- Browser Console Logs: ---"
