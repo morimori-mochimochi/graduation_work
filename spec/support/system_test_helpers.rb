@@ -4,10 +4,12 @@
 # テスト失敗時にブラウザのコンソールログを出力する設定などを集約
 module SystemTestHelpers
   # RSpecのフックをセットアップ
-  def self.included(base)
-    base.after(:each, type: :system, js: true) do |example|
-      handle_failed_example(page) if example.exception
-    end
+
+  #この SystemTestHelpers モジュールを使うテストでは、
+  # JS付きシステムテストが終わった時に、
+  # 失敗していたらデバッグ情報（アラートやコンソールログ）を自動で表示する
+  def self.included(base) # rubocop:disable Metrics/AbcSize
+    base.after(:each, type: :system, js: true) { |example| SystemTestHelpers.handle_failed_example(page) if example.exception }
   end
 
   # クラスメソッドとしてプライベートメソッドを定義
@@ -15,7 +17,7 @@ module SystemTestHelpers
     private
 
     # テスト失敗時の処理をまとめたメソッド
-    def handle_failed_example(page)
+    def handle_failed_example(page) # rubocop:disable Metrics/MethodLength
       close_alert_if_present(page)
       print_browser_logs(page)
     end
