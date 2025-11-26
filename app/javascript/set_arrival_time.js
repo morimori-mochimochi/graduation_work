@@ -33,6 +33,12 @@ export function initSetTime() {
 }
 
 function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
+  // 時刻設定UIが存在しないページでは処理を中断
+  if (!startHourEl || !startMinuteEl || !destinationHourEl || !destinationMinuteEl) {
+    console.warn('時刻設定UIが見つからないため、時刻計算をスキップします。');
+    return;
+  }
+
   const isStartSet = startHourEl && startMinuteEl && startHourEl.value !== "時" && startMinuteEl.value !== "分";
   const isDestinationSet = destinationHourEl.value !== "時" && destinationMinuteEl.value !== "分";
 
