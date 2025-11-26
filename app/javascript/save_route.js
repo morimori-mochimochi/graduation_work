@@ -2,8 +2,8 @@ function showToast(message) {
   alert(message);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const saveRouteBtn = document.getElementById('saveRouteBtn');
+export function initSaveRoute(container) {
+  const saveRouteBtn = container.querySelector('#saveRouteBtn');
 
   if (saveRouteBtn) {
     saveRouteBtn.addEventListener('click', async() => {
@@ -71,4 +71,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
+}
