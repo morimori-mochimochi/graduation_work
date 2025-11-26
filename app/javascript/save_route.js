@@ -24,13 +24,13 @@ export function initSaveRoute(container) {
       // LatLngオブジェクトから緯度経度を抽出
       const startPoint = {
         name: routeData.start?.name,
-        lat: routeData.start.point.lat(),
-        lng: routeData.start.point.lng()
+        lat: typeof routeData.start.point.lat === 'function' ? routeData.start.point.lat() : routeData.start.point.lat,
+        lng: typeof routeData.start.point.lng === 'function' ? routeData.start.point.lng() : routeData.start.point.lng
       };
       const endPoint = {
         name: routeData.destination?.mainPoint?.name,
-        lat: routeData.destination.mainPoint.point.lat(),
-        lng: routeData.destination.mainPoint.point.lng()
+        lat: typeof routeData.destination.mainPoint.point.lat === 'function' ? routeData.destination.mainPoint.point.lat() : routeData.destination.mainPoint.point.lat,
+        lng: typeof routeData.destination.mainPoint.point.lng === 'function' ? routeData.destination.mainPoint.point.lng() : routeData.destination.mainPoint.point.lng
       };
 
       // waypointも緯度経度のみを抽出
