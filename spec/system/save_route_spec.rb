@@ -63,7 +63,16 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     find('#saveRouteBtn').click
 
     # 8. 「ルートを保存しました」モーダルが表示されることを確認し、閉じる
-    expect(page).to have_content('ルートを保存しました')
+    begin
+      expect(page).to have_content('ルートを保存しました')
+    rescue Selenium::WebDriver::Error::UnexpectedAlertOpenError => e
+      # 予期せぬアラートが表示された場合の処理
+      alert_text = page.driver.browser.switch_to.alert.text
+      puts "\n--- Unexpected Alert Text: ---\n#{alert_text}\n---------------------------\n"
+      page.driver.browser.switch_to.alert.accept
+      # アラートを閉じた後、コンソールログを出力してテストを失敗させる
+      raise e, "予期せぬアラートが表示されました: #{alert_text}", e.backtrace
+    end
     click_on 'OK'
 
     # 9. 保存済みルート一覧ページに遷移する
