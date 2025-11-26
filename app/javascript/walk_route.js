@@ -67,11 +67,23 @@ export async function walkDrawRoute(start, destination){
           window.routeData.travel_mode = 'WALKING';
           window.directionsResult = response;
 
-          // ルート情報から所要時間を取得して表示
+          // ルート情報から総距離と総所要時間を計算して表示
           const route = response.routes[0];
           if (route && route.legs && route.legs.length > 0) {
-            const duration = route.legs[0].duration;
-            console.log(`所要時間: ${duration.text} (${duration.value}秒)`);
+            let totalDistance = 0;
+            let totalDuration = 0;
+
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value; // 距離をメートルで加算
+              totalDuration += leg.duration.value; // 所要時間を秒で加算
+            });
+
+            // 計算結果をグローバルなルート情報に保存
+            window.routeData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+
+            console.log(`総移動距離: ${totalDistance}メートル`);
+            console.log(`総所要時間: ${totalDuration}秒`);
           }
 
           sessionStorage.setItem("directionsResult", JSON.stringify(response));
