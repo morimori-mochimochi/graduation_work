@@ -1,5 +1,11 @@
 <tr id="<%= dom_id save_route %>">
   <td><%= link_to save_route.name, save_route_path(save_route), class: "link link-hover" %></td>
+  <td>
+    <%= case save_route.travel_mode
+        when 'driving' then '車'
+        when 'walking' then '徒歩'
+        end %>
+  </td>
   <td class="text-right space-x-2">
     <%= link_to '詳細', save_route_path(save_route), class: "btn btn-sm" %>
     <%= link_to '削除', save_route_path(save_route), data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' }, class: "btn btn-sm btn-error" %>
