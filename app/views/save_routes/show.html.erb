@@ -12,6 +12,15 @@
           <p><strong>実行日:</strong> <%= @save_route.execution_date.strftime('%Y年%m月%d日') %></p>
         <% end %>
 
+        <% if @save_route.travel_mode.present? %>
+          <p><strong>移動手段:</strong>
+            <%= case @save_route.travel_mode
+                when 'driving' then '車'
+                when 'walking' then '徒歩'
+                end %>
+          </p>
+        <% end %>
+
         <p><strong>出発点:</strong><%= @save_route.start_point['name'] %></p>
 
         <% if @save_route.waypoints.present? %>
@@ -41,5 +50,16 @@
     <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
     <%= button_to '削除', @save_route, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
     <%= link_to '一覧に戻る', save_routes_path, class: "btn btn-ghost" %>
+    <%= button_tag 'すぐ出発する',
+      # data属性にルート情報をJSON形式で埋め込む
+      # data属性:HTML要素に自由なデータを埋め込み、JavaScriptで使えるようにする仕組み
+      id: 'start-navigation-from-saved-route',
+      class: 'btn btn-primary',
+      data: {
+        route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]),
+        car_navi_path: car_navigation_routes_path,
+        walk_navi_path: walk_navigation_routes_path
+      }
+    %>
   </div>
 </div>
