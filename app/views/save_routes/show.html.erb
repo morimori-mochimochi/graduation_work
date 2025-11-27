@@ -21,18 +21,29 @@
           </p>
         <% end %>
 
-        <p><strong>出発点:</strong><%= @save_route.start_point['name'] %></p>
+        <p><strong>出発点:</strong> <%= @save_route.start_point['name'] %></p>
 
         <% if @save_route.waypoints.present? %>
           <p><strong>経由地:</strong></p>
           <ul class="list-disc list-inside pl-4">
             <% @save_route.waypoints.each do |waypoint| %>
-              <li><%= waypoint['name'] %></li>
+              <li>
+                <%# dig: ネスト（入れ子）になったハッシュや配列から、安全かつ簡潔に値を取り出すためのメソッド %>
+                <%= waypoint.dig('mainPoint', 'name') %>
+                <% if waypoint['parkingLot'].present? %>
+                  <span class="text-sm text-gray-500 ml-2">(P: <%= waypoint.dig('parkingLot', 'name') %>)</span>
+                <% end %>
+              </li>
             <% end %>
           </ul>
         <% end %>
 
-        <p><strong>到着点:</strong><%= @save_route.end_point['name'] %></p>
+        <p><strong>到着点:</strong>
+          <%= @save_route.end_point.dig('mainPoint', 'name') %>
+          <% if @save_route.end_point['parkingLot'].present? %>
+            <span class="text-sm text-gray-500 ml-2">(P: <%= @save_route.end_point.dig('parkingLot', 'name') %>)</span>
+          <% end %>
+        </p>
 
         <% if @save_route.total_distance.present? %>
           <p><strong>総移動距離:</strong> <%= (@save_route.total_distance / 1000.0).round(2) %> km</p>
