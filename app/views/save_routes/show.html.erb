@@ -72,5 +72,11 @@
       }
     %>
   </div>
+  <div id="route-data"
+       data-route="<%= @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]) %>"
+       style="display: none;">
+  </div>
   <div id="map"></div>
 </div>
+
+<%= javascript_include_tag 'draw_saved_route', 'data-turbo-track': 'reload' %>
