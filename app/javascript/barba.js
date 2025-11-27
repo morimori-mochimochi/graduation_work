@@ -15,6 +15,7 @@ import { initInfoWindow } from "./info_window";
 import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
+import { initDrawSavedRoute } from "./draw_saved_route";
 
 // ページ初期化のための共通関数
 function initializePage(container) {
@@ -62,6 +63,9 @@ function initializePage(container) {
 
     // 保存済みルート詳細ページ用の初期化
     initMoveNavi(container);
+
+    // 保存済みルートの描画
+    initDrawSavedRoute(container);
   });
 }
 

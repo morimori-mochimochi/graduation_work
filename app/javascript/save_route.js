@@ -33,16 +33,30 @@ export function initSaveRoute(container) {
         lng: typeof routeData.start.point.lng === 'function' ? routeData.start.point.lng() : routeData.start.point.lng
       };
       const endPoint = {
-        name: routeData.destination?.mainPoint?.name,
-        lat: typeof routeData.destination.mainPoint.point.lat === 'function' ? routeData.destination.mainPoint.point.lat() : routeData.destination.mainPoint.point.lat,
-        lng: typeof routeData.destination.mainPoint.point.lng === 'function' ? routeData.destination.mainPoint.point.lng() : routeData.destination.mainPoint.point.lng
+        mainPoint: {
+          name: routeData.destination?.mainPoint?.name,
+          lat: routeData.destination.mainPoint.point.lat(),
+          lng: routeData.destination.mainPoint.point.lng()
+        },
+        parkingLot: routeData.destination.parkingLot ? {
+          name: routeData.destination.parkingLot.name,
+          lat: routeData.destination.parkingLot.point.lat(),
+          lng: routeData.destination.parkingLot.point.lng()
+        } : null
       };
 
       // waypointも緯度経度のみを抽出
       const waypointsToSave =  (routeData.waypoints || []).map(wp => ({
-        name: wp.mainPoint?.name,
-        lat: wp.mainPoint?.point?.lat(),
-        lng: wp.mainPoint?.point?.lng()
+        mainPoint: {
+          name: wp.mainPoint?.name,
+          lat: wp.mainPoint?.point?.lat(),
+          lng: wp.mainPoint?.point?.lng()
+        },
+        parkingLot: wp.parkingLot ? {
+          name: wp.parkingLot.name,
+          lat: wp.parkingLot.point.lat(),
+          lng: wp.parkingLot.point.lng()
+        } : null
       }));
 
       const saveData = {
