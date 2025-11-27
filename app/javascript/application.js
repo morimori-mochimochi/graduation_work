@@ -26,3 +26,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Barba遷移後のイベント
 barba.hooks.after(() => fadeOutFlash());
+
+import "./draw_saved_route.js";

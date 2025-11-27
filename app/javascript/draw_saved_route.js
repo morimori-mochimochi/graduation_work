@@ -1,5 +1,7 @@
-document.addEventListener('turbo:load', () => {
-  const routeDataElement = document.getElementById('route-data');
+export function initDrawSaveedRoute(container) {
+  console.log("draw_saved_route.js: turbo:load イベント発火");
+
+  const routeDataElement = container.querySelector('#route-data');
   // #route-data要素が存在しないページでは何もしない
   if (!routeDataElement) {
     return;
@@ -30,7 +32,7 @@ document.addEventListener('turbo:load', () => {
       alert('ルートの描画に失敗しました。');
     }
   });
-});
+};
   
 // 保存されたルート情報からDirections APIのリクエストオブジェクトを構築する
 // @param {object} routeData - ルート情報
