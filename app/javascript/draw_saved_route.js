@@ -1,17 +1,18 @@
-export function initDrawSaveedRoute(container) {
-  console.log("draw_saved_route.js: turbo:load イベント発火");
-
+export function initDrawSavedRoute(container) {
   const routeDataElement = container.querySelector('#route-data');
   // #route-data要素が存在しないページでは何もしない
   if (!routeDataElement) {
     return;
   }
+
+  console.log("draw_saved_route.js: ルート描画を開始します。");
   
   const routeData = JSON.parse(routeDataElement.dataset.route);
-  const mapElement = document.getElementById('map');
+  const mapElement = container.querySelector('#map');
   
   // 地図とDirectionsService/Rendererの初期化
   const map = new google.maps.Map(mapElement, {
+    mapId: "56e6f7b7602076fe1ca74db5", // 他のマップ初期化と合わせる
     zoom: 15,
     // 地図の中心はルート描画後に自動調整されるため、仮の中心を設定
     center: { lat: 35.681236, lng: 139.767125 } // 東京駅
