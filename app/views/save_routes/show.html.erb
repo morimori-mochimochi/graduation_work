@@ -46,7 +46,9 @@
       id: 'start-navigation-from-saved-route',
       class: 'btn btn-primary',
       data: {
-        route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints])
+        route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]),
+        car_navi_path: car_navigation_routes_path,
+        walk_navi_path: walk_navigation_routes_path
       }
     %>
   </div>

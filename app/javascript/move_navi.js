@@ -1,21 +1,20 @@
-window.onGoogleMapsReady = window.onGoogleMapsReady || function () {};
-const originalOnGoogleMapsReady = window.onGoogleMapsReady;
-
-window.onGoogleMapsReady = function () {
-  originalOnGoogleMapsReady(); // 既存の処理があれば実行
-
-  const startNaviBtn = document.getElementById('start-navigation-from-saved-route');
-  if (!startNaniBtn) return;
-
+// container = document は「container がないときは document を使うよ」という意味
+export function initMoveNavi(container = document) {
+  const startNaviBtn = container.querySelector('#start-navigation-from-saved-route');
+  if (!startNaviBtn) return;
+  
+  // イベントリスナーの重複登録を防止
+  if (startNaviBtn.dataset.moveNaviAttached) return;
+  startNaviBtn.dataset.moveNaviAttached = 'true';
+  
   startNaviBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     const button = e.currentTarget;
     const routeData = JSON.parse(button.dataset.route);
-
     // ボタンをローディング状態にする
     button.classList.add('loading');
     button.disabled = true;
-    button.textConten = 'ルート準備中...';
+    button.textContent = 'ルート準備中...';
     
     const directionsService = new google.maps.DirectionsService();
 
@@ -37,9 +36,9 @@ window.onGoogleMapsReady = function () {
 
       // travel_modeに応じて適切なナビゲーションページに移動
       if (routeData.travel_mode === 'driving') {
-        window.location.href = '<%= car_navigation_routes_path %>';
+        window.location.href = button.dataset.carNaviPath;
       } else if (routeData.travel_mode === 'walking') {
-        window.location.href = '<%= walk_navigation_routes_path %>';
+        window.location.href = button.dataset.walkNaviPath;
       } else {
         alert('不明な移動手段です');
         button.classList.remove('loading');
@@ -54,11 +53,4 @@ window.onGoogleMapsReady = function () {
       button.textContent = 'すぐ出発する';
     }
   });
-};
-
-// API読み込み済みの時のために手動で呼び出す
-if (window.google && window.google.maps) {
-  window.onGoogleMapsReady();
 }
-
-
