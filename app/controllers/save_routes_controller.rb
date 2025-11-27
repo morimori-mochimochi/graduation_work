@@ -18,7 +18,11 @@ class SaveRoutesController < ApplicationController
   def edit; end
 
   def create
-    @save_route = current_user.save_routes.build(save_route_params)
+    route_params = save_route_params
+    # &.: nilだったら何もしない
+    # downcase!: 破壊的に小文字化
+    route_params[:travel_mode]&.downcase!
+    @save_route = current_user.save_routes.build(route_params)
     if @save_route.save
       # 成功した場合はメッセージをJSONで返す
       render json: { message: t('.notice') }, status: :created
