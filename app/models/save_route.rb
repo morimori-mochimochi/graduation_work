@@ -17,6 +17,9 @@ class SaveRoute < ApplicationRecord
 
     return nil if hour.zero? && minute.zero?
 
-    "#{hour.zero? ? '' : "#{hour}時間"}#{minute.zero? ? '' : "#{minute}分"}"
+    parts = []
+    parts << "#{hour}時間" if hour.positive?
+    parts << "#{minute}分" if minute.positive?
+    parts.join
   end
 end

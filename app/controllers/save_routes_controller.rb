@@ -54,7 +54,7 @@ class SaveRoutesController < ApplicationController
       :name, :travel_mode, :start_time, :execution_date,
       :total_distance, :total_duration,
       start_point: %i[lat lng name],
-      end_point: [:arrival_time, mainPoint: %i[lat lng name], parkingLot: %i[lat lng name]],
+      end_point: [:arrival_time, { mainPoint: %i[lat lng name], parkingLot: %i[lat lng name] }],
       waypoints: [
         :arrival_time,
         { stayDuration: %i[hour minute] },
