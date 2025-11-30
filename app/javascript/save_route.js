@@ -38,12 +38,14 @@ export function initSaveRoute(container) {
           lat: routeData.destination.mainPoint.point.lat(),
           lng: routeData.destination.mainPoint.point.lng()
         },
+        arrival_time: routeData.destination.arrival_time, // 追加
         parkingLot: routeData.destination.parkingLot ? {
           name: routeData.destination.parkingLot.name,
           lat: routeData.destination.parkingLot.point.lat(),
           lng: routeData.destination.parkingLot.point.lng()
         } : null
       };
+
 
       // waypointも緯度経度のみを抽出
       const waypointsToSave =  (routeData.waypoints || []).map(wp => ({
@@ -52,6 +54,8 @@ export function initSaveRoute(container) {
           lat: wp.mainPoint?.point?.lat(),
           lng: wp.mainPoint?.point?.lng()
         },
+        arrival_time: wp.arrival_time, // 追加
+        stayDuration: wp.stayDuration, // 追加
         parkingLot: wp.parkingLot ? {
           name: wp.parkingLot.name,
           lat: wp.parkingLot.point.lat(),
@@ -63,6 +67,7 @@ export function initSaveRoute(container) {
         save_route: {
           name: defaultRouteName,
           travel_mode: routeData.travel_mode,
+          start_time: routeData.start_time, // 追加
           start_point: startPoint,
           end_point: endPoint,
           waypoints: waypointsToSave,

@@ -20,6 +20,10 @@
           </p>
         <% end %>
 
+        <% if @save_route.start_time.present? %>
+          <p><strong>出発時刻:</strong> <%= @save_route.start_time.strftime('%H:%M') %></p>
+        <% end %>
+
         <p><strong>出発点:</strong> <%= @save_route.start_point['name'] %></p>
 
         <% if @save_route.waypoints.present? %>
@@ -29,6 +33,12 @@
               <li>
                 <%# dig: ネスト（入れ子）になったハッシュや配列から、安全かつ簡潔に値を取り出すためのメソッド %>
                 <%= waypoint.dig('mainPoint', 'name') %>
+                <% if waypoint['arrival_time'].present? %>
+                  <span class="text-sm text-gray-500 ml-2"><%= Time.zone.parse(waypoint['arrival_time']).strftime('%H:%M') %>頃着</span>
+                <% end %>
+                <% if waypoint['stayDuration'].present? && (formatted_duration = SaveRoute.format_duration(waypoint['stayDuration'])).present? %>
+                  <span class="text-sm text-gray-500 ml-2">(滞在: <%= formatted_duration %>)</span>
+                <% end %>
                 <% if waypoint['parkingLot'].present? %>
                   <span class="text-sm text-gray-500 ml-2">(P: <%= waypoint.dig('parkingLot', 'name') %>)</span>
                 <% end %>
@@ -39,6 +49,9 @@
 
         <p><strong>到着点:</strong>
           <%= @save_route.end_point.dig('mainPoint', 'name') %>
+          <% if @save_route.end_point['arrival_time'].present? %>
+            <span class="text-sm text-gray-500 ml-2"><%= Time.zone.parse(@save_route.end_point['arrival_time']).strftime('%H:%M') %>頃着</span>
+          <% end %>
           <% if @save_route.end_point['parkingLot'].present? %>
             <span class="text-sm text-gray-500 ml-2">(P: <%= @save_route.end_point.dig('parkingLot', 'name') %>)</span>
           <% end %>
@@ -55,6 +68,11 @@
       </div>
     </div>
   </div>
+  <div id="route-data"
+       data-route="<%= @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]) %>"
+       style="display: none;">
+  </div>
+  <div id="map"></div>
 
   <div class="mt-6 flex items-center space-x-2">
     <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
@@ -72,9 +90,4 @@
       }
     %>
   </div>
-  <div id="route-data"
-       data-route="<%= @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]) %>"
-       style="display: none;">
-  </div>
-  <div id="map"></div>
 </div>
