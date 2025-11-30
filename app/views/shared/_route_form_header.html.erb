@@ -9,15 +9,18 @@
     <%# 'mode'ローカル変数に応じて表示を切り替える %>
     <% if defined?(mode) && mode == :walk %>
       <%= link_to car_routes_path do %>
-        <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "btn_effect h-20" %>
+        <%= image_tag "/images/go_walk.png", alt: "go_walk", class: "btn_effect h-18" %>
       <% end %>
     <% else %>
       <%= link_to walk_routes_path do %>
-        <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-20" %>
+        <%= image_tag "/images/go_to_car.png",alt: "go_to_car", class: "btn_effect h-18" %>
       <% end %>
     <% end %>
     <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
       <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-10 -mt-1" %>
+    </button>
+    <button id="setTimeBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+      <%= image_tag "/images/set_time.png", alt: "set_time", class: "btn_effect h-10 -mt-1" %>
     </button>
   </div>
 </div> 
