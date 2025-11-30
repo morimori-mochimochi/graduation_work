@@ -91,12 +91,18 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
     startHourEl.value = String(startHour).padStart(2, '0');
     startMinuteEl.value = String(startMinute).padStart(2, '0');
   } else {
+    // ユーザーが設定した出発時刻を routeData に保存
+    const selectedTime = new Date();
+    selectedTime.setHours(parseInt(startHourEl.value, 10), parseInt(startMinuteEl.value, 10), 0, 0);
     startHour = parseInt(startHourEl.value, 10);
     startMinute = parseInt(startMinuteEl.value, 10);
   }
 
   const departureTime = new Date();
   departureTime.setHours(startHour, startMinute, 0, 0);
+
+  // 出発時刻をrouteDataに保存
+  window.routeData.start_time = departureTime.toTimeString().split(' ')[0]; // "HH:MM:SS"形式
 
   let cumulativeDuration = 0;
   route.legs.forEach((leg, index) => {
@@ -107,6 +113,8 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       // 到着時刻の表示
       destinationHourEl.value = String(arrivalTime.getHours()).padStart(2, '0');
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
+      // 到着時刻をrouteDataに保存
+      window.routeData.destination.arrival_time = arrivalTime.toISOString();
     } else { // 中継点
 
       // 中継点到着時刻を表示するspan要素を取得
@@ -117,6 +125,11 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
         const arrivalMinute = String(arrivalTime.getMinutes()).padStart(2, '0');
         const timeString = `${arrivalHour}:${arrivalMinute}`;
         arrivalTimeEl.textContent = timeString;
+
+        // 到着時刻をrouteDataに保存
+        if (window.routeData.waypoints[index]) {
+          window.routeData.waypoints[index].arrival_time = arrivalTime.toISOString();
+        }
       } else {
         console.warn(`中継点[${index}]の到着時刻表示要素が見つかりません。`);
       }
@@ -157,6 +170,9 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
 
   const arrivalTime = new Date();
   arrivalTime.setHours(destinationHour, destinationMinute, 0, 0);
+
+  // 最終到着時刻をrouteDataに保存
+  window.routeData.destination.arrival_time = arrivalTime.toISOString();
   
   let cumulativeDuration = 0;
   // reverseでlegsをゴールから近い順に並べ替え
@@ -178,6 +194,8 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
       startMinuteEl.value = String(legDepartureTime.getMinutes()).padStart(2, '0');
+      // 出発時刻をrouteDataに保存
+      window.routeData.start_time = legDepartureTime.toTimeString().split(' ')[0]; // "HH:MM:SS"形式
     } else { // 途中は中継点（この時刻はその中継点への到着時刻）
       const arrivalTimeEl = document.getElementById(`relayArrivalTime_${legIndex - 1}`);
 
@@ -186,6 +204,11 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
         const arrivalMinute = String(legDepartureTime.getMinutes()).padStart(2, '0');
         const timeString = `${arrivalHour}:${arrivalMinute}`;
         arrivalTimeEl.textContent = timeString;
+
+        // 到着時刻をrouteDataに保存
+        if (window.routeData.waypoints[legIndex - 1]) {
+          window.routeData.waypoints[legIndex - 1].arrival_time = legDepartureTime.toISOString();
+        }
       } else {
         console.warn(`中継点[${legIndex - 1}]の到着時刻表示要素が見つかりません。`);
       }

@@ -36,6 +36,9 @@
                 <% if waypoint['arrival_time'].present? %>
                   <span class="text-sm text-gray-500 ml-2"><%= Time.zone.parse(waypoint['arrival_time']).strftime('%H:%M') %>頃着</span>
                 <% end %>
+                <% if waypoint['stayDuration'].present? && (formatted_duration = SaveRoute.format_duration(waypoint['stayDuration'])).present? %>
+                  <span class="text-sm text-gray-500 ml-2">(滞在: <%= formatted_duration %>)</span>
+                <% end %>
                 <% if waypoint['parkingLot'].present? %>
                   <span class="text-sm text-gray-500 ml-2">(P: <%= waypoint.dig('parkingLot', 'name') %>)</span>
                 <% end %>
