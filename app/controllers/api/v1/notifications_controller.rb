@@ -20,6 +20,8 @@ module api
       end
 
       # PATCH/api/v1/notifications/sent
+      # 通知終了後にstatusを更新するためのエンドポイント
+      
       def sent
         notification_ids = params.require(:notification_ids)
         Notification.where(id: notification_ids).update_all(status: 'sent', updated_at: Time.current)
@@ -29,9 +31,11 @@ module api
       private
 
       def authenticate_api
-      # 環境変数などでAPIキーを設定し、リクエストヘッダーで検証するのが望ましい
-      # 例: request.headers['X-API-KEY'] == ENV['GAS_API_KEY']
-        head :unauthorized unless params[:api_key] == 'YOUR_SECRET_API_KEY' # TODO: APIキーを環境変数に設定する
+        # Rails credentialsからAPIキーを読み込む
+        api_key = Rails.application.credentials.gas_api_key
+
+        # APIキーが設定されていない、またはリクエストのキーと一致しない場合はエラーを返す
+        head :unauthorized unless api_key && params[:api_key] == api_key
       end
     end 
   end
