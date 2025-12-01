@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord # :nodoc:
+
+  # uidをDB内で暗号化
+  # deterministic: trueを指定することで暗号化後も同じ値で検索できる
+  encrypts :uid, deterministic: true
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   # Diviseの基本設定
@@ -9,7 +14,7 @@ class User < ApplicationRecord # :nodoc:
 
   has_many :locations, dependent: :destroy
   has_many :save_routes, dependent: :destroy
-  has_nmany :notifications, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true
