@@ -103,6 +103,8 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
   // 出発時刻をrouteDataに保存
   window.routeData.start_time = departureTime.toTimeString().split(' ')[0]; // "HH:MM:SS"形式
+  
+  console.log("departureTime:", routeData.start_time);
 
   let cumulativeDuration = 0;
   route.legs.forEach((leg, index) => {
@@ -170,6 +172,8 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
 
   const arrivalTime = new Date();
   arrivalTime.setHours(destinationHour, destinationMinute, 0, 0);
+
+  console.log("arrivalTime:", arrivalTime);
 
   // 最終到着時刻をrouteDataに保存
   window.routeData.destination.arrival_time = arrivalTime.toISOString();
