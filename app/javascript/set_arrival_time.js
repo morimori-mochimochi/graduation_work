@@ -177,6 +177,8 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
 
   // 最終到着時刻をrouteDataに保存
   window.routeData.destination.arrival_time = arrivalTime.toISOString();
+
+  console.log("routeData after setting arrivalTime:", window.routeData);
   
   let cumulativeDuration = 0;
   // reverseでlegsをゴールから近い順に並べ替え
