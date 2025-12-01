@@ -117,6 +117,9 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
       // 到着時刻をrouteDataに保存
       window.routeData.destination.arrival_time = arrivalTime.toISOString();
+
+      console.log("到着時刻:", outeData.destination.arrival_time);
+
     } else { // 中継点
 
       // 中継点到着時刻を表示するspan要素を取得
