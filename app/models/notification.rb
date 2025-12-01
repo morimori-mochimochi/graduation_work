@@ -3,6 +3,7 @@ class Notification < ApplicationRecord
   belongs_to :save_route
 
   validates :notify_at, presence: true
+  # statusの種類
   validates :status, presence: true, inclusion: { in: %w[pending sent failed] }
 
   # Notificationモデルに「今送るべき通知だけを取り出す」ための便利メソッドを定義。
