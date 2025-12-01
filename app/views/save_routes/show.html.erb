@@ -34,7 +34,7 @@
                 <%# dig: ネスト（入れ子）になったハッシュや配列から、安全かつ簡潔に値を取り出すためのメソッド %>
                 <%= waypoint.dig('mainPoint', 'name') %>
                 <% if waypoint['arrival_time'].present? %>
-                  <span class="text-sm text-gray-500 ml-2"><%= Time.zone.parse(waypoint['arrival_time']).strftime('%H:%M') %>頃着</span>
+                  <span class="text-sm text-gray-500 ml-2"><%= Time.parse(waypoint['arrival_time']).in_time_zone('Tokyo').strftime('%H:%M') %>頃着</span>
                 <% end %>
                 <% if waypoint['stayDuration'].present? && (formatted_duration = SaveRoute.format_duration(waypoint['stayDuration'])).present? %>
                   <span class="text-sm text-gray-500 ml-2">(滞在: <%= formatted_duration %>)</span>
@@ -50,7 +50,7 @@
         <p><strong>到着点:</strong>
           <%= @save_route.end_point.dig('mainPoint', 'name') %>
           <% if @save_route.end_point['arrival_time'].present? %>
-            <span class="text-sm text-gray-500 ml-2"><%= Time.zone.parse(@save_route.end_point['arrival_time']).strftime('%H:%M') %>頃着</span>
+            <span class="text-sm text-gray-500 ml-2"><%= Time.parse(@save_route.end_point['arrival_time']).in_time_zone('Tokyo').strftime('%H:%M') %>頃着</span>
           <% end %>
           <% if @save_route.end_point['parkingLot'].present? %>
             <span class="text-sm text-gray-500 ml-2">(P: <%= @save_route.end_point.dig('parkingLot', 'name') %>)</span>
