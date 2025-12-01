@@ -42,7 +42,7 @@ Rails.application.routes.draw do
       # 代わりに独自の API アクションを生やす
       resources :notifications, only: [] do
         collection do
-          get :due_for_sending
+          get :due
           patch :sent
         end
       end

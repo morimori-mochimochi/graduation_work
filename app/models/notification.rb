@@ -10,8 +10,5 @@ class Notification < ApplicationRecord
   # Rails ではこういう検索条件を scope（スコープ） と呼ぶ。
   # due_for_sendingというスコープ。メソッドのようにNotification.due_for_sendingと呼べる。
   # pendingの通知だけを選ぶ
-  scope :due_for_sending, -> {
-    where(status: 'pending')
-      .where(notify_at: 1.minute.ago..Time.current)
-  }
+  scope :due_for_sending, -> { where(status: 'pending').where('notify_at <= ?', Time.current) }
 end
