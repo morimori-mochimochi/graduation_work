@@ -9,6 +9,7 @@ class User < ApplicationRecord # :nodoc:
 
   has_many :locations, dependent: :destroy
   has_many :save_routes, dependent: :destroy
+  has_nmany :notifications, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true
