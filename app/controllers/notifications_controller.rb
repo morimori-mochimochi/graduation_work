@@ -11,6 +11,7 @@ class NotificationsController < ApplicationController
     end
 
     notify_at = start_datetime - 5.minutes
+    # find_or_initialize_by: ActiveRecord のメソッドで、モデルの検索と新規オブジェクト生成を自動で行う
     @notification = @save_route.notifications.find_or_initialize_by(user: current_user)
     @notification.notify_at = notify_at
     @notification.status = 'pending'
