@@ -72,7 +72,10 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     find('#saveRouteBtn').click
 
     # 8. 「ルートを保存しました」というアラートが表示されることを確認し、OKボタンを押す
-    expect(page.accept_alert).to eq 'ルートを保存しました'
+    # accept_alertに期待するテキストを渡すことで、アラートが表示されるまで待機してくれる。
+    # また、テキストが一致しない場合はエラーになるため、eqマッチャーでの比較は不要。
+    # デフォルトの待機時間で足りない場合は wait オプションを追加する: page.accept_alert('...', wait: 5)
+    page.accept_alert 'ルートを保存しました'
 
     # 9. 保存済みルート一覧ページに遷移する
     find('img[alt="routes_logo"]').click

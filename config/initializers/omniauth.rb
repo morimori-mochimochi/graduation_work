@@ -12,3 +12,4 @@ ActiveSupport.on_load(:omniauth_strategy) do
       super
     end
   end
+end
