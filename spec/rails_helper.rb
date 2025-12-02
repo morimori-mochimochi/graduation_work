@@ -30,15 +30,15 @@ if ENV['SELENIUM_URL']
                # この方法は `host.docker.internal` が使えない環境でも安定して動作します
                docker_network_id = ENV.fetch('DOCKER_NETWORK')
                # --- ここからデバッグコード ---
-               Rails.logger.debug "[DEBUG] DOCKER_NETWORK from ENV: #{docker_network_id.inspect}"
+               Rails.logger.debug { "[DEBUG] DOCKER_NETWORK from ENV: #{docker_network_id.inspect}" }
                if docker_network_id.present?
                  command = "docker network inspect #{docker_network_id} -f '{{(index .IPAM.Config 0).Gateway}}'"
-                 Rails.logger.debug "[DEBUG] Executing command: #{command}"
+                 Rails.logger.debug { "[DEBUG] Executing command: #{command}" }
                  result = `#{command}`.strip
-                 Rails.logger.debug "[DEBUG] Command result: #{result.inspect}"
+                 Rails.logger.debug { "[DEBUG] Command result: #{result.inspect}" }
                  result
                else
-                 Rails.logger.debug "[DEBUG] DOCKER_NETWORK is not present."
+                 Rails.logger.debug { "[DEBUG] DOCKER_NETWORK is not present." }
                  nil
                end
                # --- ここまでデバッグコード ---
@@ -52,8 +52,8 @@ if ENV['SELENIUM_URL']
 
   Capybara.app_host = "http://#{app_host}:#{Capybara.server_port}"
 
-  Rails.logger.debug "[DEBUG] ENV['CI']: #{ENV['CI'].inspect}"
-  Rails.logger.debug "[DEBUG] Capybara.app_host: #{Capybara.app_host}"
+  Rails.logger.debug { "[DEBUG] ENV['CI']: #{ENV['CI'].inspect}" }
+  Rails.logger.debug { "[DEBUG] Capybara.app_host: #{Capybara.app_host}" }
 end
 
 # ローカル実行用のドライバ設定

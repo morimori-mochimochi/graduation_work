@@ -40,16 +40,21 @@ module SystemTestHelpers
       logs = page.driver.browser.logs.get(:browser)
       return if logs.blank?
 
-      Rails.logger.info "\n--- Browser Console Logs: ---"
-      logs.each do |log|
-        message = "[#{log.level}] #{log.message}"
-        if log.level == 'SEVERE'
-          Rails.logger.error message
-        else
-          Rails.logger.info message
-        end
-      end
-      Rails.logger.info "---------------------------\n"
+      log_browser_messages(logs)
+    end
+
+    # ブラウザログを整形して出力する
+    def log_browser_messages(logs)
+      Rails.logger.info "\n--- Browser Console Logs: ---\n"
+      logs.each { |log| log_message(log) }
+      Rails.logger.info "---------------------------\n\n"
+    end
+
+    # ログレベルに応じてメッセージを出力する
+    def log_message(log)
+      message = "[#{log.level}] #{log.message}"
+      logger = log.level == 'SEVERE' ? Rails.logger.method(:error) : Rails.logger.method(:info)
+      logger.call(message)
     end
   end
 end
