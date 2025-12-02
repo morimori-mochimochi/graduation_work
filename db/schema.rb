@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_30_072444) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_01_032557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_30_072444) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "name"], name: "index_locations_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_locations_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "save_route_id", null: false
+    t.datetime "notify_at", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notify_at", "status"], name: "index_notifications_on_notify_at_and_status"
+    t.index ["save_route_id"], name: "index_notifications_on_save_route_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "notify_times", force: :cascade do |t|
@@ -143,6 +155,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_30_072444) do
 
   add_foreign_key "destinations", "locations"
   add_foreign_key "locations", "users"
+  add_foreign_key "notifications", "save_routes"
+  add_foreign_key "notifications", "users"
   add_foreign_key "notify_times", "trip_plans"
   add_foreign_key "route_segments", "destinations"
   add_foreign_key "route_segments", "starting_points"

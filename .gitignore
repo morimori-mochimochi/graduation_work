@@ -42,3 +42,4 @@
 /public/assets/builds/*
 
 /config/master.key
+/config/credentials/denelopment.key

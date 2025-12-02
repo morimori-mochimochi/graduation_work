@@ -77,8 +77,8 @@
   <div class="mt-6 flex items-center space-x-2">
     <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
     <%= button_to '削除', @save_route, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
-    <%= link_to '一覧に戻る', save_routes_path, class: "btn btn-ghost" %>
-    <%= button_tag 'すぐ出発する',
+    <%= link_to '一覧へ', save_routes_path, class: "btn btn-ghost" %>
+    <%= button_tag 'すぐ出発',
       # data属性にルート情報をJSON形式で埋め込む
       # data属性:HTML要素に自由なデータを埋め込み、JavaScriptで使えるようにする仕組み
       id: 'start-navigation-from-saved-route',
@@ -89,5 +89,9 @@
         walk_navi_path: walk_navigation_routes_path
       }
     %>
+    <%# 実行日と出発時刻、そしてユーザーがLINE連携済みの場合のみタイマー設定ボタンを表示 %>
+    <% if @save_route.execution_date.present? && @save_route.start_time.present? && current_user.line_connected? %>
+      <%= button_to '出発5分前にLINE通知', save_route_notifications_path(@save_route), method: :post, class: "btn btn-info", form: { data: { turbo_confirm: "出発5分前にLINE通知を設定します。よろしいですか？" } } %>
+    <% end %>
   </div>
 </div>
