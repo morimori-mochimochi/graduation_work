@@ -15,3 +15,9 @@ ja:
       notice: "ルートを更新しました"
     destroy:
       notice: "ルートを削除しました"
+  notifications:
+    create:
+      notice: "%{time}に通知を設定しました。"
+      alert: "通知の設定に失敗しました。"
+      start_time_blank: "出発時刻が設定されていません"
+    
