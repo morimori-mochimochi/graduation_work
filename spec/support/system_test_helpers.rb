@@ -16,8 +16,6 @@ module SystemTestHelpers
 
   # クラスメソッドとしてプライベートメソッドを定義
   class << self
-    private
-
     # テスト失敗時の処理をまとめたメソッド
     def handle_failed_example(page)
       close_alert_if_present(page)
