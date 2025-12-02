@@ -29,7 +29,7 @@ module SystemTestHelpers
       alert = page.driver.browser.switch_to.alert
       return unless alert
 
-      puts "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
+      Rails.logger.info "\n--- Alert Text on Failure: ---\n#{alert.text}\n---------------------------\n"
       alert.accept
     rescue Selenium::WebDriver::Error::NoSuchAlertError
       # アラートがなければ何もしない
@@ -40,12 +40,16 @@ module SystemTestHelpers
       logs = page.driver.browser.logs.get(:browser)
       return if logs.blank?
 
-      puts "\n--- Browser Console Logs: ---"
+      Rails.logger.info "\n--- Browser Console Logs: ---"
       logs.each do |log|
         message = "[#{log.level}] #{log.message}"
-        puts log.level == 'SEVERE' ? "\e[31m#{message}\e[0m" : message
+        if log.level == 'SEVERE'
+          Rails.logger.error message
+        else
+          Rails.logger.info message
+        end
       end
-      puts "---------------------------\n"
+      Rails.logger.info "---------------------------\n"
     end
   end
 end
