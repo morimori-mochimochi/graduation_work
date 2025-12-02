@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord # :nodoc:
-
   # uidをDB内で暗号化
   # deterministic: trueを指定することで暗号化後も同じ値で検索できる
   encrypts :uid, deterministic: true

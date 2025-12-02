@@ -1,4 +1,4 @@
-# frozen_srting_literal: true
+# frozen_string_literal: true
 
 class NotificationsController < ApplicationController
   before_action :authenticate_user!
@@ -6,9 +6,7 @@ class NotificationsController < ApplicationController
 
   def create
     start_datetime = @save_route.start_time
-    unless start_datetime
-      return redirect_to @save_route, alert: '出発時刻が設定されていません'
-    end
+    return redirect_to @save_route, alert: '出発時刻が設定されていません' unless start_datetime
 
     notify_at = start_datetime - 5.minutes
     # find_or_initialize_by: ActiveRecord のメソッドで、モデルの検索と新規オブジェクト生成を自動で行う

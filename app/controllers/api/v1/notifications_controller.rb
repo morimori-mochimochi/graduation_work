@@ -22,10 +22,12 @@ module Api
 
       # PATCH /api/v1/notifications/sent
       # 通知終了後にstatusを更新するためのエンドポイント
-      
+
       def sent
         notification_ids = params.require(:notification_ids)
-        Notification.where(id: notification_ids).update_all(status: 'sent', updated_at: Time.current)
+        # update_all はバリデーションをスキップするため、update を使用する
+        notifications = Notification.where(id: notification_ids)
+        notifications.update(status: 'sent')
         head :no_content
       end
 
@@ -38,6 +40,6 @@ module Api
         # APIキーが設定されていない、またはリクエストのキーと一致しない場合はエラーを返す
         head :unauthorized unless api_key && params[:api_key] == api_key
       end
-    end 
+    end
   end
-end 
+end
