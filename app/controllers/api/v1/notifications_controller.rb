@@ -8,6 +8,7 @@ module Api
       before_action :authenticate_api
 
       # GET /api/v1/notifications/due
+      # mapはRubyのメソッド。 配列の各要素に対して必要な情報のみで新しい配列を返す。
       def due
         notifications = Notification.due_for_sending.includes(:user, :save_route)
         render json: notifications.map { |n|
