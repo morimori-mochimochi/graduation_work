@@ -80,6 +80,6 @@ Rails.application.configure do
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
 
-  config.hosts << "genty-palaeanthropic-kaycee.ngrok-free.dev"
-
+  # ngrokからのアクセスを許可する。先頭にドットを付けることで、全てのサブドメインを許可する。
+  config.hosts << ".ngrok-free.dev"
 end
