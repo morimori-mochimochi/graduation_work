@@ -18,6 +18,7 @@ gem 'devise-i18n-views'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'geocoder'
 gem 'importmap-rails'
+gem 'omniauth-line'
 gem 'omniauth-oauth2'
 gem 'omniauth-rails_csrf_protection'
 gem 'pg', '>= 0.18', '< 2.0'
