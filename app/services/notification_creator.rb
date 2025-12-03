@@ -8,6 +8,11 @@ class NotificationCreator
     new(save_route: save_route, user: user).call
   end
 
+  def self.calculate_notify_at(execution_date, start_time)
+    start_datetime = Time.zone.local(execution_date.year, execution_date.month, execution_date.day, start_time.hour, start_time.min)
+    start_datetime - 5.minutes # 出発の5分前に通知
+  end
+
   def initialize(save_route:, user:)
     @save_route = save_route
     @user = user
@@ -18,7 +23,7 @@ class NotificationCreator
     return Result.new(false, nil, { alert: I18n.t('notifications.create.start_time_blank') }) unless start_datetime_present?
 
     notification = @save_route.notifications.find_or_initialize_by(user: @user)
-    notification.assign_attributes(notify_at: calculate_notify_at, status: 'pending')
+    notification.assign_attributes(notify_at: self.class.calculate_notify_at(@save_route.execution_date, @save_route.start_time), status: 'pending')
 
     if notification.save
       message = { notice: I18n.t('notifications.create.notice', time: notification.notify_at.strftime('%Y年%m月%d日 %H:%M')) }
@@ -33,12 +38,5 @@ class NotificationCreator
 
   def start_datetime_present?
     @save_route.execution_date.present? && @save_route.start_time.present?
-  end
-
-  def calculate_notify_at
-    start_time = @save_route.start_time
-    execution_date = @save_route.execution_date
-    start_datetime = Time.zone.local(execution_date.year, execution_date.month, execution_date.day, start_time.hour, start_time.min)
-    start_datetime - 5.minutes # 出発の5分前に通知
   end
 end
