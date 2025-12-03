@@ -33,8 +33,9 @@ class User < ApplicationRecord # :nodoc:
 
     unless user.persisted?
       user.name = auth.info.name
-      user.email = auth.info.email
-      # パスワードはバリデーションを通過させるためのダミー
+      # LINEからemailが取得できない場合、uidとproviderから一意なダミーメールアドレスを生成
+      user.email = auth.info.email || "#{auth.uid}-#{auth.provider}@example.com"
+      # パスワードはバリデーションを通過させるためのダミー。
       user.password = Devise.friendly_token[0, 20]
       user.save!
     end
