@@ -316,7 +316,9 @@ Devise.setup do |config|
   # requestオブジェクトから現在のホスト名やプロトコルを取得し、
   # 環境に応じた正しいredirect_uriを動的に生成します。
   config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], setup: lambda { |env|
-    request = Rack::Request.new(env)
-    env['omniauth.strategy'].options[:redirect_uri] = "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback"
+  redirect_uri = "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback"
+  # Railsのログに生成されたコールバックURLを出力する
+  Rails.logger.info "OmniAuth LINE redirect_uri: #{redirect_uri}"
+  env['omniauth.strategy'].options[:redirect_uri] = redirect_uri
   }
 end
