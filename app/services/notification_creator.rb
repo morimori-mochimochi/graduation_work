@@ -23,6 +23,7 @@ class NotificationCreator
 
     if notification.save
       message = { notice: I18n.t('notifications.create.notice', time: notify_at.strftime('%Y年%m月%d日 %H:%M')) }
+      puts "設定日時コントローラー: #{notify_at}"
       Result.new(true, notification, message)
     else
       Result.new(false, notification, { alert: I18n.t('notifications.create.alert') })
