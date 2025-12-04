@@ -30,6 +30,7 @@ class NotificationCreator
       puts "設定日時サービス: #{notification.notify_at}"
       Result.new(true, notification, message)
     else
+      Rails.logger.error "通知の保存に失敗しました: #{notification.errors.full_messages.join(', ')}"
       Result.new(false, notification, { alert: I18n.t('notifications.create.alert') })
     end
   end
