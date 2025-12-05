@@ -5,6 +5,9 @@ class Api::V1::LineLinkagesController < ApplicationController
   # APIキーなどでの認証が望ましいが、今回は省略
   skip_before_action :verify_authenticity_token
 
+  # 認証済みであることが前提
+  before_action :authenticate_user!
+
   def create
     line_user_id = params[:line_user_id]
 
@@ -23,5 +26,17 @@ class Api::V1::LineLinkagesController < ApplicationController
     else
       render json: { error: 'Failed to link LINE account', details: current_user.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  private
+
+  def authenticate_api_key
+    #リクエスパラメータからAPIキーを取得
+    provided_key = params[:api_key]
+    # Railscredencialsから正しいAPIキーを取得
+    correct_key = Rails.application.credentials.gas_api_key
+
+    # キーが一致しない場合は401 Unauthorizeエラーを試す
+    render json: { error: 'Unauthorized' }, status: :unauthorized unless provided_key == correct_key
   end
 end
