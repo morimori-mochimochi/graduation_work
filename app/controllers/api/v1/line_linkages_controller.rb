@@ -1,37 +1,77 @@
 # frozen_string_literal: true
 
-class Api::V1::LineLinkagesController < ApplicationController
-  # CSRF保護をAPIモードでは無効にする
-  # APIキーなどでの認証が望ましいが、今回は省略
-  skip_before_action :verify_authenticity_token
+module Api
+  module V1
+    class LineLinkagesController < Api::V1::BaseController # BaseControllerを継承
+      # CSRFトークンの検証をスキップ（LINEからのWebhookはCSRFトークンを持たないため）
+      skip_before_action :verify_authenticity_token, only: [:callback]
+      # ユーザー認証をスキップ（Webhook用）。LINEサーバーからのリクエストなのでRailsのセッションは存在しない。
+      # `new` アクションは BaseController の `authenticate_user!` が適用される。
+      skip_before_action :authenticate_user!, only: [:callback]
+      # GET /api/v1/line_linkage/new
+      # アカウント連携を開始し、連携用URLを返す
+      def new
+        # 1. Nonceを生成し、現在のユーザーに紐付けて保存
+        nonce = SecureRandom.hex(16)
+        # Userモデルに line_nonce:string カラムを追加してください
+        current_user.update!(line_nonce: nonce)
 
-  # 認証済みであることが前提
-  before_action :authenticate_user!
+        # 2. LINEプラットフォームからlinkTokenを取得
+        client = line_bot_client
+        response = client.create_link_token(current_user.id)
 
-  def update
-    line_user_id = params[:line_user_id]
+        unless response.code == '200'
+          logger.error "Failed to create link token: #{response.body}"
+          return render json: { error: 'Failed to create link token' }, status: :internal_server_error
+        end
 
-    if line_user_id.blank?
-      render json: { error: 'line_user_id is required' }, status: :bad_request
-      return
+        link_token = JSON.parse(response.body)['linkToken']
+
+        # 3. アカウント連携用URLを生成
+        account_link_url = "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{nonce}"
+
+        # 4. フロントエンドにURLを返す
+        render json: { url: account_link_url }
+      end
+
+      # POST /api/v1/line_linkage/callback
+      # LINEからのWebhookを受け取り、アカウントを紐付ける
+      def callback
+        body = request.body.read
+
+        # LINEからのリクエストの署名を検証
+        signature = request.env['HTTP_X_LINE_SIGNATURE']
+        unless line_bot_client.validate_signature(body, signature)
+          return head :bad_request
+        end
+
+        events = line_bot_client.parse_events_from(body)
+        events.each do |event|
+          next unless event.is_a?(LINE::Bot::Event::AccountLink)
+
+          user = User.find_by(line_nonce: event['link']['nonce'])
+          unless user
+            logger.warn "Invalid nonce received: #{event['link']['nonce']}"
+            next
+          end
+
+          # Userモデルに line_user_id:string カラムを追加してください
+          user.update!(line_user_id: event['source']['userId'], line_nonce: nil)
+          logger.info "Successfully linked LINE account for user: #{user.id}"
+        end
+
+        head :ok
+      end
+
+      private
+
+      def line_bot_client
+        # gem 'line-bot-api' を Gemfile に追加してください
+        LINE::Bot::Client.new do |config|
+          config.channel_secret = ENV['LINE_CHANNEL_SECRET']
+          config.channel_token = ENV['LINE_CHANNEL_ACCESS_TOKEN']
+        end
+      end
     end
-
-    if current_user.update(line_user_id:)
-      render json: {status: 'success', message: 'LINE account linked successfully.' }, status: :ok
-    else
-      render json: { error: 'Failed to link LINE account', details: current_user.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  private
-
-  def authenticate_api_key
-    #リクエスパラメータからAPIキーを取得
-    provided_key = params[:api_key]
-    # Railscredencialsから正しいAPIキーを取得
-    correct_key = Rails.application.credentials.gas_api_key
-
-    # キーが一致しない場合は401 Unauthorizeエラーを試す
-    render json: { error: 'Unauthorized' }, status: :unauthorized unless provided_key == correct_key
   end
 end
