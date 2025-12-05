@@ -13,7 +13,6 @@ module Api
       def new
         # 1. Nonceを生成し、現在のユーザーに紐付けて保存
         nonce = SecureRandom.hex(16)
-        # Userモデルに line_nonce:string カラムを追加してください
         current_user.update!(line_nonce: nonce)
 
         # 2. LINEプラットフォームからlinkTokenを取得
@@ -55,7 +54,6 @@ module Api
             next
           end
 
-          # Userモデルに line_user_id:string カラムを追加してください
           user.update!(line_user_id: event['source']['userId'], line_nonce: nil)
           logger.info "Successfully linked LINE account for user: #{user.id}"
         end
@@ -67,8 +65,8 @@ module Api
 
       def line_bot_client
         LINE::Bot::Client.new do |config|
-          config.channel_secret = ENV['LINE_CHANNEL_SECRET']
-          config.channel_token = ENV['LINE_CHANNEL_ACCESS_TOKEN']
+          config.channel_secret = Rails.application.credentials.messaging_api_secret
+          config.channel_token = Rails.application.credentials.messaging_api_channel_access_token
         end
       end
     end

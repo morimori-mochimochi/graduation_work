@@ -41,18 +41,14 @@ Rails.application.routes.draw do
       # 通常の index/show/create/update/destroy は作らない
       # 代わりに独自の API アクションを生やす
       resources :notifications, only: [] do
-        collection do
-          get :due
-          patch :sent
-        end
+        get :due, on: :collection
+        patch :sent, on: :collection
       end
       # ログイン中のユーザーにLINE User IDを紐付ける
       # menber: 個別の一個に対するルーティング
       # collection: 複数のリソースに対するルーティング(IDを含まない)
-      resource :line_linkage, only: [] do
-        member { get :new }
-        collection { post :callback }
-      end
+      resource :line_linkage, only: [:new], controller: 'line_linkages'
+      post 'line_linkage/callback', to: 'line_linkages#callback'
     end
   end
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
