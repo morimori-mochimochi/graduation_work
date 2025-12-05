@@ -8,20 +8,15 @@ class Api::V1::LineLinkagesController < ApplicationController
   # 認証済みであることが前提
   before_action :authenticate_user!
 
-  def create
+  def update
     line_user_id = params[:line_user_id]
-
-    if current_user.nil?
-      render json: { error: 'User not logged in' }, status: :unauthorized
-      return
-    end
 
     if line_user_id.blank?
       render json: { error: 'line_user_id is required' }, status: :bad_request
       return
     end
 
-    if current_user.update(line_user_id: line_user_id)
+    if current_user.update(line_user_id:)
       render json: {status: 'success', message: 'LINE account linked successfully.' }, status: :ok
     else
       render json: { error: 'Failed to link LINE account', details: current_user.errors.full_messages }, status: :unprocessable_entity

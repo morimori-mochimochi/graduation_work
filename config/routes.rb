@@ -47,7 +47,7 @@ Rails.application.routes.draw do
         end
       end
       # ログイン中のユーザーにLINE User IDを紐付ける
-      patch 'line_linkage', to: 'line_linkages#create'
+      resource :line_linkage, only: [:update]
     end
   end
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
