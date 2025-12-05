@@ -95,7 +95,7 @@
     <% end %>
 
     <%# LINE未連携の場合のみ連携ボタンを表示 %>
-    <% unless current_user.line_user_id.present? %>
+    <% unless current_user.line_messaging_user_id.present? %>
       <button id="line-linkage-button" class="btn btn-success" data-api-url="<%= new_api_v1_line_linkage_path %>">LINEを連携する</button>
     <% end %>
   </div>

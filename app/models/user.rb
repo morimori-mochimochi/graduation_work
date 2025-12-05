@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord # :nodoc:
-  # uidをDB内で暗号化
+  # line_login_uid, line_messaging_user_idをDB内で暗号化
   # deterministic: trueを指定することで暗号化後も同じ値で検索できる
-  encrypts :uid, deterministic: true
+  encrypts :line_login_uid, :line_messaging_user_id, deterministic: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -20,11 +20,11 @@ class User < ApplicationRecord # :nodoc:
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP },
                     unless: :line_connected?
   validates :password, presence: true, length: { minimum: 6 }, unless: :line_connected?
-  validates :uid, uniqueness: { scope: :provider }, if: -> { provider.present? }
+  validates :line_login_uid, uniqueness: { scope: :provider }, if: -> { provider.present? }
 
   # インスタンスメソッド
   def line_connected?
-    uid.present? && provider.present?
+    line_login_uid.present? && provider.present?
   end
 
   # クラスメソッド
@@ -32,8 +32,9 @@ class User < ApplicationRecord # :nodoc:
     user = find_or_initialize_by_line_auth(auth)
 
     unless user.persisted?
+      user.line_login_uid = auth.uid
       user.name = auth.info.name
-      # LINEからemailが取得できない場合、uidとproviderから一意なダミーメールアドレスを生成
+      # LINEからemailが取得できない場合、line_login_uidとproviderから一意なダミーメールアドレスを生成
       user.email = auth.info.email || "#{auth.uid}-#{auth.provider}@example.com"
       # パスワードはバリデーションを通過させるためのダミー。
       user.password = Devise.friendly_token[0, 20]
@@ -53,7 +54,7 @@ class User < ApplicationRecord # :nodoc:
   end
 
   def self.find_or_initialize_by_line_auth(auth)
-    # providerとuidでユーザーを検索、または新規作成(メモリ上)
-    find_or_initialize_by(provider: auth.provider, uid: auth.uid)
+    # providerとline_login_uidでユーザーを検索、または新規作成(メモリ上)
+    find_or_initialize_by(provider: auth.provider, line_login_uid: auth.uid)
   end
 end

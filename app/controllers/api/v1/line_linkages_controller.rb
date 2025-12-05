@@ -35,8 +35,8 @@ module Api
         events.each do |event|
           # アカウント連携イベントの場合
           if event.is_a?(Line::Bot::Event::AccountLink)
-            # 3. nonceからユーザーを特定
-            user = User.find_by(id: event['source']['userId'])
+            # 3. nonceからユーザーを特定 (nonceはリダイレクト時にcurrent_user.idを渡している)
+            user = User.find_by(id: event['nonce'])
             next unless user
 
             # 4. Messaging APIのユーザーIDを保存
