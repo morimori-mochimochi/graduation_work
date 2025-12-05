@@ -14,7 +14,7 @@ module Api
         render json: notifications.map { |n|
           {
             notification_id: n.id,
-            line_user_id: n.user.uid, # LINE連携しているユーザーのUID
+            line_user_id: n.user.line_messaging_user_id, # Messaging API用のユーザーID
             message: "#{n.save_route.name}の出発時刻5分前です！"
           }
         }

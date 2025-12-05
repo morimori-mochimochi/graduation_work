@@ -2,73 +2,55 @@
 
 module Api
   module V1
-    class LineLinkagesController < Api::V1::BaseController # BaseControllerを継承
-      # CSRFトークンの検証をスキップ（LINEからのWebhookはCSRFトークンを持たないため）
+    # アカウント連携のためのコントローラー
+    class LineLinkagesController < ApplicationController
+      # LINEからのWebhookはCSRFトークンを含まないため、検証をスキップ
       skip_before_action :verify_authenticity_token, only: [:callback]
-      # ユーザー認証をスキップ（Webhook用）。LINEサーバーからのリクエストなのでRailsのセッションは存在しない。
-      # `new` アクションは BaseController の `authenticate_user!` が適用される。
-      skip_before_action :authenticate_user!, only: [:callback]
-      # GET /api/v1/line_linkage/new
-      # アカウント連携を開始し、連携用URLを返す
+
+      # ユーザーをアカウント連携ページへリダイレクトさせる
       def new
-        # 1. Nonceを生成し、現在のユーザーに紐付けて保存
-        nonce = SecureRandom.hex(16)
-        current_user.update!(line_nonce: nonce)
+        # ログイン必須
+        unless user_signed_in?
+          return redirect_to new_user_session_path, alert: 'LINE通知を連携するには、ログインが必要です。'
+        end
 
-        # 2. LINEプラットフォームからlinkTokenを取得
-        client = line_bot_client
-        response = client.create_link_token(current_user.id)
-
+        # 1. LINE PlatformからlinkTokenを発行してもらう
+        response = line_bot_client.create_link_token(current_user.id)
         unless response.code == '200'
-          logger.error "Failed to create link token: #{response.body}"
-          return render json: { error: 'Failed to create link token' }, status: :internal_server_error
+          Rails.logger.error "Failed to create link token: #{response.body}"
+          return redirect_to mypage_path, alert: 'LINE連携に失敗しました。もう一度お試しください。'
         end
 
         link_token = JSON.parse(response.body)['linkToken']
 
-        # 3. アカウント連携用URLを生成
-        account_link_url = "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{nonce}"
-
-        # 4. フロントエンドにURLを返す
-        render json: { url: account_link_url }
+        # 2. linkTokenを使ってアカウント連携用URLにリダイレクト
+        redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true
       end
 
-      # POST /api/v1/line_linkage/callback
-      # LINEからのWebhookを受け取り、アカウントを紐付ける
+      # LINE PlatformからのWebhookを受け取るアクション
       def callback
         body = request.body.read
-
-        # LINEからのリクエストの署名を検証
-        signature = request.env['HTTP_X_LINE_SIGNATURE']
-        unless line_bot_client.validate_signature(body, signature)
-          return head :bad_request
-        end
-
         events = line_bot_client.parse_events_from(body)
+
         events.each do |event|
-          next unless event.is_a?(LINE::Bot::Event::AccountLink)
+          # アカウント連携イベントの場合
+          if event.is_a?(Line::Bot::Event::AccountLink)
+            # 3. nonceからユーザーを特定
+            user = User.find_by(id: event['source']['userId'])
+            next unless user
 
-          user = User.find_by(line_nonce: event['link']['nonce'])
-          unless user
-            logger.warn "Invalid nonce received: #{event['link']['nonce']}"
-            next
+            # 4. Messaging APIのユーザーIDを保存
+            user.update!(line_messaging_user_id: event['source']['userId'])
+
+            # 連携完了をユーザーに通知
+            message = { type: 'text', text: 'アカウント連携が完了しました！' }
+            line_bot_client.push_message(user.line_messaging_user_id, message)
           end
-
-          user.update!(line_user_id: event['source']['userId'], line_nonce: nil)
-          logger.info "Successfully linked LINE account for user: #{user.id}"
         end
 
         head :ok
       end
-
-      private
-
-      def line_bot_client
-        LINE::Bot::Client.new do |config|
-          config.channel_secret = Rails.application.credentials.messaging_api_secret
-          config.channel_token = Rails.application.credentials.messaging_api_channel_access_token
-        end
-      end
     end
   end
 end
+  

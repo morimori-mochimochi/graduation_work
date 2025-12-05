@@ -44,10 +44,10 @@ Rails.application.routes.draw do
         get :due, on: :collection
         patch :sent, on: :collection
       end
-      # ログイン中のユーザーにLINE User IDを紐付ける
-      # menber: 個別の一個に対するルーティング
-      # collection: 複数のリソースに対するルーティング(IDを含まない)
-      resource :line_linkage, only: [:new], controller: 'line_linkages'
+      # LINE Messaging APIとのアカウント連携
+      # GET /api/v1/line_linkage/new -> 連携開始URLへリダイレクト
+      # POST /api/v1/line_linkage/callback -> LINE PlatformからのWebhookを受け取る
+      get 'line_linkage/new', to: 'line_linkages#new'
       post 'line_linkage/callback', to: 'line_linkages#callback'
     end
   end
