@@ -1,12 +1,20 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const lineLinkageButton = document.getElementById('line-linkage-button');
+export function initLineLinkageButton(container) {
+  // 指定されたコンテナ内からボタンを探す
+  const lineLinkageButton = container.querySelector('#line-linkage-button');
 
   // ボタンが存在する場合のみイベントリスナーを設定
   if (lineLinkageButton) {
+    // data属性からAPIパスを取得
+    const apiUrl = lineLinkageButton.dataset.apiUrl;
+    if (!apiUrl) {
+      console.error('LINE連携ボタンに data-api-url 属性がありません。');
+      return;
+    }
+
     lineLinkageButton.addEventListener('click', async (event) => {
       event.preventDefault(); // デフォルトの動作をキャンセル
       try {
-        const response = await fetch('<%= new_api_v1_line_linkage_path %>');
+        const response = await fetch(apiUrl);
         const data = await response.json();
         window.location.href = data.url; // 取得したURLにリダイレクト
       } catch (error) {
@@ -15,4 +23,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
+}
