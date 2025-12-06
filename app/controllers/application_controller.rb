@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'line/bot' # line-bot-api を読み込む
+
 class ApplicationController < ActionController::Base # :nodoc:
   # 全てのコントローラーでLINE Botクライアントを利用できるようにする
   # helper_method :line_bot_client # ビューでは使用しないため、この行は不要
