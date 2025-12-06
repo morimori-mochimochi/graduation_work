@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'line/bot'
+
 class ApplicationController < ActionController::Base # :nodoc:
   # 全てのコントローラーでLINE Botクライアントを利用できるようにする
   # helper_method :line_bot_client # ビューでは使用しないため、この行は不要
@@ -8,10 +10,11 @@ class ApplicationController < ActionController::Base # :nodoc:
 
   private
 
+  # line-bot-apiを使用してline-apiサーバーと通信するための窓口を提供
   def line_bot_client
     @line_bot_client ||= Line::Bot::Client.new do |config|
-      config.channel_secret = Rails.application.credentials.line[:messaging_channel_secret]
-      config.channel_token = Rails.application.credentials.line[:messaging_channel_token]
+      config.channel_secret = Rails.application.credentials.line[:messaging_api_secret]
+      config.channel_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
     end
   end
 
