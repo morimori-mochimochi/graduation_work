@@ -11,14 +11,14 @@ module Api
       def new
         # ログイン必須
         unless user_signed_in?
-          return redirect_to new_user_session_path, alert: 'LINE通知を連携するには、ログインが必要です。'
+      return render json: { error: 'LINE通知を連携するには、ログインが必要です。' }, status: :unauthorized
         end
 
         # 1. LINE PlatformからlinkTokenを発行してもらう
         response = line_bot_client.create_link_token(current_user.id)
         unless response.code == '200'
           Rails.logger.error "Failed to create link token: #{response.body}"
-          return redirect_to mypage_path, alert: 'LINE連携に失敗しました。もう一度お試しください。'
+      return render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
         end
 
         link_token = JSON.parse(response.body)['linkToken']
