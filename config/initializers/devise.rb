@@ -271,10 +271,6 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  #
-  # カスタムストラテジーを読み込む
-  # ファイル名を変更したため、ここで明示的に読み込む必要がある
-  require 'strategies/line_strategy'
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
   # ==> Warden configuration
@@ -318,7 +314,7 @@ Devise.setup do |config|
   # OmniAuthのプロバイダーごとに動的な設定を行うためのブロック
   # requestオブジェクトから現在のホスト名やプロトコルを取得し、
   # 環境に応じた正しいredirect_uriを動的に生成します。
-  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], setup: lambda { |env|
+  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], name: :line, strategy_class: OmniAuth::Strategies::Line, setup: lambda { |env|
     request = Rack::Request.new(env)
     redirect_uri = "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback"
     # Railsのログに生成されたコールバックURLを出力する
