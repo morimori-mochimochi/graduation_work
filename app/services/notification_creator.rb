@@ -5,17 +5,11 @@ class NotificationCreator
   Result = Struct.new(:success?, :notification, :message)
 
   def self.call(save_route:, user:)
-    new(save_route: save_route, user: user).call
   end
 
   def self.calculate_notify_at(execution_date, start_time)
     start_datetime = Time.zone.local(execution_date.year, execution_date.month, execution_date.day, start_time.hour, start_time.min)
     start_datetime - 5.minutes # 出発の5分前に通知
-  end
-
-  def initialize(save_route:, user:)
-    @save_route = save_route
-    @user = user
   end
 
   def call

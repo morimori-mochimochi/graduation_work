@@ -444,7 +444,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   pg (>= 0.18, < 2.0)
   pry-rails
-  puma (~> 6.0)
+  puma (~> 6.4)
   rails (~> 7.1.0)
   rspec-rails
   rubocop
