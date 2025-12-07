@@ -20,7 +20,7 @@ module Api
 
         # 2. linkTokenを使ってアカウント連携用URLにリダイレクト
         redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true
-      rescue Line::Bot::V2::ApiError => e
+      rescue Line::Bot::V2::MessagingApi::ApiError => e
         Rails.logger.error "Failed to create link token: #{e.response_body}"
         render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
       end
