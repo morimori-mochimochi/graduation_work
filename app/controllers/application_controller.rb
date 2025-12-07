@@ -10,8 +10,9 @@ class ApplicationController < ActionController::Base # :nodoc:
 
   # line-bot-apiを使用してline-apiサーバーと通信するための窓口を提供
   def line_messaging_client
-    @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new(
-      channel_access_token: Rails.application.credentials.line[:messaging_api_channel_access_token]
+    @line_messaging_client ||= Line::Bot::V2::MessagingApi.new(
+      channel_secret: Rails.application.credentials.line[:messaging_api_secret],
+      channel_token: Rails.application.credentials.line[:messaging_api_channel_access_token]
     )
   end
 
