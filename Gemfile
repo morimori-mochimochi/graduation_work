@@ -26,7 +26,7 @@ gem 'puma', '~> 6.4'
 gem 'rails', '~> 7.1.0'
 gem 'stimulus-rails'
 gem 'turbo-rails'
-gem 'line-bot-api'
+gem 'line-bot-api', '~> 2.5.0'
 
 group :development, :test do
   gem 'capybara'

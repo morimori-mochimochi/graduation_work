@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-require 'line-bot-api'
+require 'line/bot'
