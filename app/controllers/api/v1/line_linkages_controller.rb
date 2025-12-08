@@ -9,7 +9,7 @@ module Api
     # アカウント連携のためのコントローラー
     class LineLinkagesController < BaseController
       # LINEからのWebhookはCSRFトークンを含まないため、検証をスキップ
-      skip_before_action :verify_authenticity_token, only: [:callback]
+      skip_before_action :verify_authenticity_token
 
       # LinkUserApiクライアント（V2では不要なため削除）
       # V2ではline_messaging_client（Line::Bot::Clientのインスタンス）を直接使用します。
