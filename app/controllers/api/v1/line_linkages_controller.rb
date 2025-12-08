@@ -21,31 +21,27 @@ module Api
         # 1. LINE PlatformからlinkTokenを発行してもらう (V2対応)
         # V2 GemにはlinkToken発行のヘルパーメソッドがないため、Messaging APIの /linkToken エンドポイントを直接叩く
         # clientはLine::Bot::Clientのインスタンスと仮定します。
-        
         # Line::Bot::Client#post を使ってAPIエンドポイントを叩く
-        response = line_messaging_client.post(
-          '/v2/bot/user/linkToken',
-          nil, # Bodyは不要
-          'Content-Type' => 'application/json' # ヘッダーは必須
-        )
+        # 1. LINE PlatformからlinkTokenを発行してもらう (V3/V2 SDKのメソッドを使用)
+        # client.issue_link_token は、Line::Bot::V2::MessagingApi::ApiClient のメソッド。
+        # V3 SDKのように User ID は引数に不要。
+        response = line_messaging_client.issue_link_token
+         
+        # 応答はHashではなく、DTOオブジェクト（例: Line::Bot::V2::MessagingApi::LinkTokenResponse）を返す
+        link_token = response.link_token
+
+        # 2. linkToknを使ってアカウント連携用URLにリダイレクト
+        redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true 
 
         # 応答の検証
         unless response.code.to_i == 200
           raise StandardError, "LINE API failed to issue link token. Response: #{response.body}"
         end
-        
-        # 応答オブジェクトからlinkTokenを取得
-        response_body = JSON.parse(response.body)
-        link_token = response_body['linkToken']
 
-        # 2. linkTokenを使ってアカウント連携用URLにリダイレクト
-        # nonceとして現在のuser IDを使用
-        redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true
-
-      # エラーハンドリング (V2対応)
-      rescue StandardError => e
-        # LINE APIのエラーもここでキャッチされる
-        Rails.logger.error "Failed to create link token (V2): #{e.class} - #{e.message}"
+        # エラーハンドリング(v2/v3のSDKのエラークラスを使用)
+      rescue Line::Bot::V2::ApiError => e
+        # Line::Bot::V2::MessagingApi::ApiClient は Line::Bot::V2::ApiError をraiseします
+        Rails.logger.error "Failed to create link token: #{e.class} - #{e.message}"
         render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
       end
 
@@ -54,34 +50,29 @@ module Api
         body = request.body.read
         signature = request.env['HTTP_X_LINE_SIGNATURE']
 
-        # V2では Line::Bot::Client#parse_events_from を使用
-        # `line_messaging_client` が Line::Bot::Client のインスタンスである必要があります。
-        events = line_messaging_client.parse_events_from(body, signature)
+        # V2 SDKでは parse_events メソッドを使用 (bodyとsignatureを引数に取る)
+        # V2::MessagingApi::ApiClient のインスタンスは parse_events メソッドを持ちます。
+        events = line_messaging_client.parse_events(body, signature)
 
         events.each do |event|
-          # AccountLinkイベントのTypeは 'accountLink'
+          # V2 SDKのイベントオブジェクトは Hash のようにアクセスできます。
           if event['type'] == 'accountLink'
             # 3. nonceからユーザーを特定
-            # V2のEventオブジェクトの構造: event['link'] または event['link']['nonce']
-            # event.link.nonce のようにHashieでアクセスできることもありますが、ここでは安全のためHashでアクセスします。
-            nonce = event['link']['nonce']
+            nonce = event.link['nonce'] # Hashieオブジェクトとしてアクセス可能と仮定
             user = User.find_by(id: nonce)
             next unless user
 
             # 4. Messaging APIのユーザーIDを保存
-            # V2では event['source']['userId'] でアクセス
-            user_id = event['source']['userId']
+            user_id = event.source['user_id']
             user.update!(line_messaging_user_id: user_id)
 
             # 連携完了をユーザーに通知
             message = { type: 'text', text: 'アカウント連携が完了しました！' }
-            
-            # V2では Line::Bot::Client#push_message を使用
-            # push_message(to, messages) の形式
-            line_messaging_client.push_message(user_id, message)
+        
+            # V2 SDKでは push メソッドを使用 (to, messages の引数形式)
+            line_messaging_client.push(user_id, [message])
           end
         end
-
         head :ok
       rescue StandardError => e
         Rails.logger.error "LINE webhook callback failed: #{e.class} - #{e.message}"
