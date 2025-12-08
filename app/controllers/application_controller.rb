@@ -11,12 +11,12 @@ class ApplicationController < ActionController::Base # :nodoc:
   # line-bot-apiを使用してline-apiサーバーと通信するための窓口を提供
   # V2 APIではLINE::Bot::Clientを使用する
   def line_messaging_client
-    @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new do |config|
-      config.channel_secret = Rails.application.credentials.line[:messaging_api_secret]
-      config.channel_access_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
-    end
+    # Line::Bot::V2::MessagingApi::ApiClient のコンストラクタに直接キーワード引数を渡す形式
+    @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new(
+      channel_secret: Rails.application.credentials.line[:messaging_api_secret],
+      channel_access_token: Rails.application.credentials.line[:messaging_api_channel_access_token]
+    )
   end
-
   protected
 
   def configure_permitted_parameters

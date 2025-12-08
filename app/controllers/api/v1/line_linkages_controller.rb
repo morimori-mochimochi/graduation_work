@@ -26,17 +26,20 @@ module Api
         # client.issue_link_token は、Line::Bot::V2::MessagingApi::ApiClient のメソッド。
         # V3 SDKのように User ID は引数に不要。
         response = line_messaging_client.issue_link_token
+
+        # ★ 修正箇所：レスポンスが nil でないことをチェック ★
+        if response.nil? || !response.link_token
+          # responseがnilの場合、API通信自体が失敗している可能性が高い
+          Rails.logger.error "LINE API Call Failed: issue_link_token returned nil or missing link_token."
+          # StandardErrorへ処理を移すか、直接エラーを返す
+          raise StandardError, "LINE API failed to return a valid link token." 
+        end
          
         # 応答はHashではなく、DTOオブジェクト（例: Line::Bot::V2::MessagingApi::LinkTokenResponse）を返す
         link_token = response.link_token
 
         # 2. linkToknを使ってアカウント連携用URLにリダイレクト
         redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true 
-
-        # 応答の検証
-        unless response.code.to_i == 200
-          raise StandardError, "LINE API failed to issue link token. Response: #{response.body}"
-        end
 
       # エラーハンドリング:
       # NameErrorを回避するため、StandardErrorで捕捉範囲を広げます。
