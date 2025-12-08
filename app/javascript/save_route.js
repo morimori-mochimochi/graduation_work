@@ -88,7 +88,14 @@ export function initSaveRoute(container) {
 
         if (response.ok) {
           const data = await response.json();
-          showToast(data.message);
+          showToast(data.message); 
+          if (data.save_route_id) {
+            // 保存成功後、作成されたルートの詳細ページにリダイレクト
+            window.location.href = `/save_routes/${data.save_route_id}`;
+          } else {
+            console.error('保存には成功しましたが、ルートIDが取得できませんでした。');
+            showToast('ルートは保存されましたが、ページの移動に失敗しました。');
+          }
         } else {
           const errorData = await response.json();
           console.error('ルートの保存に失敗しました:', errorData);

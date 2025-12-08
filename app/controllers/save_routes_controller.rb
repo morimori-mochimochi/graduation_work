@@ -24,8 +24,8 @@ class SaveRoutesController < ApplicationController
     route_params[:travel_mode]&.downcase!
     @save_route = current_user.save_routes.build(route_params)
     if @save_route.save
-      # 成功した場合はメッセージをJSONで返す
-      render json: { message: t('.notice') }, status: :created
+      # 成功した場合はメッセージと作成されたルートのIDをJSONで返す
+      render json: { message: t('.notice'), save_route_id: @save_route.id }, status: :created
     else
       # 失敗した場合はエラー内容をJSONで返す
       logger.error "ルートの保存に失敗しました: #{@save_route.errors.full_messages.join(', ')}"

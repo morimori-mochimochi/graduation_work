@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base # :nodoc:
   def line_messaging_client
     @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new do |config|
       config.channel_secret = Rails.application.credentials.line[:messaging_api_secret]
-      config.channel_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
+      config.channel_access_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
     end
   end
 
