@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base # :nodoc:
   private
 
   # line-bot-apiを使用してline-apiサーバーと通信するための窓口を提供
+  # V2 APIではLINE::Bot::Clientを使用する
   def line_messaging_client
     @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new do |config|
       config.channel_secret = Rails.application.credentials.line[:messaging_api_secret]
