@@ -38,13 +38,15 @@ module Api
           raise StandardError, "LINE API failed to issue link token. Response: #{response.body}"
         end
 
-        # エラーハンドリング(v2/v3のSDKのエラークラスを使用)
-      rescue Line::Bot::V2::ApiError => e
-        # Line::Bot::V2::MessagingApi::ApiClient は Line::Bot::V2::ApiError をraiseします
-        Rails.logger.error "Failed to create link token: #{e.class} - #{e.message}"
-        render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
+      # エラーハンドリング(v2/v3のSDKのエラークラスを使用)
+      # 致命的なエラー箇所の修正: 捕捉範囲を Line::Bot::V2::ApiError から
+      # Line::Bot の内部エラー（V2 SDKで発生する可能性のある全てのエラー）に広げます。
+      rescue Line::Bot::V2::ApiError, Line::Bot::ApiError, StandardError => e
+          # 捕捉クラスが見つからないため、とりあえず StandardError で捕捉し、
+          # ログで実際の発生クラスを確認します。
+          Rails.logger.error "LINE API Error (Catching StandardError): #{e.class} - #{e.message}"
+          render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
       end
-
       # LINE PlatformからのWebhookを受け取るアクション
       def callback
         body = request.body.read
