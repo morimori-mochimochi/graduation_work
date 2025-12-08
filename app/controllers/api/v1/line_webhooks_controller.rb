@@ -31,8 +31,13 @@ module Api
 
       # LINEからの正当なリクエストであることを署名で検証
       def validate_line_signature
+        # LINEの署名検証に生データが必要なのでパースせずそのまま読み取る
         body = request.body.read
+        #  LINEから送信された署名を取得。
         signature = request.env['HTTP_X_LINE_SIGNATURE']
+        # bodyとsignatureが一致するかチェック
+        # 上記で取り出したbodyとsignature、SDKが裏で生成したsignatureと上記bodyを比較する
+        # SDKはchannel_secret を使って自分でもう一度 signature を生成
         return head :bad_request unless client.validate_signature(body, signature)
 
         # リクエストボディを再度読めるようにポインタを先頭に戻す

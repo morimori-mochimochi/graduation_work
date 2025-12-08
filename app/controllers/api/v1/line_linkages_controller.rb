@@ -17,45 +17,34 @@ module Api
 
       # ユーザーをアカウント連携ページへリダイレクトさせる
       def new
-        # ログイン必須
-        unless user_signed_in?
-          return render json: { error: 'LINE通知を連携するには、ログインが必要です。' }, status: :unauthorized
-        end
+        nonce = SecureRandom.urlsafe_base64
+        current_user.update!(line_nonce: nonce)
 
-        # 1. LINE PlatformからlinkTokenを発行してもらう (直接 HTTP API コール)
-        line_user_id = current_user.line_lonig_uid
-            
-        uri = URI.parse("https://api.line.me/v2/bot/user/#{user_id}/linkToken")
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
+        # line-bot-api gem　を使ってlinkTokenを発行
+        # これにはLINE Login Id が必要
+        # LINE Login ID はDBに保存済みの想定
+        response = line_messaging_client.issue_link_token(user_id: current_user.line_login_uid)
 
-        request = Net::HTTP::Post.new(uri.request_uri)
+        # 応答が成功したかチェック
+        raise "Failed to issue link token: #{response.body}" unless response.is_a?(Net::HTTPOK)
 
-        # 認証ヘッダに Channel Access Token を設定
-        channel_access_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
-        request['Authorization'] = "Bearer #{channel_access_token}"
-
-        # APIリクエストを実行
-        response = http.request(request)
-
-        # 2. 応答の確認とlinkTokenの取得
-        if response.code.to_i != 200
-            # APIがエラーを返した場合、レスポンスボディをログに出力
-            Rails.logger.error "LINE API Error (HTTP #{response.code}): #{response.body}"
-            raise StandardError, "LINE API failed: #{response.code}"
-        end
-
-        # 成功した場合、JSONをパースしてlinkTokenを取得
-        data = JSON.parse(response.body)
-        link_token = data['linkToken'] # キー名は 'linkToken' のはず
-
-        # 3. linkTokenを使ってアカウント連携用URLにリダイレクト
-        redirect_to "https://access.line.me/dialog/bot/accountLink?linkToken=#{link_token}&nonce=#{current_user.id}", allow_other_host: true 
+        link_token = JSON.parse(response.body)['linkToken']
 
       rescue StandardError => e
         # 捕捉されたエラーのクラス名とメッセージをログに出力
-        Rails.logger.error "LINE Linkage Failed (Final Catch): Class=#{e.class}, Message=#{e.message}"
+        Rails.logger.error "LINE Account Linkage failed for user #{current_user.id}: #{e.message}"
         render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
+      end
+
+      private
+
+      # ApplicationControllerからline_messaging_clientを呼び出せるように。
+      # このクライアントはMessagingAPIとの通信を担当する
+      def line_messaging_client
+        @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new(
+          channel_secret: Rails.application.credentials.line[:messaging_api_secret],
+          channel_access_token: Rails.application.credentials.line[:messaging_api_channel_access_token]
+        )
       end
     end
   end
