@@ -23,7 +23,7 @@ module Api
         end
 
         # 1. LINE PlatformからlinkTokenを発行してもらう (直接 HTTP API コール)
-        user_id = current_user.id
+        line_user_id = current_user.line_lonig_uid
             
         uri = URI.parse("https://api.line.me/v2/bot/user/#{user_id}/linkToken")
         http = Net::HTTP.new(uri.host, uri.port)
