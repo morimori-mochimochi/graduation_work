@@ -8,8 +8,6 @@ module Api
   module V1
     # アカウント連携のためのコントローラー
     class LineLinkagesController < BaseController
-      # LINEからのWebhookはCSRFトークンを含まないため、検証をスキップ
-      skip_before_action :verify_authenticity_token
 
       # ユーザーをアカウント連携ページへリダイレクトさせる
       # nonce: webアプリのユーザーとlineアカウントを安全に紐付ける合言葉
