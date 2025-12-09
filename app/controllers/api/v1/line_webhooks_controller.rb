@@ -1,3 +1,7 @@
+# このファイルでは、ユーザーが公式アカをフォローした時に
+# LINEプラットフォームから送信されるWebhookを受け取り、
+# MessagingAPI用のユーザーIDを保存するエンドポイントを定義。
+
 # frozen_string_literal: true
 
 module Api
@@ -8,9 +12,13 @@ module Api
       before_action :validate_line_signature
 
       def create
+        # parse_events_from: line-bot-sdk-ruby が提供しているWebhook専用のメソッド
+        # LINEから送られてきたWebhookの生データ（JSON文字列）をRubyのEventオブジェクトに変換
+        # そのため複数のWebhookイベントが届いた場合もまとめて処理できる
         events = client.parse_events_from(request.body.read)
 
         events.each do |event|
+          # eventがAccountLinkイベントだった時はアカウント連携処理に進む。
           case event
           when Line::Bot::Event::AccountLink
             handle_account_link(event)
