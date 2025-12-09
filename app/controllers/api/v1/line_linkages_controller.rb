@@ -27,12 +27,14 @@ module Api
         base_url = 'https://access.line.me/oauth2/v2.1/authorize'
         client_id = ENV['LINE_CHANNEL_ID']
 
-        session[:omniauth_state] = SecureRandom.hex(24) unless session[:omniauth_state]
+        # CSRF対策のため、リクエストごとに新しいstateを生成してセッションに保存する
+        session[:omniauth_state] = SecureRandom.hex(24)
 
         params = {
           response_type: 'code',
           client_id: client_id,
-          redirect_uri: "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback", # DeviseのコールバックURL
+          # ngrok利用時に`request.host_with_port`がlocalhostになる問題を避けるため、URLを環境変数などから明示的に構築する
+          redirect_uri: "https://#{ENV.fetch('APP_HOST', 'localhost:3000')}/users/auth/line/callback",
           state: session[:omniauth_state], # CSRF対策
           scope: 'profile openid email',
           nonce: nonce,

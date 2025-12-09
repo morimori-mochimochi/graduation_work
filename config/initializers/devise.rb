@@ -316,9 +316,10 @@ Devise.setup do |config|
   # OmniAuthのプロバイダーごとに動的な設定を行うためのブロック
   # requestオブジェクトから現在のホスト名やプロトコルを取得し、
   # 環境に応じた正しいredirect_uriを動的に生成します。
-  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], name: :line, strategy_class: OmniAuth::Strategies::LineStrategy, setup: lambda { |env|
-    request = Rack::Request.new(env)
-    redirect_uri = "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback"
+  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], name: :line, strategy_class: OmniAuth::Strategies::LineStrategy, setup: lambda { |_env|
+    # ngrok利用時に`request.host_with_port`がlocalhostになる問題を避けるため、URLを環境変数から明示的に構築する
+    host = ENV.fetch('APP_HOST', 'localhost:3000')
+    redirect_uri = "https://#{host}/users/auth/line/callback"
     # Railsのログに生成されたコールバックURLを出力する
     Rails.logger.info "OmniAuth LINE redirect_uri: #{redirect_uri}"
     env['omniauth.strategy'].options[:redirect_uri] = redirect_uri
