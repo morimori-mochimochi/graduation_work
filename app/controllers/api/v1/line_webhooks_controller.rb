@@ -61,6 +61,7 @@ module Api
       # アカウント連携イベントの処理
       def handle_account_link(event)
         # イベントに 'success' と nonce が含まれているか確認
+        # この通知の中にユーザー判別のためのnonceが含まれる
         return unless event.link['result'] == 'success' && event.link['nonce']
 
         # nonce を使ってWeb側のユーザーを検索
