@@ -29,6 +29,8 @@ module Api
         base_url = 'https://access.line.me/oauth2/v2.1/authorize'
         client_id = ENV['LINE_CHANNEL_ID']
 
+        session[:omniauth_state] = SecureRandom.hex(24) unless session[:omniauth_state]
+
         params = {
           response_type: 'code',
           client_id: client_id,
