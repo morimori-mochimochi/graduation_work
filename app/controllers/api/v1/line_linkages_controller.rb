@@ -47,8 +47,6 @@ module Api
         Rails.logger.error "LINE Account Linkage failed for user #{current_user.id}: #{e.message}"
         render json: { error: 'LINE連携に失敗しました。もう一度お試しください。' }, status: :internal_server_error
       end
-
-      private
     end
   end
 end
