@@ -32,7 +32,7 @@ module Api
         params = {
           response_type: 'code',
           client_id: client_id,
-          redirect_uri: users_line_omniauth_callback_url, # DeviseのコールバックURL
+          redirect_uri: "#{request.scheme}://#{request.host_with_port}/users/auth/line/callback", # DeviseのコールバックURL
           state: session[:omniauth_state], # CSRF対策
           scope: 'profile openid email',
           nonce: nonce,
