@@ -73,26 +73,19 @@ module Api
           line_messaging_user_id: event['source']['userId'],
           line_nonce: nil
         )
+
+        # TODO: 連携完了メッセージをユーザーに送信する処理をここに追加できます
       end
 
       def handle_follow(event)
-        body = request.body.read
-        signature = request.env["HTTP_X_LINE_SIGNATURE"]
-        return head :bad_request unless client.validate_signature(body, signature)
+        messaging_user_id = event['source']['userId']
 
-        event = client.parse_events_from(body)
-        events.each do |event|
-          next unless event.type == "accountLink"
+        # 既に連携済みのユーザーには何もしない
+        return if User.exists?(line_messaging_uid: messaging_user_id)
 
-          if event.link.result == "ok"
-            messaging_user_id = event["source"]["userId"]
-            link_token = event["link"]["linkToken"]
-
-            # link_tokenからcurrent_userを探す
-            user = User.find_by(line_link_token: link_token)
-            user.update!(line_messaging_user_id: messaging_user_id)
-          end
-        end
+        # TODO: ここに、まだ連携していないユーザーに対して
+        # アカウント連携を促すメッセージを送信する処理を実装するのが一般的です。
+        # (例: 「Webサービスと連携して全ての機能を使おう！」といったボタン付きメッセージを送る)
       end
     end
   end

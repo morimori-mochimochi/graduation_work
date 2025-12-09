@@ -16,6 +16,9 @@ module Api
       skip_before_action :verify_authenticity_token
 
       # ユーザーをアカウント連携ページへリダイレクトさせる
+      # nonce: webアプリのユーザーとlineアカウントを安全に紐付ける合言葉
+      # アカウント連携ボタンクリックでnonceはDBに保存される
+      # link_tokenによってユーザーはlineの画面へ移行する
       def new
         nonce = SecureRandom.urlsafe_base64
         current_user.update!(line_nonce: nonce)
@@ -25,6 +28,7 @@ module Api
         # LINE Login ID はDBに保存済みの想定
         # issue_link_tokenAPIを呼び出した時、link_tokenが生成される
         # このlink_tokenを後のresponseに含まれるlink_tokenと比較することで安全性を検証
+        # link_token: ユーザーをlineアプリのアカウント連携画面へ正しく誘導する通行手形
         response = line_messaging_client.issue_link_token(user_id: current_user.line_login_uid)
         # object.is_a?(Class): objectがClassまたはそのサブクラス、またはインクルードしているモジュールに属するか調べる。
         raise unless response.is_a? (Net::HTTPOK)
