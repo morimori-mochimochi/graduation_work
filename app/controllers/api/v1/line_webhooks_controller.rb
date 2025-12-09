@@ -2,6 +2,9 @@
 # LINEプラットフォームから送信されるWebhookを受け取り、
 # MessagingAPI用のユーザーIDを保存するエンドポイントを定義。
 
+# しかしwebhookURLは一つしか登録できないので、このファイルをLINEとのエンドポイントとし
+# UserIDの保存なのか、アカウント連携なのか、条件分岐をしている
+
 # frozen_string_literal: true
 
 module Api
@@ -20,8 +23,8 @@ module Api
         events.each do |event|
           # eventがAccountLinkイベントだった時はアカウント連携処理に進む。
           case event
-          when Line::Bot::Event::AccountLink
-            handle_account_link(event)
+          when Line::Bot::Event::Follow
+            handle_follow(event)
           end
         end
 
