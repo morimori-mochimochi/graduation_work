@@ -25,6 +25,9 @@ module Api
           case event
           when Line::Bot::Event::Follow
             handle_follow(event)
+          
+          when Line::Bot::Event::AccountLink
+            handle_account_link(event)
           end
         end
 
@@ -69,6 +72,26 @@ module Api
           line_messaging_user_id: event['source']['userId'],
           line_nonce: nil
         )
+      end
+
+      def handle_follow(event)
+        body = request.body.read
+        signature = request.env["HTTP_X_LINE_SIGNATURE"]
+        return head :bad_request unless client.validate_signature(body, signature)
+
+        event = client.parse_events_from(body)
+        events.each do |event|
+          next unless event.type == "accountLink"
+
+          if event.link.result == "ok"
+            messaging_user_id = event["source"]["userId"]
+            link_token = event["link"]["linkToken"]
+
+            # link_tokenからcurrent_userを探す
+            user = User.find_by(line_link_token: link_token)
+            user.update!(line_messaging_user_id: messaging_user_id)
+          end
+        end
       end
     end
   end
