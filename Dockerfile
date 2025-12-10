@@ -31,6 +31,10 @@ RUN yarn install
 #アプリの全ファイルをコピー
 COPY . .
 
+# --- デバッグ：ビルド時にコピーされたファイルの内容を確認 ---
+RUN echo "--- Building image: Contents of devise.rb ---" && \
+    cat config/initializers/devise.rb
+
 # CSS / JS をビルド
 RUN yarn build
 RUN yarn build:css
