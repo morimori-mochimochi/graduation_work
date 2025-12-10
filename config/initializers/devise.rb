@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'strategies/line_strategy'
-
 Rails.logger.info "initializers/devise.rbが呼ばれた"
 
 # Assuming you have not yet modified this file, each configuration option below
@@ -323,7 +321,6 @@ Devise.setup do |config|
                   ENV['LINE_CHANNEL_SECRET'],
                   {
                     name: :line,
-                    strategy_class: OmniAuth::Strategies::LineStrategy,
                     scope: 'profile openid email', # アプリケーションで必要なスコープを指定
                     setup: (lambda do |env|
                       strategy = env['omniauth.strategy']
@@ -339,7 +336,7 @@ Devise.setup do |config|
                       Rails.logger.info("===== OmniAuth-LINE デバッグ情報 =====")
                       Rails.logger.info("  クライアントID (Channel ID): #{strategy.options.client_id}")
                       Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret&.gsub(/./, '*')}") # 安全のためマスク表示
-                      Rails.logger.info("  リダイレクトURI (Callback URL): #{strategy.callback_url}")
+                      Rails.logger.info("  リダイレクトURI (Callback URL): #{line_redirect_uri}")
                       Rails.logger.info("========================================")
                     end)
                   }
