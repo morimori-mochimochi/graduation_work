@@ -318,17 +318,29 @@ Devise.setup do |config|
   # OmniAuthのプロバイダーごとに動的な設定を行うためのブロック
   # requestオブジェクトから現在のホスト名やプロトコルを取得し、
   # 環境に応じた正しいredirect_uriを動的に生成します。
-  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET'], {
-    name: :line,
-    strategy_class: OmniAuth::Strategies::LineStrategy,
-    # ngrok利用時に`request.host_with_port`がlocalhostになる問題を避けるため、
-    # リクエストごとに環境変数から動的にredirect_uriを構築する
-    setup: lambda { |env|
-      request = Rack::Request.new(env)
-      # APP_URLはngrokのURLなどを設定した環境変数を想定
-      line_redirect_uri = "#{ENV['APP_URL']}/users/auth/line/callback"
-      env['omniauth.strategy'].options[:redirect_uri] = line_redirect_uri
-      Rails.logger.info "OmniAuth LINE Callback URI configured as: #{line_redirect_uri}"
-    }
-  }
+  config.omniauth :line,
+                  ENV['LINE_CHANNEL_ID'],
+                  ENV['LINE_CHANNEL_SECRET'],
+                  {
+                    name: :line,
+                    strategy_class: OmniAuth::Strategies::LineStrategy,
+                    scope: 'profile openid email', # アプリケーションで必要なスコープを指定
+                    setup: (lambda do |env|
+                      strategy = env['omniauth.strategy']
+
+                      # --- 1つ目の設定（redirect_uriの動的設定）をここに統合 ---
+                      # APP_URLはngrokのURLなどを設定した環境変数を想定
+                      line_redirect_uri = "#{ENV['APP_URL']}/users/auth/line/callback"
+                      strategy.options[:redirect_uri] = line_redirect_uri
+                      # ----------------------------------------------------
+                      
+                      # --- 2つ目の設定（デバッグログ出力）---
+                      # ターミナル（Railsのログ）にデバッグ情報を出力します
+                      Rails.logger.info("===== OmniAuth-LINE デバッグ情報 =====")
+                      Rails.logger.info("  クライアントID (Channel ID): #{strategy.options.client_id}")
+                      Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret&.gsub(/./, '*')}") # 安全のためマスク表示
+                      Rails.logger.info("  リダイレクトURI (Callback URL): #{strategy.callback_url}")
+                      Rails.logger.info("========================================")
+                    end)
+                  }
 end
