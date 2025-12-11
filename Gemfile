@@ -27,6 +27,7 @@ gem 'rails', '~> 7.1.0'
 gem 'stimulus-rails'
 gem 'turbo-rails'
 gem 'line-bot-api', '~> 2.5.0'
+gem 'whenever', require: false
 
 group :development, :test do
   gem 'capybara'
