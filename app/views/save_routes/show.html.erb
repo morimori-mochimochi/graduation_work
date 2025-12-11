@@ -95,7 +95,7 @@
 
     <%# LINE未連携の場合のみ連携ボタンを表示 %>
     <% unless current_user.line_messaging_user_id.present? %>
-      <%= link_to 'LINE連携', new_api_v1_line_linkage_path, class: "btn btn-success", data: { turbo: false } %>
+      <%= link_to 'LINE連携', new_api_v1_line_linkage_path, class: "btn btn-success", data: { turbo: false }, "data-barba-prevent": "all" %>
     <% end %>
   </div>
 </div>
