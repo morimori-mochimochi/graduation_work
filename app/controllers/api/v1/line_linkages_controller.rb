@@ -26,7 +26,7 @@ module Api
         # このメソッドはLINEプラットフォームのlinkToken発行APIに対して
         # current_user.line_login_uidを引数として渡して
         # このための連携トークンを発行して、と伝える
-        response = client.issue_link_token(current_user.line_login_uid)
+        response = client.issue_link_token(user_id: current_user.line_login_uid)
         unless response.code == '200'
           # linkTokenの発行に失敗した場合のエラーハンドリング
           Rails.logger.error "Failed to create link token for user #{current_user.id}: #{response.body}"
