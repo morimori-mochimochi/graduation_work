@@ -31,9 +31,10 @@ module Api
         response = client.issue_link_token(user_id: current_user.line_login_uid) # 修正済み
         link_token = response.link_token # link_token属性を直接取得
 
-        unless link_token.present?
-          Rails.logger.error "Failed to get link token from response for user #{current_user.id}: #{response.inspect}"
-          raise StandardError, "linkTokenの取得に失敗しました。"
+        unless response.is_a?(Line::Bot::V2::MessagingApi::IssueLinkTokenResponse) && link_token.present?
+          # 失敗した場合、responseは ApiError オブジェクトになることが多い
+          Rails.logger.error "Failed to get link token for user #{current_user.id}: #{response.try(:message) || response.inspect}"
+          raise "linkTokenの取得に失敗しました。"
         end
 
         # line-bot-api gem　を使ってlinkTokenを発行
