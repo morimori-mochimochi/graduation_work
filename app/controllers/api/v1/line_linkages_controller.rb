@@ -22,11 +22,11 @@ module Api
         # link_token: ユーザーをLINEアプリのアカウント連携画面へ正しく誘導するための通行手形
         # このAPIを呼び出すには、Messaging APIのチャネルアクセストークンが必要
 
-        # create_link_tokenはline-bot-apiの持つメソッド
+        # issue_link_tokenはline-bot-apiの持つメソッド
         # このメソッドはLINEプラットフォームのlinkToken発行APIに対して
         # current_user.line_login_uidを引数として渡して
         # このための連携トークンを発行して、と伝える
-        response = client.create_link_token(current_user.line_login_uid)
+        response = client.issue_link_token(current_user.line_login_uid)
         unless response.code == '200'
           # linkTokenの発行に失敗した場合のエラーハンドリング
           Rails.logger.error "Failed to create link token for user #{current_user.id}: #{response.body}"
