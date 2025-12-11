@@ -3,7 +3,7 @@
 class User < ApplicationRecord # :nodoc:
   # line_login_uid, line_messaging_user_idをDB内で暗号化
   # deterministic: trueを指定することで暗号化後も同じ値で検索できる
-  encrypts :line_login_uid, :line_messaging_user_id, deterministic: true
+  encrypts :line_login_uid, deterministic: true
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable

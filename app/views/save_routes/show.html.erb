@@ -88,14 +88,9 @@
         walk_navi_path: walk_navigation_routes_path
       }
     %>
-    <%# 実行日と出発時刻、そしてユーザーがLINE連携済みの場合のみタイマー設定ボタンを表示 %>
-    <% if @save_route.execution_date.present? && @save_route.start_time.present? && current_user.line_connected? %>
-      <%= button_to 'LINE通知', save_route_notifications_path(@save_route), method: :post, class: "btn btn-info", form: { data: { turbo_confirm: "出発5分前にLINE通知を設定します。よろしいですか？" } } %>
-    <% end %>
-
-    <%# LINE未連携の場合のみ連携ボタンを表示 %>
-    <% unless current_user.line_messaging_user_id.present? %>
-      <%= link_to 'LINE連携', new_api_v1_line_linkage_path, class: "btn btn-success", data: { turbo: false }, "data-barba-prevent": "all" %>
+    <%# 実行日と出発時刻が設定されている場合のみ通知設定ボタンを表示 %>
+    <% if @save_route.execution_date.present? && @save_route.start_time.present? %>
+      <%= button_to 'メールで通知', save_route_notifications_path(@save_route), method: :post, class: "btn btn-info", form: { data: { turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } } %>
     <% end %>
   </div>
 </div>

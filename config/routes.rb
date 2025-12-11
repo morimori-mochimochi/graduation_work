@@ -44,11 +44,6 @@ Rails.application.routes.draw do
         get :due, on: :collection
         patch :sent, on: :collection
       end
-      # LINE Messaging APIとのアカウント連携
-      # GET /api/v1/line_linkage/new -> 連携開始URLへリダイレクト
-      # POST /api/v1/line_linkage/callback -> LINE PlatformからのWebhookを受け取る
-      resource :line_linkage, only: [:new]
-      resources :line_webhooks, only: [:create] 
     end
   end
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
