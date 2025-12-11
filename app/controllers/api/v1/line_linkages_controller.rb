@@ -26,16 +26,15 @@ module Api
         # このメソッドはLINEプラットフォームのlinkToken発行APIに対して
         # current_user.line_login_uidを引数として渡して
         # このための連携トークンを発行して、と伝える
-        response = client.issue_link_token(user_id: current_user.line_login_uid)
-        unless response.code == '200'
-          # linkTokenの発行に失敗した場合のエラーハンドリング
-          Rails.logger.error "Failed to create link token for user #{current_user.id}: #{response.body}"
-          raise StandardError, "linkTokenの作成に失敗しました。"
-        end
+        # issue_link_tokenが成功すると、Line::Bot::V2::MessagingApi::IssueLinkTokenResponseオブジェクトが返される
+        # このオブジェクトは直接link_token属性を持つ
+        response = client.issue_link_token(user_id: current_user.line_login_uid) # 修正済み
+        link_token = response.link_token # link_token属性を直接取得
 
-        # APIからの応答（response.body）は{"linkToken":"xxxxxxxxxxxx"}のようなJSON文字列なのでJSON.parse でRubyのハッシュに変換。
-        # ハッシュから'linkToken'というキーで値（実際のトークン文字列）を取り出し、link_token 変数に代入。
-        link_token = JSON.parse(response.body)['linkToken']
+        unless link_token.present?
+          Rails.logger.error "Failed to get link token from response for user #{current_user.id}: #{response.inspect}"
+          raise StandardError, "linkTokenの取得に失敗しました。"
+        end
 
         # line-bot-api gem　を使ってlinkTokenを発行
         # これにはLINE Login Id が必要
