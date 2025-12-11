@@ -58,10 +58,10 @@ module Api
       private
 
       def client
-        @line_messaging_client ||= Line::Bot::V2::MessagingApi::ApiClient.new(
-          channel_secret: Rails.application.credentials.line[:messaging_api_secret],
-          channel_access_token: Rails.application.credentials.line[:messaging_api_channel_access_token]
-        )
+        @client ||= Line::Bot::Client.new do |config|
+          config.channel_secret = Rails.application.credentials.line[:messaging_api_secret]
+          config.channel_token = Rails.application.credentials.line[:messaging_api_channel_access_token]
+        end
       end
     end
   end
