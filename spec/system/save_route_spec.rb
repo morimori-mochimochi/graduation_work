@@ -78,7 +78,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     page.accept_alert 'ルートを保存しました'
 
     # 9. 保存済みルート一覧ページに遷移する
-    find('img[alt="routes_logo"]').click
+    find("a[href='#{save_routes_path}'] img[ alt='routes_logo' ]", wait: 5).click
 
     # 10. 保存したルートが一覧に表示されていることを確認する
     expect(page).to have_current_path(save_routes_path)
