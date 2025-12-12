@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NotificationMailer < ApplicationMailer
   # 5分前を通知するメール
   def departure_notification(notification)
