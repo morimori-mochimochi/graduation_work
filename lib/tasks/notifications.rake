@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# このファイルはバックで自動実行されるために使われ、
+# cronが理解できる形にwheneverによって解釈される
+
 namespace :notifications do
   desc '出発時刻5分前の通知をチェックしてメールを送信する'
   task send_due: :environment do
