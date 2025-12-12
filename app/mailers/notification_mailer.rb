@@ -12,4 +12,8 @@ class NotificationMailer < ApplicationMailer
       subject: "出発時刻のお知らせ: #{@save_route.name}"
     )
   end
+
+  def good_morning(user)
+    mail to: user.email, subject: 'good morning!!'
+  end
 end

@@ -10,7 +10,7 @@ set :output, "log/cron.log"
 # ジョブの実行環境を設定
 set :environment, :development
 #
-every 1.hours do
+every 1.minutes do
 #   command "/usr/bin/some_great_command"
 #   runner "MyModel.some_method"
   rake "notifications:send_due"
