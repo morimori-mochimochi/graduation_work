@@ -1,0 +1,10 @@
+<%= @user.name %>様、出発時刻のお知らせです
+
+「<%= @save_route.name %>」の出発時刻が近づいています。
+
+出発時刻: <%= @save_route.start_time.strftime('%H:%M') %>
+
+お気をつけていってらっしゃいませ。
+
+ルート詳細はこちらからご確認いただけます。
+<%= save_route_url(@save_route) %>
