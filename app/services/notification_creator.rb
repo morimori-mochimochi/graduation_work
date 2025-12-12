@@ -44,7 +44,12 @@ class NotificationCreator
   end
 
   def handle_success(notification)
-    message = { notice: I18n.t('notifications.create.notice', time: notification.notify_at.strftime('%Y年%m月%d日 %H:%M')) }
+    message = {
+      notice: I18n.t(
+        'notifications.create.notice',
+        time: notification.notify_at.strftime('%Y年%m月%d日 %H:%M')
+      )
+    }
     Rails.logger.info "設定日時サービス: #{notification.notify_at}"
     Result.new(true, notification, message)
   end
