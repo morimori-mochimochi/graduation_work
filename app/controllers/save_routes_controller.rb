@@ -18,16 +18,10 @@ class SaveRoutesController < ApplicationController
   def edit; end
 
   def create
-    route_params = save_route_params
-    # &.: nilだったら何もしない
-    # downcase!: 破壊的に小文字化
-    route_params[:travel_mode]&.downcase!
-    @save_route = current_user.save_routes.build(route_params)
+    @save_route = current_user.save_routes.build(processed_route_params)
     if @save_route.save
-      # 成功した場合はメッセージと作成されたルートのIDをJSONで返す
       render json: { message: t('.notice'), save_route_id: @save_route.id }, status: :created
     else
-      # 失敗した場合はエラー内容をJSONで返す
       logger.error "ルートの保存に失敗しました: #{@save_route.errors.full_messages.join(', ')}"
       render json: @save_route.errors, status: :unprocessable_entity
     end
@@ -70,5 +64,12 @@ class SaveRoutesController < ApplicationController
   def save_route_params_for_new
     # save_routeがあればそれを使い、ないときは空のハッシュを返す
     params.fetch(:save_route, {}).permit(:name, :travel_mode, :start_point, :end_point, :waypoints)
+  end
+
+  def processed_route_params
+    route_params = save_route_params
+    # travel_modeを小文字に変換
+    route_params[:travel_mode]&.downcase!
+    route_params
   end
 end
