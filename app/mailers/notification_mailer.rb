@@ -4,8 +4,8 @@ class NotificationMailer < ApplicationMailer
   # 5分前を通知するメール
   def departure_notification(notification)
     @notification = notification
-    @save_route = notification_save_route
-    @user = notification_user
+    @save_route = @notification.save_route
+    @user = @notification.user
 
     mail(
       to: @user.email,
@@ -13,6 +13,7 @@ class NotificationMailer < ApplicationMailer
     )
   end
 
+  # ***** あとで消す *****
   def good_morning(user)
     mail to: user.email, subject: 'good morning!!'
   end
