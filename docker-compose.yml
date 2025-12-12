@@ -24,9 +24,6 @@ services:
 
   web:
     build: .
-    # 環境変数 RAILS_COMMAND があればそれを実行し、なければデフォルトのサーバー起動コマンドを実行する
-    # これにより、`docker compose run` で任意のコマンドを実行しつつ、`docker compose up` ではサーバーを起動できる
-    command: bash -c "rm -f tmp/pids/server.pid && ${RAILS_COMMAND:-bundle exec rails s -b 0.0.0.0}"
     volumes:
       - .:/app
       - bundle:/usr/local/bundle

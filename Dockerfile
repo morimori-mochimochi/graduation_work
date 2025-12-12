@@ -8,14 +8,17 @@ FROM ruby:3.2.3
 #libpg-dev: PostgreSQLと連携するためのライブラリ
 #nodejs, yarn: JSとCSSのコンパイル用
 RUN apt-get update -qq && apt-get install -y \
-    vim \
     build-essential \
     libpq-dev \
     curl \
     gnupg2 \
+    cron \
+    vim \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g yarn
+    && npm install -g yarn \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 #アプリの作業ディレクトリを設定
 WORKDIR /app
@@ -31,13 +34,14 @@ RUN yarn install
 #アプリの全ファイルをコピー
 COPY . .
 
-# --- デバッグ：ビルド時にコピーされたファイルの内容を確認 ---
-RUN echo "--- Building image: Contents of devise.rb ---" && \
-    cat config/initializers/devise.rb
-
 # CSS / JS をビルド
 RUN yarn build
 RUN yarn build:css
+
+# entrypoint.shをコンテナにコピーして実行権限を付与
+COPY entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
 
 #コンテナ外部からアクセス可能にするポート解放
 EXPOSE 3000
