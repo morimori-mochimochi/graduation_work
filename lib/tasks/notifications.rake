@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
-# このファイルはバックで自動実行されるために使われ、
-# cronが理解できる形にwheneverによって解釈される
-
 namespace :notifications do
-  desc '出発時刻5分前の通知をチェックしてメールを送信する'
+  desc '期限が来た通知を送信する'
   task send_due: :environment do
-    puts '通知送信タスクを開始します...'
-
-    # 送信対象の通知を取得 (pendingかつ通知時刻を過ぎたもの)
+    # 送信すべき通知を取得
     notifications_to_send = Notification.due_for_sending.includes(:user, :save_route)
 
-    if notifications_to_send.empty?
-      puts '送信対象の通知はありませんでした。'
-    else
-      puts "#{notifications_to_send.count}件の通知を送信します。"
-      notifications_to_send.each do |notification|
+    notifications_to_send.each do |notification|
+      begin
+        # メールを送信
+        Rails.logger.info "通知を送信します: Notification ID #{notification.id}"
         NotificationMailer.departure_notification(notification).deliver_now
-        notification.update(status: 'sent') # 送信済みステータスに更新
+        # ステータスを 'sent' に更新
+        notification.update!(status: 'sent')
+        Rails.logger.info "通知を送信しました: Notification ID #{notification.id}"
+      rescue StandardError => e
+        # エラーが発生した場合はステータスを 'failed' に更新
+        notification.update!(status: 'failed')
+        Rails.logger.error "通知の送信に失敗しました: Notification ID #{notification.id}, エラー: #{e.message}"
       end
     end
-    puts '通知送信タスクを終了します。'
   end
 end
