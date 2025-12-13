@@ -7,6 +7,9 @@
 # ログファイルの出力を確認
 set :output, "log/cron.log"
 
+# bundle exec を使ってコマンドを実行するように設定
+job_type :rake, "cd :path && :environment_variable=:environment bundle exec rake :task --silent :output"
+
 # ジョブの実行環境を設定
 set :environment, :development
 #
