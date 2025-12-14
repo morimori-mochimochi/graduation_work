@@ -65,6 +65,8 @@ services:
       DATABASE_PASSWORD: password
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
       DOCKER_CONTAINER: "true"
+      BUNDLE_PATH: "/usr/local/bundle"
+      BUNDLE_APP_CONFIG: "/usr/local/bundle"
       CONTAINER_ROLE: cron
       DISABLE_SPRING: 1
 
