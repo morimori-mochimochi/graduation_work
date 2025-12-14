@@ -10,7 +10,8 @@ require File.expand_path(File.dirname(__FILE__) + "/environment")
 set :output, "log/cron.log"
 
 # bundle exec を使ってコマンドを実行するように設定
-job_type :rake, "cd :path && :environment_variable=:environment bundle exec rake :task --silent :output"
+env :PATH, ENV['PATH']
+job_type :rake, "cd :path && :environment_variable=:environment /bin/bash -l -c 'bundle exec rake :task --silent :output'"
 
 # ジョブの実行環境を設定
 set :environment, :development
