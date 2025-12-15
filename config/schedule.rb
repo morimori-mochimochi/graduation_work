@@ -10,7 +10,7 @@ require File.expand_path(File.dirname(__FILE__) + "/environment")
 set :output, "log/cron.log"
 
 # ジョブの実行環境を設定
-set :environment, :development
+set :environment, :production
 
 # cron実行時の環境変数を設定
 env :PATH, ENV['PATH']
