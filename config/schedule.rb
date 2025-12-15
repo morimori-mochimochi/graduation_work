@@ -15,6 +15,11 @@ set :environment, :development
 # cron実行時の環境変数を設定
 env :PATH, ENV['PATH']
 
+# Bundlerがgemを見つけられるように、BUNDLE_PATHとBUNDLE_GEMFILEを明示的に設定します。
+# これにより、cronデーモンから実行される際にも、vendor/bundle内のgemが正しく読み込まれます。
+env :BUNDLE_PATH, '/app/vendor/bundle'
+env :BUNDLE_GEMFILE, '/app/Gemfile'
+
 every 1.minutes do
 #   command "/usr/bin/some_great_command"
 #   runner "MyModel.some_method"
