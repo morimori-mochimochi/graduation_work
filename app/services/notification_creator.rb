@@ -13,12 +13,6 @@ class NotificationCreator
     new(save_route: save_route, user: user).call
   end
 
-  def self.calculate_notify_at(execution_date, start_time)
-    start_datetime = Time.zone.local(execution_date.year, execution_date.month, execution_date.day, start_time.hour,
-                                     start_time.min)
-    start_datetime - 5.minutes # 出発の5分前に通知
-  end
-
   def call
     return handle_missing_datetime unless start_datetime_present?
 
@@ -34,12 +28,19 @@ class NotificationCreator
 
   private
 
+  def self.calculate_notify_at(execution_date, start_time)
+    start_datetime = Time.zone.local(execution_date.year, execution_date.month, execution_date.day, start_time.hour,
+                                     start_time.min)
+    start_datetime - 5.minutes # 出発の5分前に通知
+  end
+  private_class_method :calculate_notify_at
+
   def handle_missing_datetime
     Result.new(false, nil, { alert: I18n.t('notifications.create.start_time_blank') })
   end
 
   def assign_notification_attributes(notification)
-    notify_at = self.class.calculate_notify_at(@save_route.execution_date, @save_route.start_time)
+    notify_at = self.class.send(:calculate_notify_at, @save_route.execution_date, @save_route.start_time)
     notification.assign_attributes(notify_at: notify_at, status: 'pending')
   end
 
