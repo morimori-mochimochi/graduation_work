@@ -3,6 +3,9 @@
 namespace :notifications do
   desc '期限が来た通知を送信する'
   task send_due: :environment do
+
+    Rails.logger.info "===== [CRON] notifications:send_dueタスクを実行しました ====="
+
     # 送信すべき通知を取得
     notifications_to_send = Notification.due_for_sending.includes(:user, :save_route)
 
