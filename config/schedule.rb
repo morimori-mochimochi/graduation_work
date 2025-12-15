@@ -11,7 +11,10 @@ set :output, "log/cron.log"
 
 # ジョブの実行環境を設定
 set :environment, :development
-#
+
+# cron実行時の環境変数を設定
+env :PATH, ENV['PATH']
+
 every 1.minutes do
 #   command "/usr/bin/some_great_command"
 #   runner "MyModel.some_method"
