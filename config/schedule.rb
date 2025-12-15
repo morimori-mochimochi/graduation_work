@@ -17,7 +17,7 @@ env :PATH, ENV['PATH']
 
 # Bundlerがgemを見つけられるように、BUNDLE_PATHとBUNDLE_GEMFILEを明示的に設定します。
 # これにより、cronデーモンから実行される際にも、vendor/bundle内のgemが正しく読み込まれます。
-env :BUNDLE_PATH, '/app/vendor/bundle'
+env :BUNDLE_PATH, '/usr/local/bundle'
 env :BUNDLE_GEMFILE, '/app/Gemfile'
 
 every 1.minutes do
