@@ -52,6 +52,8 @@ services:
   # environment以下のコマンドはその時に必要とされる情報
   cron:
     build: .
+    mem_limit: 1g # メモリ上限を1GBに設定
+    shm_size: 2g # メモリ不足を防ぐためのおまじない
     entrypoint: /app/entrypoint.sh
     command: ["cron", "-f"]
     volumes:
