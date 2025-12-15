@@ -38,6 +38,10 @@ COPY . .
 RUN yarn build
 RUN yarn build:css
 
+# 本番環境のデータベースマイグレーションを実行
+# DATABASE_URLが設定されていないビルド環境でエラーになるのを防ぐため、RAILS_ENVを指定
+RUN RAILS_ENV=production bundle exec rails db:migrate
+
 # entrypoint.shをコンテナにコピーして実行権限を付与
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
