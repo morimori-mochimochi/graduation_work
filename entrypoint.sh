@@ -7,6 +7,7 @@ rm -f /app/tmp/pids/server.pid
 # cronコンテナの場合のみ、crontabを更新する
 if [ "$CONTAINER_ROLE" = "cron" ]; then
   echo "Updating crontab..."
+  bundle install
   bundle exec whenever --update-crontab
 fi
 
