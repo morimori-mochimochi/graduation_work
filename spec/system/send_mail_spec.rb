@@ -69,7 +69,12 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
     # 6. 実行日を今日に設定して更新
     expect(page).to have_current_path(edit_save_route_path(saved_route))
+    # 通知メールのテストを安定させるため、出発時刻をテスト実行時の10分後に明示的に設定
+    departure_time = Time.zone.now
+    # strftime: string format timeの略。TimeオブジェクトやDateオブジェクトを指定した書式の文字列に変換するメソッド
     fill_in 'save_route_execution_date', with: Time.zone.today.strftime('%Y-%m-%d')
+    select departure_time.strftime('%H'), from: 'save_route_start_time_4i'
+    select departure_time.strftime('%M'), from: 'save_route_start_time_5i'
     click_button '更新'
 
     # 7. 詳細ページに戻り、「メールで通知」ボタンが表示されていることを確認
