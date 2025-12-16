@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     resources :notifications, only: [:create]
   end
 
+  resource :calendar, only: [:index] do
+
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Defines the root path route ("/")
   # root "posts#index"
