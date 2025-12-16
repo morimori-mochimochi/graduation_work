@@ -75,6 +75,9 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
     # fill_inでは日付が '50101-02-02' のように誤って入力されることがあるため、
     # execute_scriptを使用して直接値を設定する
+    # 実行前に、対象の要素が表示されるまで待機する
+    expect(page).to have_field('save_route_execution_date', type: 'date')
+
     execute_script("document.getElementById('save_route_execution_date').value = '2025-01-01'")
     click_button '更新'
 
