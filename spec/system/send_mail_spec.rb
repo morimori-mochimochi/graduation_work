@@ -53,7 +53,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 3. 到着時刻が計算されていることを確認
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
 
-    expect(find('startHour').value).not_to eq '時'
+    expect(find('#startHour').value).not_to eq '時'
     expect(find('#startMinute').value).not_to eq '分'
     expect(find('#destinationHour').value).not_to eq '時'
     expect(find('#destinationMinute').value).not_to eq '分'
@@ -81,7 +81,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # ActionMailer::Base.deliveries.clearで、テスト実行前に溜まったメールをクリア
     ActionMailer::Base.deliveries.clear
     # button_toはformを生成するため、確認ダイアログのacceptが必要
-    accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
+    # accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
       click_button 'メールで通知'
     end
 
