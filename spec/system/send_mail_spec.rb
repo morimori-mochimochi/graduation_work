@@ -26,6 +26,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
         window.routeData = {
           start: { point: start, name: start_location.name },
           destination: { mainPoint: { point: destination, name: destination_location.name } },
+          waypoints: []
         };
         // 画面にも設定を反映
         document.getElementById('startPoint').textContent = start_location.name;
