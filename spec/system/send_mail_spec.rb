@@ -72,6 +72,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 通知メールのテストを安定させるため、出発時刻をテスト実行時の10分後に明示的に設定
     departure_time = Time.zone.now
     # strftime: string format timeの略。TimeオブジェクトやDateオブジェクトを指定した書式の文字列に変換するメソッド
+    # %H は24時間表記の時を、常に2桁の文字列（00-23）で表現せよ、の意味
     fill_in 'save_route_execution_date', with: Time.zone.today.strftime('%Y-%m-%d')
     select departure_time.strftime('%H'), from: 'save_route_start_time_4i'
     select departure_time.strftime('%M'), from: 'save_route_start_time_5i'
