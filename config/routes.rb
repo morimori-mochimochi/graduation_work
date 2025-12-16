@@ -34,7 +34,7 @@ Rails.application.routes.draw do
     resources :notifications, only: [:create]
   end
 
-  resource :calendar, only: [:index]
+  get 'calendar', to: 'calendars#index', as: :calendar
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Defines the root path route ("/")
