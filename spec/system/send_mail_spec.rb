@@ -84,7 +84,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
     click_button 'メールで通知'
 
-    expect(page).to have_content('出発通知メールを予約しました。')
+    expect(page).to have_content("%{time}に通知を設定しました。")
     # テストで送信しようとしたメールはすべてActionMailer::Base.deliveriesという配列に保存される。
     expect(ActionMailer::Base.deliveries.size).to eq 1
   end
