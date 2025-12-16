@@ -46,17 +46,16 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
     expect(page).to have_current_path(walk_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
-    
-    departure_time = Time.zone.now
-    select departure_time.strftime('%H'), from: 'save_route_start_time_4i'
-    select departure_time.strftime('%M'), from: 'save_route_start_time_5i'
      
     # 2. ルートを描画
     set_route
 
+    # ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
+    select '10', from: 'startHour'
+    select '30', from: 'startMinute'
+
     # 3. 到着時刻が計算されていることを確認
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
-
     expect(find('#startHour').value).not_to eq '時'
     expect(find('#startMinute').value).not_to eq '分'
     expect(find('#destinationHour').value).not_to eq '時'
@@ -73,11 +72,8 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
     # 6. 実行日を今日に設定して更新
     expect(page).to have_current_path(edit_save_route_path(saved_route))
-    # 通知メールのテストを安定させるため、出発時刻をテスト実行時の10分後に明示的に設定
-    
-    # strftime: string format timeの略。TimeオブジェクトやDateオブジェクトを指定した書式の文字列に変換するメソッド
-    # %H は24時間表記の時を、常に2桁の文字列（00-23）で表現せよ、の意味
-    fill_in 'save_route_execution_date', with: Time.zone.today.strftime('%Y-%m-%d')
+
+    fill_in 'save_route_execution_date', with: '2025-01-01'
     click_button '更新'
 
     # 7. 詳細ページに戻り、「メールで通知」ボタンが表示されていることを確認
