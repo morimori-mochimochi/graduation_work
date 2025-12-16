@@ -26,15 +26,15 @@ for (let n = 0; n < 6; n++) {
     for (let d = 0; d < 7; d++) {
       if (n == 0 && d < firstDay) {
         createHtml += '<td></td>';
-      } else if (dayCount > lastDayCount) {
+      } else if (dayCount > lastDay) {
         createHtml += '<td></td>';
       } else {
         createHtml += '<td>' + dayCount + '</td>';
         dayCount++;
       }
     }
-  create += '</tr>';
+  createHtml += '</tr>';
 }
 createHtml += '</table>';
 
-document.querySelector('#calendar').innerHtml = createHtml;
+document.querySelector('#calendar').innerHTML = createHtml;
