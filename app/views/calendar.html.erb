@@ -1,2 +1,2 @@
-<div id="calendar"></div>
-<script src="javascripts/calendar.js"></script>
+<%# Stimulusコントローラを適用するdiv要素のみを残します %>
+<div id="calendar" data-controller="calendar" data-calendar-events-value="<%= @events.to_json %>"></div>
