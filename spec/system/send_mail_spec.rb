@@ -45,7 +45,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     find("a[href='#{walk_routes_path}']").click
 
     expect(page).to have_current_path(walk_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')     
+    expect(page).to have_selector('#map')
     # 2. ルートを描画
     set_route
 
