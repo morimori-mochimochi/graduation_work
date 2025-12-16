@@ -10,7 +10,7 @@ class CalendarsController < ApplicationController
         title: "#{route.name} #{route.start_time&.strftime('%H:%M')}",
         start: route.execution_date,
         url: save_route_path(route),
-        extendedProps: { id: route.id}
+        extendedProps: { id: route.id }
       }
     end
   end
