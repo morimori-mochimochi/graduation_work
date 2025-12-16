@@ -1,4 +1,3 @@
-// app/views/calender.html.erb
 'use strict'
 
 const date = new Date();
