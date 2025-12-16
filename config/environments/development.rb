@@ -17,8 +17,6 @@ Rails.application.configure do
   # Enable server timing
   config.server_timing = true
 
-  config.importmap.exprimental_dynamic_imports = false
-
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
   # config.action_mailer.delivery_method = :letter_opener
