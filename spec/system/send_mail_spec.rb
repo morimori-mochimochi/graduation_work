@@ -45,8 +45,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     find("a[href='#{walk_routes_path}']").click
 
     expect(page).to have_current_path(walk_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')
-     
+    expect(page).to have_selector('#map')     
     # 2. ルートを描画
     set_route
 
@@ -96,21 +95,13 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 日時部分は変動するため、正規表現でメッセージの存在を確認
     # 例: "2024年07月26日 08:55に通知を設定しました。"
     expect(page).to have_content(/に通知を設定しました。/)
- 
+
     # テスト内でメール送信タスクを直接実行する
     # Rails.application.load_tasksでRakeタスクを読み込む
     Rails.application.load_tasks
     # Rake::Task['notification:send_due'].invokeでタスクを実行
     Rake::Task['notifications:send_due'].invoke
- 
+
     expect(ActionMailer::Base.deliveries.size).to eq 1
   end
 end
-
-
-
-
-
-
-
-  
