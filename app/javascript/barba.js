@@ -16,7 +16,6 @@ import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
 import { initDrawSavedRoute } from "./draw_saved_route";
-import "./calendar";
 
 // ページ初期化のための共通関数
 function initializePage(container) {
