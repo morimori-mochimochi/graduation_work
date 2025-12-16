@@ -38,7 +38,11 @@ function initializeCalendar(element, events) {
 export function initCalendar(container) {
   const calendarEl = container.querySelector('#calendar');
   if (calendarEl && calendarEl.dataset.calendarEventsValue) {
-    const events = JSON.parse(calendarEl.dataset.calendarEventsValue);
-    initializeCalendar(calendarEl, events);
+    try {
+      const events = JSON.parse(calendarEl.dataset.calendarEventsValue);
+      initializeCalendar(calendarEl, events);
+    } catch (e) {
+      console.error("カレンダーイベントのJSONパースに失敗しました:", e);
+    }
   }
 }

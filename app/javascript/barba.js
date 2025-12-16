@@ -35,6 +35,9 @@ function initializePage(container) {
     }).mount();
   }
   
+  // カレンダーの初期化
+  initCalendar(container);
+
   // マップ関連の初期化
   const mapIds = ['map', 'naviMap', 'carNaviMap'];
   mapIds.forEach(id => {
@@ -60,7 +63,6 @@ function initializePage(container) {
       initInfoWindow();
       initResetRouteBtn();
       initSaveRoute(container);
-      initCalendar(container); // コメントアウトを解除
     }
 
     // 保存済みルート詳細ページ用の初期化
