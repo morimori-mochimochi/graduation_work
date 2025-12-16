@@ -16,6 +16,7 @@ import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
 import { initDrawSavedRoute } from "./draw_saved_route";
+import { initCalendar } from "./calendar_controller.js"; // calendar_controller.jsをインポート
 
 // ページ初期化のための共通関数
 function initializePage(container) {
@@ -33,7 +34,7 @@ function initializePage(container) {
       pagination: true
     }).mount();
   }
-
+  
   // マップ関連の初期化
   const mapIds = ['map', 'naviMap', 'carNaviMap'];
   mapIds.forEach(id => {
@@ -59,6 +60,7 @@ function initializePage(container) {
       initInfoWindow();
       initResetRouteBtn();
       initSaveRoute(container);
+      initCalendar(container);
     }
 
     // 保存済みルート詳細ページ用の初期化
