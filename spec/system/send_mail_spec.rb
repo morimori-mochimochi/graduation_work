@@ -101,7 +101,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # Rails.application.load_tasksでRakeタスクを読み込む
     Rails.application.load_tasks
     # Rake::Task['notification:send_due'].invokeでタスクを実行
-    Rake::Task['notification:send_due'].invoke
+    Rake::Task['notifications:send_due'].invoke
  
     expect(ActionMailer::Base.deliveries.size).to eq 1
   end
