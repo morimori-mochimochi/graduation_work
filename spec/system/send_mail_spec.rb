@@ -73,7 +73,9 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 6. 実行日を今日に設定して更新
     expect(page).to have_current_path(edit_save_route_path(saved_route))
 
-    fill_in 'save_route_execution_date', with: '2025-01-01'
+    # fill_inでは日付が '50101-02-02' のように誤って入力されることがあるため、
+    # execute_scriptを使用して直接値を設定する
+    execute_script("document.getElementById('save_route_execution_date').value = '2025-01-01'")
     click_button '更新'
 
     # 7. 詳細ページに戻り、「メールで通知」ボタンが表示されていることを確認
