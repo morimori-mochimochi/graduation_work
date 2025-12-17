@@ -1,7 +1,9 @@
 <%= render 'layouts/header' %>
-<div class="cute-title flex items-center space-x-2 justify-center">
-  <input type="text" id="address" placeholder="住所や施設名を入力" class="w-1/2 text-center">
-  <button id="searchBtn" class="px-4 py-2 bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold btn_effect">検索</button>
+<div class="cute-title flex items-center space-x-2 justify-center mt-5 w-full">
+  <input type="text" id="address" placeholder="住所や施設名を入力" class="border-none rounded-md shadow-md w-1/2 text-center">
+  <button id="searchBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+    <%=image_tag "/images/search_btn.png", alt: "search_btn", class: "btn_effect h-13 -mt-1" %>
+  </button>
 </div>
 <%= render 'shared/route_menu', mode: :car %>
 <%= render 'shared/route_points', mode: :car %>
