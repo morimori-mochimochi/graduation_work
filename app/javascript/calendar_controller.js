@@ -1,17 +1,16 @@
+// Stimulusは、HTMLとJavaScriptをうまく連携させるためのフレームワーク
+// HTMLに data-controller="コントローラー名" という特別な属性を書くだけで、
+// 対応するJSファイル（この場合は calendar_controller.js）を自動で読み込んで実行してくれる。
 import { Controller } from "@hotwired/stimulus"
 // `initCalendar`をインポートするが、ここでは使わない。
 // `initializeCalendar`をインポートしてロジックを再利用する。
-// ただし、`calendar_initializer.js`では`initializeCalendar`がエクスポートされていないため、
-// このままだとエラーになります。
-// 実際には、`calendar_initializer.js`から`initializeCalendar`をエクスポートするか、
-// もしくは`initCalendar`を再利用する形にします。
-// ここでは、`initCalendar`を再利用する形に修正します。
 import { initCalendar } from "./calendar_initializer.js";
 
-// Connects to data-controller="calendar"
+// 「これはStimulusのコントローラーですよ」という宣言.お決まりの書き方
 export default class extends Controller {
+  // これはStimulusの機能で、HTML側からデータを受け取るための設定
   static values = { events: Array }
-
+  //このコントローラーがHTML要素に接続された時に自動実行される
   connect() {
     // Stimulusコントローラーがアタッチされた要素をコンテナとして渡す
     initCalendar(this.element.parentElement);

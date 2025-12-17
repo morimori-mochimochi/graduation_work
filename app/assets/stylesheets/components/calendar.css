@@ -1,0 +1,75 @@
+.calendar {
+    /* カレンダーの高さやマージンを調整 */
+    height: 80vh; /* ビューポートの高さの80% */
+    max-height: 800px; /* 最大の高さを指定 */
+    margin-bottom: 2rem;
+  
+    /* --- ここからFullCalendarの見た目を上書き --- */
+  
+    /* 
+      FullCalendarはCSS変数で色の管理をしています。
+      これを上書きするのが一番簡単で安全な方法です。
+      アプリのテーマカラーに合わせて調整しました。
+    */
+    --fc-border-color: #e0d1c1; /* 枠線の色を柔らかく */
+    --fc-today-bg-color: #fffaf0; /* 今日の背景色を少しだけ色付け */
+    --fc-event-bg-color: #9A6812; /* イベントの背景色 */
+    --fc-event-border-color: #855a10; /* イベントの枠線 */
+    --fc-event-text-color: #ffffff; /* イベントの文字色 */
+    --fc-button-bg-color: #9A6812; /* ボタンの背景色 */
+    --fc-button-active-bg-color: #855a10; /* アクティブなボタンの背景色 */
+    --fc-button-border-color: #9A6812; /* ボタンの枠線 */
+  
+    /* 全体のフォントをアプリの他の部分と合わせる */
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+  }
+  
+  /* ヘッダー（年月表示）の文字スタイル */
+  .calendar .fc-toolbar-title {
+    color: #624007; /* タイトルの文字色 */
+    font-size: 1.75em; /* 少し大きく */
+  }
+  
+  /* ヘッダーのボタンのスタイル */
+  .calendar .fc-button {
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* ほんのり影をつける */
+    transition: transform 0.2s ease;
+  }
+  
+  .calendar .fc-button:hover {
+    transform: translateY(-2px); /* ホバー時に少し浮き上がる */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 曜日ヘッダーのスタイル (日, 月, 火...) */
+  .calendar .fc-col-header-cell {
+    background-color: #fdf6ec; /* 背景を少し色付け */
+    color: #855a10;
+    font-weight: bold;
+  }
+  
+  /* 日付のマスのスタイル */
+  .calendar .fc-daygrid-day {
+    transition: background-color 0.3s;
+  }
+  
+  /* マスにホバーした時のスタイル */
+  .calendar .fc-daygrid-day:hover {
+    background-color: #fefcf9;
+  }
+  
+  /* 日付の数字のスタイル */
+  .calendar .fc-daygrid-day-number {
+    color: #a88d6c;
+    padding: 0.5em;
+  }
+  
+  /* イベントの見た目を調整 */
+  .calendar .fc-event {
+    border-radius: 4px; /* 角を少し丸くする */
+    padding: 2px 4px;
+    font-weight: bold;
+  }
+  
+  
