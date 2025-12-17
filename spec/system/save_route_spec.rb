@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'ルート保存機能', type: :system, js: true do
+  # テスト実行中の時刻を固定する
+  before do
+    Timecop.freeze(Time.zone.local(2025, 12, 18, 12, 0, 0))
+  end
+
   let(:user) { create(:user) }
 
   it '車ルートを設定し、ルートを保存できること' do
