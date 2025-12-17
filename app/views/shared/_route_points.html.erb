@@ -12,15 +12,15 @@
   <% end %>
 
   <div class="flex flex-col gap-1">
-    <button id="startPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">出発地</button>
+    <button id="startPoint" class="btn_effect px-4 py-2 bg-white border-none rounded-md shadow-md font-bold">出発地</button>
     <div class="flex items-center gap-1">
-      <select id="startHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+      <select id="startHour" class="select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md">
         <option disabled selected>時</option>
         <% (0..23).each do |h| %>
           <option><%= format('%02d', h) %></option>
         <% end %>
       </select>
-      <select id="startMinute"class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+      <select id="startMinute"class="select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md">
         <option disabled selected>分</option>
         <% (0..59).step(1).each do |m| %>
           <option><%= format('%02d', m) %></option>
@@ -37,7 +37,7 @@
   <template id="relay-point-template">
     <div class="relay-point-item flex flex-col items-center justify-center gap-2">
       <%= image_tag "/images/arrow.png", alt: "arrow", class: "h-5 w-auto" %>
-      <button class="relay-point-name btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">中継地</button>
+      <button class="relay-point-name btn_effect px-4 py-2 bg-white border-none rounded-md shadow-md font-bold">中継地</button>
       <div class="flex items-center gap-1">
         <div class="flex items-center gap-1">
           <div class="flex flex-col gap-1">
@@ -45,9 +45,9 @@
           </div>
           <div class="flex flex-items gap-1">
             <span class="font-bold text-[#624007]">滞在時間</span>
-            <select id="stayHour_${index}" class="stay-hour-select select select-bordered select-sm w-20 bg-white border-[#9A6812]"
+            <select id="stayHour_${index}" class="stay-hour-select select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md"
                     data-options="<%= options_for_select((0..23).map { |h| format('%02d', h) }).to_json %>"></select>
-            <select id="stayMinute_${index}" class="stay-minute-select select select-bordered select-sm w-20 bg-white border-[#9A6812]"
+            <select id="stayMinute_${index}" class="stay-minute-select select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md"
                     data-options="<%= options_for_select((0..59).map { |m| format('%02d', m) }).to_json %>"></select>
             <span class="font-bold text-[#624007]">中継点(着)</span>
           </div>
@@ -67,16 +67,16 @@
 
   <%= image_tag "/images/arrow.png", alt: "arrow", class: "mb-1 h-5 w-auto" %>
   <div class="flex flex-col gap-1">
-    <button id="destinationPoint" class="btn_effect px-4 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">目的地</button>
+    <button id="destinationPoint" class="btn_effect px-4 py-2 bg-white border-none rounded-md shadow-md font-bold">目的地</button>
     <div class="flex items-center gap-2">
       <div class="flex flex-items gap-1">
-        <select id="destinationHour" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="destinationHour" class="select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md">
           <option disabled selected>時</option>
           <% (0..23).each do |h| %>
             <option><%= format('%02d', h) %></option>
           <% end %>
         </select>
-        <select id="destinationMinute" class="select select-bordered select-sm w-20 bg-white border-[#9A6812]">
+        <select id="destinationMinute" class="select select-bordered select-sm w-20 bg-white border-none rounded-md shadow-md">
           <option disabled selected>分</option>
           <% (0..59).step(1).each do |m| %>
             <option><%= format('%02d', m) %></option>
