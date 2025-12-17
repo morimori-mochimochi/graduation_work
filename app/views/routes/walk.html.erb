@@ -1,22 +1,9 @@
 <%= render 'layouts/header' %>  
-<%= render 'shared/route_points', mode: :walk %>
 <div class="cute-title flex items-center space-x-2 justify-center">
   <input type="text" id="address" placeholder="住所や施設名を入力" class="w-1/2">
   <button id="searchBtn" class="btn_effect px-2 py-2 bg-white border-3 border-[#9A6812] rounded-md shadow-md font-bold">検索</button>
 </div>
-
-<!-- フローティングボタンをヘッダーの下に移動 -->
-<div class="absolute top-45 right-0 z-10 flex items-center">
-  <button id="currentPosBtn" class="btn_effect current_pos appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
-    <%= image_tag "/images/currentPos.png", alt: "current_pos" %>
-  </button> 
-  <%= link_to walk_navigation_routes_path, data: { barba: "link" } do %>
-    <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"btn_effect navi_btn" %>
-  <% end %>
-  <button id="resetRouteBtn" class="btn btn-danger mt-2">ルートをリセット</button>
-</div>
-
 <div class="mt-15">
-  <%= render 'shared/route_points' %>
+  <%= render 'shared/route_points', mode: :walk %>
   <div id="map"></div>
 </div>

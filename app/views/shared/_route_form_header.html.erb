@@ -6,8 +6,19 @@
     <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
       <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-10 -mt-1" %>
     </button>
+    
     <button id="<%= mode == :car ? 'carDrawRoute' : 'walkDrawRoute' %>" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
       <%= image_tag "/images/search_route.png", alt: "search_route", class: "btn_effect h-10 -mt-1" %>
     </button>
+
+    <button id="resetRouteBtn" class="btn btn-danger mt-2">ルートをリセット</button>
+
+    <button id="<%= mode == :car ? 'currentPosBtnCar' : 'currentPosBtn' %>" class ="btn_effect current_pos appearance-none bg-transparent border-none p-0m-0 mr-[-1rem] mt-3">
+      <%= image_tag "/images/get_currentPos.png", alt:"current_pos_car" %>
+    </button>
+
+    <%= link_to(mode == :car ? car_navigation_routes_path : walk_navigation_routes_path) do %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class:"btn_effect navi_btn mt-5" %>
+    <% end %>
   </div>
 </div> 
