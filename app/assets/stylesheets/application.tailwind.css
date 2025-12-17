@@ -16,6 +16,7 @@
 @import "./components/character.css";
 @import "./components/slider.css"; 
 @import "./components/navbar_custom.css";
+@import "./components/calendar.css";
 /* @import "./pages/top.css"; */
 
 body {

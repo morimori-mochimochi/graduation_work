@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "@barba/core": "^2.10.3",
+    "@fullcalendar/core": "^6.1.19",
+    "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/interaction": "^6.1.19",
     "@popperjs/core": "^2.11.8",
     "@splidejs/splide": "^4.1.4",
     "@tailwindcss/cli": "^4.1.12",
