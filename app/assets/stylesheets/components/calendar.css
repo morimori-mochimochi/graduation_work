@@ -3,13 +3,11 @@
     height: 80vh; /* ビューポートの高さの80% */
     max-height: 800px; /* 最大の高さを指定 */
     margin-bottom: 2rem;
-  
+    margin-top: 4rem;
     /* --- ここからFullCalendarの見た目を上書き --- */
   
     /* 
-      FullCalendarはCSS変数で色の管理をしています。
-      これを上書きするのが一番簡単で安全な方法です。
-      アプリのテーマカラーに合わせて調整しました。
+      --fc-***: FullCalendarのCSS変数を上書き
     */
     --fc-border-color: #e0d1c1; /* 枠線の色を柔らかく */
     --fc-today-bg-color: #fffaf0; /* 今日の背景色を少しだけ色付け */
@@ -44,9 +42,14 @@
   
   /* 曜日ヘッダーのスタイル (日, 月, 火...) */
   .calendar .fc-col-header-cell {
-    background-color: #fdf6ec; /* 背景を少し色付け */
-    color: #855a10;
+    background-color: #fdf6ec; /* 背景色はこちらに設定 */
     font-weight: bold;
+  }
+  
+  /* 曜日ヘッダーのテキスト部分を直接指定 */
+  .calendar .fc-col-header-cell-cushion {
+    color: #855a10; /* 文字色はこちらに設定 */
+    text-decoration: none; /* リンクの下線を消す */
   }
   
   /* 日付のマスのスタイル */
@@ -63,6 +66,7 @@
   .calendar .fc-daygrid-day-number {
     color: #a88d6c;
     padding: 0.5em;
+    text-decoration: none; /* リンクの下線を消す */
   }
   
   /* イベントの見た目を調整 */
