@@ -380,6 +380,7 @@ GEM
       railties (>= 6.0.0)
     stringio (3.1.7)
     thor (1.4.0)
+    timecop (0.9.10)
     timeout (0.4.3)
     tsort (0.2.0)
     turbo-rails (2.0.16)
@@ -444,6 +445,7 @@ DEPENDENCIES
   rubocop-rails
   selenium-webdriver
   stimulus-rails
+  timecop
   turbo-rails
   web-console
   whenever

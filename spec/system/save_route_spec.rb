@@ -3,11 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'ルート保存機能', type: :system, js: true do
-  # テスト実行中の時刻を固定する
-  before do
-    Timecop.freeze(Time.zone.local(2025, 12, 18, 12, 0, 0))
-  end
-
   let(:user) { create(:user) }
 
   it '車ルートを設定し、ルートを保存できること' do
@@ -86,6 +81,15 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # user.reloadを挟むことで、データベースに保存された最新の状態を読み込む
     saved_route = user.reload.save_routes.last
     expect(page).to have_current_path(save_route_path(saved_route))
+
+    # --- デバッグ用ログ出力 ---
+    # ここでブラウザのコンソールログを出力して、JSが生成した日付を確認します。
+    puts "\n--- Browser Console Logs ---"
+    page.driver.browser.logs.get(:browser).each do |log|
+      puts log.message
+    end
+    puts "--------------------------\n"
+
     expected_route_name = "#{Time.zone.now.strftime('%Y-%m-%d')}のルート"
     expect(page).to have_content(expected_route_name)
   end
