@@ -26,6 +26,7 @@ gem 'rails', '~> 7.1.0'
 gem 'stimulus-rails'
 gem 'turbo-rails'
 gem 'whenever', require: false
+gem 'meta-tags'
 
 group :development, :test do
   gem 'capybara'
@@ -34,7 +35,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'timecop'
 end
 
 group :development do
