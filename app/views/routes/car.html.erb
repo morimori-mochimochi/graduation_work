@@ -5,6 +5,8 @@
     <%=image_tag "/images/search_btn.png", alt: "search_btn", class: "btn_effect h-13 -mt-1" %>
   </button>
 </div>
-<%= render 'shared/route_menu', mode: :car %>
+<div id="route-menu">
+  <%= render 'shared/route_menu', mode: :car %>
+</div>
 <%= render 'shared/route_points', mode: :car %>
 <div id="map"></div>
