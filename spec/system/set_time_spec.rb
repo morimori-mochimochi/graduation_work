@@ -106,12 +106,15 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 3. ルート検索完了後、中継点のUIが表示されるのを待つ
       expect(page).to have_selector('#relayPointsContainer .relay-point-item')
 
-      # 4. 中継点の滞在時間を1時間に設定
-      select '10', from: 'stayHour_0'
+      # 4. 中継点の滞在時間を10時間に設定
+      # 'within' を使って最初の中継点要素の範囲に操作を限定する
+      within find('#relayPointsContainer .relay-point-item:first-child') do
+        select '10', from: 'stayHour_0'
+      end
+
+      expect(page).to have_selector('#route-menu', visible: true)
 
       # 5. 再度ルート検索を実行
-      # フローティングボタンが被ってクリックできないことがあるため、一時的に非表示にする
-      execute_script("document.getElementById('currentPosBtn').parentElement.style.display = 'none';")
       find('#walkDrawRoute').click
 
       # 6. 時刻計算が完了するのを待つ

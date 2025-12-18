@@ -11,6 +11,12 @@ export function initSaveRoute(container) {
   const saveRouteBtn = container.querySelector('#saveRouteBtn');
 
   if (saveRouteBtn) {
+    // イベントの重複登録を防ぐためのチェック
+    if (saveRouteBtn.dataset.saveEventAttached) {
+      return;
+    }
+    saveRouteBtn.dataset.saveEventAttached = 'true';
+
     saveRouteBtn.addEventListener('click', async() => {
       // 'window.routeData'からルート情報を取得
       const routeData = window.routeData;
@@ -25,6 +31,8 @@ export function initSaveRoute(container) {
       const today = new Date();
       const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
       const defaultRouteName = `${formattedDate}のルート`;
+      console.log("defaultRouteName:", defaultRouteName);
+
 
       // LatLngオブジェクトから緯度経度を抽出
       const startPoint = {

@@ -1,0 +1,26 @@
+<!-- padding: 内側余白、space-y-*: 子要素の間に縦方向(y軸)の間隔 -->
+<div class="flex flex-wrap justify-center w-full">
+  <!-- flex: 子要素が横並びになる、items-center: 上下中央寄せ、justify-between: 最初の要素は左端、最後の要素は右端に寄せられる -->
+
+  <div class="flex items-center">
+    <button id="<%= mode == :car ? 'carDrawRoute' : 'walkDrawRoute' %>" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+      <%= image_tag "/images/search_route.png", alt: "search_route", class: "btn_effect h-17 -mt-1" %>
+    </button>
+
+    <button id="resetRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+      <%= image_tag "/images/clear_route.png", alt: "search_route", class: "btn_effect h-17 -mt-1" %>
+    </button>
+
+    <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
+      <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-17 -mt-1" %>
+    </button>
+    
+    <%= link_to(mode == :car ? car_navigation_routes_path : walk_navigation_routes_path, class: "appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]") do %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-17 -mt-1" %>
+    <% end %>
+
+    <button id="<%= mode == :car ? 'currentPosBtnCar' : 'currentPosBtn'%>" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]">
+      <%= image_tag "/images/get_current_pos.png", alt:"current_pos", class: "btn_effect h-17 -mt-1"%>
+    </button>
+  </div>
+</div> 

@@ -81,6 +81,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # user.reloadを挟むことで、データベースに保存された最新の状態を読み込む
     saved_route = user.reload.save_routes.last
     expect(page).to have_current_path(save_route_path(saved_route))
+
     expected_route_name = "#{Time.zone.now.strftime('%Y-%m-%d')}のルート"
     expect(page).to have_content(expected_route_name)
   end
