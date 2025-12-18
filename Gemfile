@@ -17,6 +17,7 @@ gem 'devise-i18n'
 gem 'devise-i18n-views'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'geocoder'
+gem 'meta-tags'
 gem 'omniauth-line'
 gem 'omniauth-oauth2'
 gem 'omniauth-rails_csrf_protection'
@@ -26,7 +27,6 @@ gem 'rails', '~> 7.1.0'
 gem 'stimulus-rails'
 gem 'turbo-rails'
 gem 'whenever', require: false
-gem 'meta-tags'
 
 group :development, :test do
   gem 'capybara'
