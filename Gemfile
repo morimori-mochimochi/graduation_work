@@ -17,6 +17,7 @@ gem 'devise-i18n'
 gem 'devise-i18n-views'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'geocoder'
+gem 'meta-tags'
 gem 'omniauth-line'
 gem 'omniauth-oauth2'
 gem 'omniauth-rails_csrf_protection'
@@ -34,7 +35,6 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'timecop'
 end
 
 group :development do
