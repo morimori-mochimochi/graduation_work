@@ -18,8 +18,16 @@
   </div>
 
   <div class="mt-6 flex items-center space-x-2">
-    <%= link_to '編集', edit_location_path(@location), class: "btn-warning" %>
-    <%= button_to '削除', @location, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
-    <%= link_to '一覧に戻る', locations_path, class: "btn btn-ghost" %>
+    <%= link_to edit_location_path(@location), class: "nav-link" do %>
+      <img src="/images/edit.png" alt="edit" class="h-10">
+    <% end %>
+
+    <%= button_to @location, method: :delete, form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } }, class: "nav-link" do %>
+      <%= image_tag "/images/delete.png", alt: "削除", class: "h-10" %>
+    <% end %>
+
+    <%= link_to locations_path, class: "nav-link" do %>
+      <img src="/images/return_map.png" alt="return_map" class="h-10">
+    <% end %> 
   </div>
 </div>

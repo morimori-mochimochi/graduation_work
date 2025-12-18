@@ -31,8 +31,13 @@
       </div>
 
       <div class="card-actions justify-end mt-6">
-        <%= link_to 'キャンセル', save_route_path(@save_route), class: "btn btn-ghost" %>
-        <%= form.submit '更新', class: "btn btn-primary" %>
+        <%= link_to save_route_path(@save_route), class: "nav-link" do %>
+          <img src="/images/return_map.png" alt="return" class="h-10">
+        <% end %>
+
+        <%= form.submit class: "nav-link" do %>
+          <%= image_tag "/images/update.png", alt: "update", class: "h-10" %>
+        <% end %>
       </div>
     </div>
   <% end %>
