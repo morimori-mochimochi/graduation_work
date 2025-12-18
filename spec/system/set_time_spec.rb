@@ -115,8 +115,6 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       expect(page).to have_selector('#route-menu', visible: true)
 
       # 5. 再度ルート検索を実行
-      # フローティングボタンが被ってクリックできないことがあるため、一時的に非表示にする
-      execute_script("document.getElementById('currentPosBtn').parentElement.style.display = 'none';")
       find('#walkDrawRoute').click
 
       # 6. 時刻計算が完了するのを待つ
