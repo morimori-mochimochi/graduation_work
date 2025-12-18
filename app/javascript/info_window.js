@@ -169,6 +169,12 @@ export function createRelayPointElement(waypoint, index) {
 // 他のファイルから呼び出して使う部品のような関数にaddEventListenerは不安定
 // なのでinitにして末尾に入れる
 export function initInfoWindow() {
+  // イベントリスナーの重複登録を防ぐためのフラグ
+  if (document.body.dataset.infoWindowInitialized) {
+    return;
+  }
+  document.body.dataset.infoWindowInitialized = 'true';
+
   // ルートが描画されたら、中継点UIも再描画する
   // これにより、ページ読み込み後やルート再検索時にもUIが正しく表示される
   document.addEventListener('routeDrawn', () => {

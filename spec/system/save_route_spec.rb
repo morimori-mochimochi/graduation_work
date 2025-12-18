@@ -82,14 +82,6 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     saved_route = user.reload.save_routes.last
     expect(page).to have_current_path(save_route_path(saved_route))
 
-    # --- デバッグ用ログ出力 ---
-    # ここでブラウザのコンソールログを出力して、JSが生成した日付を確認します。
-    puts "\n--- Browser Console Logs ---"
-    page.driver.browser.logs.get(:browser).each do |log|
-      puts log.message
-    end
-    puts "--------------------------\n"
-
     expected_route_name = "#{Time.zone.now.strftime('%Y-%m-%d')}のルート"
     expect(page).to have_content(expected_route_name)
   end
