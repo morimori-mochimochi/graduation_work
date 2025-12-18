@@ -23,6 +23,11 @@ module ApplicationHelper # :nodoc:
         url: request.original_url,
         image: image_url('ogp.png'),
         locale: 'ja_JP'
+      },
+      twitter: {
+        card: 'summary_large_image', # 大きな画像付きのサマリーカード
+        site: '@@morimori_mochi',
+        image: image_url('ogp.png')
       }
     }
   end
