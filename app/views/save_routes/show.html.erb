@@ -75,9 +75,18 @@
   <div id="map"></div>
 
   <div class="mt-6 flex items-center space-x-2">
-    <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
-    <%= button_to '削除', @save_route, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
-    <%= link_to '一覧へ', save_routes_path, class: "btn btn-ghost" %>
+    <%= link_to edit_save_route_path(@save_route), class: "nav-link" do %>
+      <img src="/images/edit.png" alt="edit" class="h-17">
+    <% end %>
+    
+    <%= button_to @save_route, method: :delete, form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } }, class: "nav-link" do %>
+      <%= image_tag "/images/delete.png", alt: "削除", class: "h-17" %>
+    <% end %>
+
+    <%= link_to save_routes_path, class: "nav-link" do %>
+      <img src="/images/return_map.png" alt="return_map" class="h-17">
+    <% end %> 
+ 
     <%= button_tag 'すぐ出発',
       # data属性:HTML要素に自由なデータを埋め込み、JavaScriptで使えるようにする仕組み
       id: 'start-navigation-from-saved-route',
