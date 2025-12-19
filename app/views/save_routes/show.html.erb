@@ -87,16 +87,17 @@
       <img src="/images/return_map.png" alt="return_map" class="h-17">
     <% end %> 
  
-    <%= button_tag 'すぐ出発',
-      # data属性:HTML要素に自由なデータを埋め込み、JavaScriptで使えるようにする仕組み
+    <%= button_tag(
       id: 'start-navigation-from-saved-route',
-      class: 'btn btn-primary',
+      class: 'nav-link',
       data: {
         route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]),
         car_navi_path: car_navigation_routes_path,
         walk_navi_path: walk_navigation_routes_path
       }
-    %>
+    ) do %>
+      <%= image_tag "/images/startNavi.png", alt: "すぐ出発", class: "h-17" %>
+    <% end %>
     <%# 実行日と出発時刻が設定されている場合のみ通知設定ボタンを表示 %>
     <% if @save_route.execution_date.present? && @save_route.start_time.present? %>
       <%= button_to 'メールで通知', save_route_notifications_path(@save_route), method: :post, class: "btn btn-info", form: { data: { turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } } %>
