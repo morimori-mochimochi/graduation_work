@@ -29,16 +29,16 @@
         </label>
         <%= form.date_field :execution_date, class: "input input-bordered" %>
       </div>
+    </div>
 
-      <div class="card-actions justify-end mt-6">
-        <%= link_to save_route_path(@save_route), class: "nav-link" do %>
-          <img src="/images/return_map.png" alt="return" class="h-10">
-        <% end %>
+    <div class="card-actions justify-end mt-6">
+      <%= link_to save_route_path(@save_route), class: "nav-link" do %>
+        <img src="/images/return_map.png" alt="return" class="h-10">
+      <% end %>
 
-        <%= form.button class: "nav-link" do %>
-          <%= image_tag "/images/update.png", alt: "update", class: "h-10" %>
-        <% end %>
-      </div>
+      <%= form.button class: "nav-link" do %>
+        <%= image_tag "/images/update.png", alt: "update", class: "h-10" %>
+      <% end %>
     </div>
   <% end %>
 </div>
