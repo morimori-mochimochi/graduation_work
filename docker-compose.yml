@@ -44,6 +44,15 @@ services:
       LINE_CHANNEL_ID: ${LINE_CHANNEL_ID:-} 
       LINE_CHANNEL_SECRET: ${LINE_CHANNEL_SECRET:-}
       DISABLE_SPRING: 1 # ファイル変更の検知問題を避けるためにSpringを無効化
+      CONTAINER_ROLE: web
+      BUNDLE_PATH: "/usr/local/bundle"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   # docker-compose.ymlで定義したcronコンテナはconfig/schedule.rbの設定に沿ってコマンド実行
   # lib/tasks/notifications.rake にはtask send_due: :environment とかいてある
@@ -60,7 +69,10 @@ services:
       - .:/app
       - bundle:/usr/local/bundle
     depends_on:
-      - db
+      web:
+        condition: service_healthy
+      db:
+        condition: service_started
     environment:
       DATABASE_HOST: db
       DATABASE_USERNAME: postgres
@@ -68,7 +80,6 @@ services:
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
       DOCKER_CONTAINER: "true"
       BUNDLE_PATH: "/usr/local/bundle"
-      BUNDLE_APP_CONFIG: "/usr/local/bundle"
       CONTAINER_ROLE: cron
       DISABLE_SPRING: 1
 
