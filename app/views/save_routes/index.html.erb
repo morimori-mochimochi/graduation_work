@@ -2,7 +2,9 @@
 <div class="container cute-title mx-auto px-4 py-8">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">保存したルート一覧</h1>
-    <%= link_to 'マップへ戻る', new_route_path, class: "btn btn-outline" %>
+    <%= link_to save_routes_path, class: "nav-link" do %>
+      <img src="/images/return_map.png" alt="return_map" class="h-17">
+    <% end %> 
   </div>
 
   <% if @save_routes.empty? %>
