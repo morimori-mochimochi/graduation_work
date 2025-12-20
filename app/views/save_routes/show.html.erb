@@ -75,17 +75,17 @@
   <div id="map"></div>
 
   <div class="mt-6 flex items-center space-x-2">
+    <%= link_to save_routes_path, class: "nav-link" do %>
+      <%= image_tag "/images/return_before.png", alt: "return_map", class: "btn_effect h-17" %>
+    <% end %> 
+
     <%= link_to edit_save_route_path(@save_route), class: "nav-link" do %>
-      <img src="/images/edit.png" alt="edit" class="h-17">
+      <%= image_tag "/images/edit.png", alt: "edit",class:"btn_effect h-17" %>
     <% end %>
     
     <%= button_to @save_route, method: :delete, form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } }, class: "nav-link" do %>
-      <%= image_tag "/images/delete.png", alt: "削除", class: "h-17" %>
+      <%= image_tag "/images/delete.png", alt: "destroy", class: "btn_effect h-17" %>
     <% end %>
-
-    <%= link_to save_routes_path, class: "nav-link" do %>
-      <img src="/images/return_map.png" alt="return_map" class="h-17">
-    <% end %> 
  
     <%= button_tag(
       id: 'start-navigation-from-saved-route',
@@ -96,16 +96,16 @@
         walk_navi_path: walk_navigation_routes_path
       }
     ) do %>
-      <%= image_tag "/images/startNavi.png", alt: "すぐ出発", class: "h-17" %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-17" %>
     <% end %>
 
     <% if @save_route.execution_date.present? && @save_route.start_time.present? %>
       <%= button_to save_route_notifications_path(@save_route), method: :post, form: { data: { turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } }, class: "nav-link" do %>
-        <%= image_tag "/images/mail_notification.png", alt: "メール通知", class: "h-17" %>
+        <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
       <% end %>
     <% else %>
       <%= button_tag type: 'button', class: "nav-link", onclick: "alert('通知を設定するには、編集画面で実行日と出発時刻を設定してください。')" do %>
-        <%= image_tag "/images/mail_notification.png", alt: "メール通知", class: "h-17 opacity-50" %>
+        <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
       <% end %>
     <% end %>
   </div>
