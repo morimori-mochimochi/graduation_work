@@ -1,2 +1,45 @@
-<h1>Mypages#show</h1>
-<p>Find me in app/views/mypages/show.html.erb</p>
+<div class="container cute-title mx-auto px-4 py-8">
+  <div class="card bg-base-200 shadow-xl mb-8">
+    <div class="card-body">
+      <h2 class="card-title">プロフィール情報</h2>
+      <div class="py-2">
+        <p class="text-sm text-gray-600">お名前</p>
+        <p class="text-lg font-medium"><%= current_user.name %></p>
+      </div>
+      <div class="py-2">
+        <p class="text-sm text-gray-600">メールアドレス</p>
+        <p class="text-lg font-medium"><%= current_user.email %></p>
+      </div>
+
+      <div class="card-actions justify-end mt-4">
+        <%= link_to "プロフィール編集", edit_mypage_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+    <%= link_to save_routes_path, class: "card bg-base-100 shadow-md hover:bg-base-200 transition-colors border" do %>
+      <div class="card-body items-center text-center">
+        <h3 class="card-title">保存したルート</h3>
+        <p>作成したルートの一覧を確認します</p>
+      </div>
+    <% end %>
+
+    <%= link_to locations_path, class: "card bg-base-100 shadow-md hover:bg-base-200 transition-colors border" do %>
+      <div class="card-body items-center text-center">
+        <h3 class="card-title">保存した場所</h3>
+        <p>登録した場所の一覧を確認します</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="mt-8">
+    <h3 class="text-xl font-bold mb-4">アカウント設定</h3>
+    <div class="flex flex-wrap gap-4">
+      <%= button_to "ログアウト", destroy_user_session_path, method: :delete, class: "btn btn-outline" %>
+      <%= button_to "アカウント削除", mypage_path, method: :delete, data: { turbo_confirm: "本当に削除しますか？保存されたデータは全て失われます。" }, class: "btn btn-outline btn-error" %>
+    </div>
+  </div>
+</div>

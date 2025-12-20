@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get 'mypages/show'
   devise_for :users, controllers: {
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
@@ -12,6 +11,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   root 'top#index'
+
+  resource :mypage, only: [:show, :edit, :update, :destroy]
 
   resources :routes, only: [:new, :create, :show] do
     collection do
