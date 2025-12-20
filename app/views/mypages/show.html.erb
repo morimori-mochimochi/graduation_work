@@ -38,11 +38,14 @@
   <div class="mt-8">
     <h3 class="text-xl font-bold mb-4">アカウント設定</h3>
     <div class="flex flex-wrap gap-4">
-      <%= button_to destroy_user_session_path, method: :delete, class: "nav-link" do %>
+      <%= button_to destroy_user_session_path,
+        method: :delete,
+        form: { data: { turbo_confirm: "ログアウトしますか？" } },
+        class: "nav-link" do %>
         <%= image_tag "/images/logout.png", alt: "logout", class: "btn_effect h-17" %>
       <% end %>
 
-      <%= button_to mypage_path, method: :delete, data: { turbo_confirm: "本当に削除しますか？保存されたデータは全て失われます。" }, class: "nav-link" do %>
+      <%= button_to mypage_path, method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？保存されたデータは全て失われます。" } }, class: "nav-link" do %>
         <%= image_tag "/images/delete_user.png", alt: "delete_user", class: "btn_effect h-17" %>
       <% end %>
 

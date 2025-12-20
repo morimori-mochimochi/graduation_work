@@ -45,15 +45,6 @@
               <%= image_tag "/images/top.png", alt: "load_top" %>
             <% end %>
           </li>
-
-          <li class="nav-item">
-            <%= button_to destroy_user_session_path,
-              method: :delete, 
-              data: { confirm: "ログアウトしますか？" },
-              class: "bg-transparent border-none p-0 nav-link"  do %>
-              <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-9 cursor-pointer" %>
-            <% end %>
-          </li>
         </ul>
       </div>
     <% end %>

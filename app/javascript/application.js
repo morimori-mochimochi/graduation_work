@@ -2,6 +2,7 @@
 // 主にbarba.jsやその他のグローバルなスクリプトを読み込みます。
 // ページごとの初期化はbarba.jsのフックで行われます。
 import barba from "./barba.js";
+import "@hotwired/turbo-rails"
 import { Collapse } from "bootstrap";
 
 // callapseをバンドル対象と認識させるためのダミーコード
