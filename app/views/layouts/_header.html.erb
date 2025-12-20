@@ -24,23 +24,27 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <%= link_to calendar_path, class: "nav-link" do %>
-              <img src="/images/calendar.png" alt="calendar" class="h-10">
+              <img src="/images/calendar.png" alt="calendar" class="h-17">
             <% end %>
           </li>
 
           <li class="nav-item">
             <%= link_to save_routes_path, class: "nav-link" do %>
-              <img src="/images/saved_routes.png" alt="routes_logo" class="h-10">
+              <img src="/images/saved_routes.png" alt="routes_logo" class="h-17">
             <% end %>
           </li>
           
           <li class="nav-item">
             <%= link_to locations_path, class: "nav-link" do %>
-              <img src="/images/saved_locations.png" alt="locations_logo" class="h-10">
+              <img src="/images/saved_locations.png" alt="locations_logo" class="h-17">
             <% end %>
           </li>
 
-
+          <li class="nav-item">
+            <%= link_to root_path, class: "nav-link" do %>
+              <%= image_tag "/images/top.png", alt: "load_top" %>
+            <% end %>
+          </li>
 
           <li class="nav-item">
             <%= button_to destroy_user_session_path,

@@ -1,3 +1,5 @@
 <%# Stimulusコントローラを適用するdiv要素のみを残します %>
 <div id="calendar" data-controller="calendar" data-calendar-events-value="<%= @events.to_json %>" class="calendar"></div>
-<%= link_to 'マップへ戻る', new_route_path, class: "btn_effect bg-white text-black border-3 border-[#9A6812] rounded-md shadow-md font-bold no-underline" %>
+<%= link_to new_route_path, class: "nav-link" do %>
+    <img src="/images/return_map.png" alt="return_map" class="h-17">
+<% end %> 
