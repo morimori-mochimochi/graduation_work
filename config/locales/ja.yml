@@ -3,6 +3,8 @@ ja:
     update: 
       notice: "プロフィールを更新しました。"
       alert: "プロフィールの更新に失敗しました。"
+    destroy:
+      notice: "アカウントを削除しました。"
   locations:
     create:
       notice: "場所を保存しました。"
