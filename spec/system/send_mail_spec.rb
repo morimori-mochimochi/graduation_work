@@ -67,7 +67,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 5. 保存されたルートの詳細ページから編集ページへ
     saved_route = user.reload.save_routes.last
     expect(page).to have_current_path(save_route_path(saved_route))
-    click_link '編集'
+    find("img[alt='edit']").click
 
     # 6. 実行日を今日に設定して更新
     expect(page).to have_current_path(edit_save_route_path(saved_route))
@@ -78,19 +78,18 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     expect(page).to have_field('save_route_execution_date', type: 'date')
 
     execute_script("document.getElementById('save_route_execution_date').value = '2025-01-01'")
-    click_button '更新'
+    find("img[alt='update']").click
 
     # 7. 詳細ページに戻り、「メールで通知」ボタンが表示されていることを確認
     expect(page).to have_current_path(save_route_path(saved_route))
     expect(page).to have_content('ルートを更新しました')
-    expect(page).to have_button('メールで通知')
 
     # 8. メール送信処理を実行し、メールが送信されることを確認
     # ActionMailer::Base.deliveries.clearで、テスト実行前に溜まったメールをクリア
     ActionMailer::Base.deliveries.clear
     # button_toはformを生成するため、確認ダイアログのacceptが必要
     # accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
-    click_button 'メールで通知'
+    find("img[alt='mail']").click
 
     # 日時部分は変動するため、正規表現でメッセージの存在を確認
     # 例: "2024年07月26日 08:55に通知を設定しました。"
