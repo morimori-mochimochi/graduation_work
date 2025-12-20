@@ -3,20 +3,20 @@
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
 
-require File.expand_path(File.dirname(__FILE__) + "/environment")
+# require File.expand_path(File.dirname(__FILE__) + "/environment")
 
 # Example:
 # ログファイルの出力を確認
 set :output, "log/cron.log"
 
 # ジョブの実行環境を設定
-set :environment, :production
+set :environment, ENV['RAILS_ENV'] || :development
 
 # cron実行時の環境変数を設定
 env :PATH, ENV['PATH']
 
 # Bundlerがgemを見つけられるように、BUNDLE_PATHとBUNDLE_GEMFILEを明示的に設定します。
-# これにより、cronデーモンから実行される際にも、vendor/bundle内のgemが正しく読み込まれます。
+# これにより、cronデーモンから実行される際にも、/usr/local/bundle内のgemが正しく読み込まれます。
 env :BUNDLE_PATH, '/usr/local/bundle'
 env :BUNDLE_GEMFILE, '/app/Gemfile'
 

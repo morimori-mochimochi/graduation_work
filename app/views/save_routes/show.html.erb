@@ -75,22 +75,38 @@
   <div id="map"></div>
 
   <div class="mt-6 flex items-center space-x-2">
-    <%= link_to '編集', edit_save_route_path(@save_route), class: "btn-warning" %>
-    <%= button_to '削除', @save_route, method: :delete, class: "btn btn-sm btn-error", form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } } %>
-    <%= link_to '一覧へ', save_routes_path, class: "btn btn-ghost" %>
-    <%= button_tag 'すぐ出発',
-      # data属性:HTML要素に自由なデータを埋め込み、JavaScriptで使えるようにする仕組み
+    <%= link_to save_routes_path, class: "nav-link" do %>
+      <%= image_tag "/images/return_before.png", alt: "return_map", class: "btn_effect h-17" %>
+    <% end %> 
+
+    <%= link_to edit_save_route_path(@save_route), class: "nav-link" do %>
+      <%= image_tag "/images/edit.png", alt: "edit",class:"btn_effect h-17" %>
+    <% end %>
+    
+    <%= button_to @save_route, method: :delete, form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } }, class: "nav-link" do %>
+      <%= image_tag "/images/delete.png", alt: "destroy", class: "btn_effect h-17" %>
+    <% end %>
+ 
+    <%= button_tag(
       id: 'start-navigation-from-saved-route',
-      class: 'btn btn-primary',
+      class: 'nav-link',
       data: {
         route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]),
         car_navi_path: car_navigation_routes_path,
         walk_navi_path: walk_navigation_routes_path
       }
-    %>
-    <%# 実行日と出発時刻が設定されている場合のみ通知設定ボタンを表示 %>
+    ) do %>
+      <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-17" %>
+    <% end %>
+
     <% if @save_route.execution_date.present? && @save_route.start_time.present? %>
-      <%= button_to 'メールで通知', save_route_notifications_path(@save_route), method: :post, class: "btn btn-info", form: { data: { turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } } %>
+      <%= button_to save_route_notifications_path(@save_route), method: :post, form: { data: { turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } }, class: "nav-link" do %>
+        <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+      <% end %>
+    <% else %>
+      <%= button_tag type: 'button', class: "nav-link", onclick: "alert('通知を設定するには、編集画面で実行日と出発時刻を設定してください。')" do %>
+        <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
+      <% end %>
     <% end %>
   </div>
 </div>

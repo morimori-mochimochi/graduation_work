@@ -5,7 +5,7 @@
     登録日: <%= @save_route.created_at.strftime('%Y年%m月%d日') %>
   </div>
 
-  <%= form_with(model: @save_route, class: "card bg-base-200 shadow-xl") do |form| %>
+  <%= form_with(model: @save_route) do |form| %>
     <% if @save_route.errors.any? %>
       <div class="alert alert-error">
         <ul>
@@ -15,25 +15,32 @@
         </ul>
       </div>
     <% end %>
-    <div class="card-body">
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">ルートの名前</span>
-        </label>
-        <%= form.text_field :name, class: "input input-bordered", required: true %>
-      </div>
+    <div class="card bg-base-200 shadow-xl">
+      <div class="card-body">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">ルートの名前</span>
+          </label>
+          <%= form.text_field :name, class: "input input-bordered", required: true %>
+        </div>
 
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">実行する日</span>
-        </label>
-        <%= form.date_field :execution_date, class: "input input-bordered" %>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">実行する日</span>
+          </label>
+          <%= form.date_field :execution_date, class: "input input-bordered" %>
+        </div>
       </div>
+    </div>
 
-      <div class="card-actions justify-end mt-6">
-        <%= link_to 'キャンセル', save_route_path(@save_route), class: "btn btn-ghost" %>
-        <%= form.submit '更新', class: "btn btn-primary" %>
-      </div>
+    <div class="flex justify-end mt-6 gap-2">
+      <%= link_to save_route_path(@save_route), class: "nav-link" do %>
+        <img src="/images/return_before.png" alt="return" class="btn_effect h-17">
+      <% end %>
+
+      <%= form.button class: "nav-link" do %>
+        <%= image_tag "/images/update.png", alt: "update", class: "btn_effect h-17" %>
+      <% end %>
     </div>
   <% end %>
 </div>

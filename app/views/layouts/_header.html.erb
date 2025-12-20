@@ -23,26 +23,26 @@
         <%  1 # navbar-nav → ナビゲーション用のリストスタイル.横並びに整列 %>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#">
-              <img src="/images/new_route_logo.png" alt="new_route_logo" class="h-10">
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <%= link_to locations_path, class: "nav-link" do %>
-              <img src="/images/locations_logo.png" alt="locations_logo" class="h-10">
+            <%= link_to calendar_path, class: "nav-link" do %>
+              <img src="/images/calendar.png" alt="calendar" class="h-17">
             <% end %>
           </li>
 
           <li class="nav-item">
             <%= link_to save_routes_path, class: "nav-link" do %>
-              <img src="/images/routes_logo.png" alt="routes_logo" class="h-10">
+              <img src="/images/saved_routes.png" alt="routes_logo" class="h-17">
+            <% end %>
+          </li>
+          
+          <li class="nav-item">
+            <%= link_to locations_path, class: "nav-link" do %>
+              <img src="/images/saved_locations.png" alt="locations_logo" class="h-17">
             <% end %>
           </li>
 
           <li class="nav-item">
-            <%= link_to calendar_path, class: "nav-link" do %>
-              <img src="/images/calendar.png" alt="calendar" class="h-10">
+            <%= link_to root_path, class: "nav-link" do %>
+              <%= image_tag "/images/top.png", alt: "load_top" %>
             <% end %>
           </li>
 
