@@ -54,7 +54,8 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
-    find("img[alt='startNavi']").click
+    # 画像そのものではなく、親要素（リンクまたはボタン）をクリックすることでイベント発火を確実に
+    find("img[alt='startNavi']").find(:xpath, "..").click
 
     # 7. ナビゲーションページに遷移したことを確認
     expect(page).to have_current_path(walk_navigation_routes_path)
