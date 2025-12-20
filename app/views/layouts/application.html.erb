@@ -33,7 +33,11 @@
     <div style="min-width:200px;">
         <div class="info-window-facility-name" style="font-weight:bold;font-size:1.1em;margin-bottom:8px;text-align:center;"></div>
         <button class="info-window-route-btn btn btn-sm btn-primary" style="margin-right: 8px;">ルート設定</button>
-        <button class="info-window-save-location btn btn-sm btn-secondary">この場所を保存</button>
+        <% if user_signed_in? %>
+          <button class="info-window-save-location btn btn-sm btn-secondary">この場所を保存</button>
+        <% else %>
+          <button class="btn btn-sm btn-secondary" onclick="alert('場所を保存するにはログインが必要です。')">この場所を保存</button>
+        <% end %>
     </div>
     <ul class="info-window-dropdown-menu bg-base-100 rounded-box p-2 mt-1" hidden>
       <li><button class="info-window-set-start btn btn-sm btn-primary rounded-full">出発地に設定</button></li>
