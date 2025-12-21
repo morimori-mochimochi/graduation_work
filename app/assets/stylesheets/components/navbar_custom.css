@@ -61,7 +61,7 @@
 
   /* ログアウトボタンの画像サイズを調整 */
   .navbar-nav .nav-item:last-child img {
-    height: 25px !important; 
+    height: 30px !important; 
     width: auto !important;
   }
   

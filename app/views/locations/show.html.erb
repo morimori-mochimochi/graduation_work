@@ -26,7 +26,10 @@
       <%= image_tag "/images/edit.png", alt: "edit", class: "btn_effect h-17" %>
     <% end %>
 
-    <%= button_to @location, method: :delete, form: { data: { turbo_confirm: '本当に削除しますか？', "barba-prevent": "all" } }, class: "nav-link" do %>
+    <%= button_to @location,
+      method: :delete,
+      form: { data: { turbo: true, turbo_confirm: '本当に削除しますか？'} },
+      class: "nav-link" do %>
       <%= image_tag "/images/delete.png", alt: "削除", class: "btn_effect h-17" %>
     <% end %>
   </div>
