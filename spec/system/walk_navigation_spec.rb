@@ -3,10 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'ナビゲーション機能', type: :system, js: true do
-  before do
-    visit walk_routes_path
-  end
-
   it '徒歩ルートを設定し、ナビゲーションを開始できる' do
     # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
     visit root_path

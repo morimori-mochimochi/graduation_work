@@ -169,6 +169,9 @@ RSpec.configure do |config|
 
   # システムテスト用のヘルパーをインクルード
   config.include SystemTestHelpers, type: :system
+
+  # Request SpecでDeviseのヘルパー（sign_inなど）を使えるようにする
+  config.include Devise::Test::IntegrationHelpers, type: :request
 end
 
 RSpec.configure do |config|

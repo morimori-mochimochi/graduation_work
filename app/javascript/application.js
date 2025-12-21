@@ -2,6 +2,7 @@
 // 主にbarba.jsやその他のグローバルなスクリプトを読み込みます。
 // ページごとの初期化はbarba.jsのフックで行われます。
 import barba from "./barba.js";
+import "@hotwired/turbo-rails"
 import { Collapse } from "bootstrap";
 
 // callapseをバンドル対象と認識させるためのダミーコード
@@ -21,6 +22,11 @@ function fadeOutFlash() {
 // DOMContentLoaded で一度だけ実行される処理を定義
 document.addEventListener('DOMContentLoaded', () => {
   // 初回読み込み時の処理を実行
+  fadeOutFlash();
+});
+
+// Turbo Drive での遷移後にも実行
+document.addEventListener('turbo:load', () => {
   fadeOutFlash();
 });
 

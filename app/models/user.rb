@@ -17,9 +17,6 @@ class User < ApplicationRecord # :nodoc:
 
   # バリデーション
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP },
-                    unless: :line_connected?
-  validates :password, presence: true, length: { minimum: 6 }, unless: :line_connected?
   validates :line_login_uid, uniqueness: { scope: :provider }, if: -> { provider.present? }
 
   # インスタンスメソッド

@@ -1,2 +1,57 @@
-<h1>Mypages#show</h1>
-<p>Find me in app/views/mypages/show.html.erb</p>
+<div class="container cute-title mx-auto px-4 py-8">
+  <div class="card bg-base-200 shadow-xl mb-8">
+    <div class="card-body">
+      <h2 class="cute-title">プロフィール情報</h2>
+      <div class="py-2">
+        <p class="text-sm text-gray-600">お名前</p>
+        <p class="text-lg font-medium"><%= current_user.name %></p>
+      </div>
+      <div class="py-2">
+        <p class="text-sm text-gray-600">メールアドレス</p>
+        <p class="text-lg font-medium"><%= current_user.email %></p>
+      </div>
+
+      <%= link_to edit_mypage_path do %>
+        <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+    <%= link_to save_routes_path, class: "card bg-base-100 shadow-md btn_effect transition-colors border" do %>
+      <div class="card-body items-center text-center">
+        <h3 class="card-title">保存したルート</h3>
+        <p>作成したルートの一覧を確認します</p>
+      </div>
+    <% end %>
+
+    <%= link_to locations_path, class: "card bg-base-100 shadow-md btn_effect transition-colors border" do %>
+      <div class="card-body items-center text-center">
+        <h3 class="card-title">保存した場所</h3>
+        <p>登録した場所の一覧を確認します</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="mt-8">
+    <h3 class="text-xl font-bold mb-4">アカウント設定</h3>
+    <div class="flex flex-wrap gap-4">
+      <%= button_to destroy_user_session_path,
+        method: :delete,
+        form: { data: { turbo: true, turbo_confirm: "ログアウトしますか？" } },
+        class: "nav-link" do %>
+        <%= image_tag "/images/logout.png", alt: "logout", class: "btn_effect h-17" %>
+      <% end %>
+
+      <%= button_to mypage_path, method: :delete, form: { data: { turbo: true, turbo_confirm: "本当に削除しますか？保存されたデータは全て失われます。" } }, class: "nav-link" do %>
+        <%= image_tag "/images/delete_user.png", alt: "delete_user", class: "btn_effect h-17" %>
+      <% end %>
+
+      <%= link_to new_route_path, class: "nav-link ml-auto" do %>
+        <img src="/images/return_map.png" alt="return_map" class="btn_effect h-17">
+      <% end %>     
+    </div>
+  </div>
+</div>

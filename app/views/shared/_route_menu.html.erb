@@ -11,10 +11,16 @@
       <%= image_tag "/images/clear_route.png", alt: "search_route", class: "btn_effect h-17 -mt-1" %>
     </button>
 
-    <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
-      <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-17 -mt-1" %>
-    </button>
-    
+    <% if user_signed_in? %>
+      <button id="saveRouteBtn" class="appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" data-save-route-url="<%= save_routes_path %>">
+        <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-17 -mt-1" %>
+      </button>
+    <% else %>
+      <%= button_tag type: 'button', class: "appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]", onclick: "alert('ルートを保存するにはログインが必要です。')" do %>
+        <%= image_tag "/images/save_route.png", alt: "save_route", class: "btn_effect h-17 -mt-1 opacity-50" %>
+      <% end %>
+    <% end %>
+   
     <%= link_to(mode == :car ? car_navigation_routes_path : walk_navigation_routes_path, class: "appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]") do %>
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-17 -mt-1" %>
     <% end %>

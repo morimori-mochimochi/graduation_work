@@ -1,0 +1,42 @@
+<div class="container cute-title mx-auto px-4 py-8">
+  <%= form_with(model: current_user, url: mypage_path, method: :patch, local: true) do |form| %>
+    <div class="card bg-base-200 shadow-xl mb-8">
+      <div class="card-body">
+        <h2 class="card-title">プロフィールの編集</h2>
+        <% if current_user.errors.any? %>
+          <div class="alert alert-error">
+            <ul>
+              <% current_user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">お名前</span>
+          </label>
+          <%= form.text_field :name, class: "input input-bordered", required: true %>
+        </div>
+
+        <div class="form-control mt-4">
+          <label class="label">
+            <span class="label-text">メールアドレス</span>
+          </label>
+          <%= form.email_field :email, class: "input input-bordered", required: true %>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-start mt-6 gap-2">
+      <%= link_to mypage_path, class: "nav-link" do %>
+        <img src="/images/return_before.png" alt="return" class="btn_effect h-17">
+      <% end %>
+
+      <%= form.button class: "nav-link" do %>
+        <%= image_tag "/images/update.png", alt: "update", class: "btn_effect h-17" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

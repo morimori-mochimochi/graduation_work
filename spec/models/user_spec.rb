@@ -27,7 +27,7 @@ RSpec.describe User, type: :model do
       it 'emailが空だと登録できない' do
         @user.email = nil
         @user.valid?
-        expect(@user.errors.full_messages).to include('メールアドレスを入力してください', 'メールアドレスを入力してください', 'メールアドレスは不正な値です')
+        expect(@user.errors.full_messages).to include('メールアドレスを入力してください')
       end
 
       it '登録ずみのEmailは再登録できない' do
@@ -42,8 +42,7 @@ RSpec.describe User, type: :model do
       it 'passwordが空だと登録できない' do
         @user.password = nil
         @user.valid?
-        expect(@user.errors.full_messages).to include('パスワードを入力してください', '確認用パスワードとパスワードの入力が一致しません', 'パスワードを入力してください',
-                                                      'パスワードは6文字以上で入力してください')
+        expect(@user.errors.full_messages).to include('パスワードを入力してください', '確認用パスワードとパスワードの入力が一致しません')
       end
 
       it 'passwordが6文字以下だと表示できない' do

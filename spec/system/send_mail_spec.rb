@@ -88,8 +88,9 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # ActionMailer::Base.deliveries.clearで、テスト実行前に溜まったメールをクリア
     ActionMailer::Base.deliveries.clear
     # button_toはformを生成するため、確認ダイアログのacceptが必要
-    # accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
-    find("img[alt='mail']").click
+    accept_confirm '出発5分前にメールで通知を設定します。よろしいですか？' do
+      find("img[alt='mail']").click
+    end
 
     # 日時部分は変動するため、正規表現でメッセージの存在を確認
     # 例: "2024年07月26日 08:55に通知を設定しました。"

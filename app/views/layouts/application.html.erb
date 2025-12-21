@@ -4,23 +4,26 @@
     <title>Sketto</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
+    <%# CSP: ブラウザに対してページで実行して良いJavaScriptに許可証（nonce/ナンス）を発行 %>
     <%= csp_meta_tag %>
     <%= favicon_link_tag('favicon.ico') %>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide/dist/css/splide.min.css">
     <link rel="stylesheet" href="/assets/builds/application.css" data-turbo-track="reload">
     <script type="module" src="/assets/builds/application.js" data-turbo-track="reload"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  </head>
-
-  <body data-csrf-token="<%= form_authenticity_token %>">
-    <% flash.each do |message_type, message| %>
-      <div class="flash_message <%= message_type %>"><%= message %></div>
-    <% end %>
     <%# GoogleMapsが呼び出す公式推奨のコールバック関数 %>
     <%# callback=initMapに指定した関数はGoogleMapsApiのロード&初期化が終わってから呼ばれる %>
     <script defer 
       src="https://maps.googleapis.com/maps/api/js?key=<%= google_maps_api_key %>&libraries=places,marker,geometry&callback=onGoogleMapsReady"
+      data-turbo-track="reload"
     ></script>
+  </head>
+
+  <%# csrfトークンをJSが取り出しやすいように予備で埋め込んだトークン %>
+  <body data-csrf-token="<%= form_authenticity_token %>" data-turbo="false">
+    <% flash.each do |message_type, message| %>
+      <div class="flash_message <%= message_type %>"><%= message %></div>
+    <% end %>
 
     <%= render 'shared/component/barba_wrapper' do %>
 
@@ -33,7 +36,11 @@
     <div style="min-width:200px;">
         <div class="info-window-facility-name" style="font-weight:bold;font-size:1.1em;margin-bottom:8px;text-align:center;"></div>
         <button class="info-window-route-btn btn btn-sm btn-primary" style="margin-right: 8px;">ルート設定</button>
-        <button class="info-window-save-location btn btn-sm btn-secondary">この場所を保存</button>
+        <% if user_signed_in? %>
+          <button class="info-window-save-location btn btn-sm btn-secondary">この場所を保存</button>
+        <% else %>
+          <button class="btn btn-sm btn-secondary" onclick="alert('場所を保存するにはログインが必要です。')">この場所を保存</button>
+        <% end %>
     </div>
     <ul class="info-window-dropdown-menu bg-base-100 rounded-box p-2 mt-1" hidden>
       <li><button class="info-window-set-start btn btn-sm btn-primary rounded-full">出発地に設定</button></li>

@@ -120,4 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Turbo Drive での遷移時（ログアウト時など）にも初期化を実行
+document.addEventListener('turbo:load', () => {
+  console.log("turbo:load が発火しました。ページを初期化します。");
+  initializePage(document.body);
+});
+
 export  default barba;

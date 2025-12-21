@@ -1,7 +1,7 @@
 <%# class に指定されているクラスは Bootstrap のスタイルを適用するためのもの %>
 <%# navbar → ナビゲーションバー用の基本クラス %>
 <%# navbar-expand-lg → 画面幅が「large（992px）以上」のとき横に展開、それ以下は折りたたむ %>
-<% menu_should_be_visible = user_signed_in? && [walk_routes_path, car_routes_path, locations_path].include?(request.path) %>
+<% menu_should_be_visible = [walk_routes_path, car_routes_path].include?(request.path) %>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <%# container-fluid は、左右に余白がなく画面いっぱいに広がるコンテナ %>
@@ -22,36 +22,30 @@
         <%# <ul> → メニュー項目のリスト %>
         <%  1 # navbar-nav → ナビゲーション用のリストスタイル.横並びに整列 %>
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <%= link_to calendar_path, class: "nav-link" do %>
-              <img src="/images/calendar.png" alt="calendar" class="h-17">
-            <% end %>
-          </li>
-
-          <li class="nav-item">
-            <%= link_to save_routes_path, class: "nav-link" do %>
-              <img src="/images/saved_routes.png" alt="routes_logo" class="h-17">
-            <% end %>
-          </li>
-          
-          <li class="nav-item">
-            <%= link_to locations_path, class: "nav-link" do %>
-              <img src="/images/saved_locations.png" alt="locations_logo" class="h-17">
-            <% end %>
-          </li>
+          <%
+            menu_items = [
+              { path: calendar_path, image: "/images/calendar.png", alt: "calendar", message: "カレンダーの閲覧にはログインが必要です。" },
+              { path: save_routes_path, image: "/images/saved_routes.png", alt: "routes_logo", message: "保存したルートの閲覧にはログインが必要です。" },
+              { path: locations_path, image: "/images/saved_locations.png", alt: "locations_logo", message: "保存した場所の閲覧にはログインが必要です。" }
+            ]
+          %>
+          <% menu_items.each do |item| %>
+            <li class="nav-item">
+              <% if user_signed_in? %>
+                <%= link_to item[:path], class: "nav-link" do %>
+                  <%= image_tag item[:image], alt: item[:alt], class: "h-15" %>
+                <% end %>
+              <% else %>
+                <%= button_tag type: 'button', class: "nav-link bg-transparent border-0", onclick: "alert('#{item[:message]}')" do %>
+                  <%= image_tag item[:image], alt: item[:alt], class: "btn_effect h-15 opacity-50" %>
+                <% end %>
+              <% end %>
+            </li>
+          <% end %>
 
           <li class="nav-item">
             <%= link_to root_path, class: "nav-link" do %>
-              <%= image_tag "/images/top.png", alt: "load_top" %>
-            <% end %>
-          </li>
-
-          <li class="nav-item">
-            <%= button_to destroy_user_session_path,
-              method: :delete, 
-              data: { confirm: "ログアウトしますか？" },
-              class: "bg-transparent border-none p-0 nav-link"  do %>
-              <%= image_tag "/images/logout_button.png", alt: "logout_button", class: "h-9 cursor-pointer" %>
+              <%= image_tag "/images/top.png", alt: "load_top", class: "h-15" %>
             <% end %>
           </li>
         </ul>

@@ -68,14 +68,22 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # 5. ルート情報がsessionStorageに保存されるのを待つ
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
 
-    # 7. 保存ボタンをクリックする
-    find('#saveRouteBtn').click
-
-    # 8. 「ルートを保存しました」というアラートが表示されることを確認し、OKボタンを押す
-    # accept_alertに期待するテキストを渡すことで、アラートが表示されるまで待機してくれる。
-    # また、テキストが一致しない場合はエラーになるため、eqマッチャーでの比較は不要。
-    # デフォルトの待機時間で足りない場合は wait オプションを追加する: page.accept_alert('...', wait: 5)
-    page.accept_alert 'ルートを保存しました'
+    # 7. 保存ボタンをクリックし、アラートが表示されるのを待ってOKを押す
+    # accept_alertのブロック内で操作を行うことで、非同期で表示されるアラートを待機してくれます
+    # テキストを指定せずに待機することで、文言不一致やエラーアラートの場合でも内容を確認できるようにする
+    alert_text = nil
+    begin
+      alert_text = page.accept_alert(wait: 10) do
+        # #saveRouteBtnが画像の場合、親要素をクリックすることでイベント発火を確実にします
+        btn = find('#saveRouteBtn')
+        btn.tag_name == 'img' ? btn.find(:xpath, '..').click : btn.click
+      end
+    rescue Capybara::ModalNotFound => e
+      Rails.logger.error "=== Browser Logs (On Failure) ==="
+      Rails.logger.error page.driver.browser.logs.get(:browser).map(&:message).join("\n")
+      raise e
+    end
+    expect(alert_text).to eq 'ルートを保存しました'
 
     # 10. 保存したルートが一覧に表示されていることを確認する
     # user.reloadを挟むことで、データベースに保存された最新の状態を読み込む
