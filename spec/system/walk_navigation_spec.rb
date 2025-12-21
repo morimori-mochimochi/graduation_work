@@ -3,10 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'ナビゲーション機能', type: :system, js: true do
-  before do
-    visit walk_routes_path
-  end
-
   it '徒歩ルートを設定し、ナビゲーションを開始できる' do
     # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
     visit root_path
@@ -54,8 +50,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
-    # 画像そのものではなく、親要素（リンクまたはボタン）をクリックすることでイベント発火を確実に
-    find("img[alt='startNavi']").find(:xpath, "..").click
+    find("img[alt='startNavi']").click
 
     # 7. ナビゲーションページに遷移したことを確認
     expect(page).to have_current_path(walk_navigation_routes_path)

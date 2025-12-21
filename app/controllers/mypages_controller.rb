@@ -21,7 +21,6 @@ class MypagesController < ApplicationController
     redirect_to root_path, notice: t('.notice')
   end
 
-
   private
 
   def user_params

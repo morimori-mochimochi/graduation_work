@@ -79,8 +79,8 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
         btn.tag_name == 'img' ? btn.find(:xpath, '..').click : btn.click
       end
     rescue Capybara::ModalNotFound => e
-      puts "=== Browser Logs (On Failure) ==="
-      puts page.driver.browser.logs.get(:browser).map(&:message)
+      Rails.logger.error "=== Browser Logs (On Failure) ==="
+      Rails.logger.error page.driver.browser.logs.get(:browser).map(&:message).join("\n")
       raise e
     end
     expect(alert_text).to eq 'ルートを保存しました'
