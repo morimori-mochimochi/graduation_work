@@ -25,5 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
   fadeOutFlash();
 });
 
+// Turbo Drive での遷移後にも実行
+document.addEventListener('turbo:load', () => {
+  fadeOutFlash();
+});
+
 // Barba遷移後のイベント
 barba.hooks.after(() => fadeOutFlash());
