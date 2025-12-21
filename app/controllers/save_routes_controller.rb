@@ -9,7 +9,9 @@ class SaveRoutesController < ApplicationController
   end
 
   # set_save_route で @save_route がセットされる
-  def show; end
+  def show
+    @notify_at = @save_route.notifications.last&.notify_at
+  end
 
   def new
     @save_route = current_user.save_routes.new(save_route_params_for_new)

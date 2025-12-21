@@ -65,6 +65,9 @@
           <p><strong>所要時間:</strong> <%= (@save_route.total_duration / 60.0).ceil %> 分</p>
         <% end %>
 
+        <% if @notify_at.present? %>
+          <p><strong>通知日時:</strong> <%= @notify_at.strftime('%Y年%m月%d日 %H:%M') %></p>
+        <% end %>
       </div>
     </div>
   </div>
