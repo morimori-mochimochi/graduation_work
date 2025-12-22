@@ -3,8 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe "SaveRoutes", type: :request do
-  let(:user) { create(:uset) }
-  let(:save_route) { create(:save_route, user: user) }
+  let(:user) { create(:user) }
+  let(:save_route) do
+    create(:save_route,
+           user: user,
+           name: 'テストルート',
+           travel_mode: 'walking',
+           start_point: { name: '東京駅', lat: 35.6812, lng: 139.7671 },
+           end_point: { mainPoint: { name: '東京タワー', lat: 35.6586, lng: 139.7454 } })
+  end
 
   before { sign_in user }
 
@@ -12,7 +19,7 @@ RSpec.describe "SaveRoutes", type: :request do
     context "正規の署名付きIDでアクセスした場合" do
       it "正常にレスポンスが返る" do
         get save_route_path(save_route)
-        expect(response).to redirect_to(save_routes_path)
+        expect(response).to have_http_status(:success)
       end
     end
 
