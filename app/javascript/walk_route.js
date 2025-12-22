@@ -66,42 +66,47 @@ export async function walkDrawRoute(start, destination){
   return new Promise((resolve, reject) => {
     directionsService.route(request,
       (response, status) => {
-        if (status !== "OK") {
-          console.error("Directionsエラー:", status, response);
-        }
-        if (status === "OK"){
-          window.directionsRenderer.setDirections(response);
-          // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
-          window.routeData.travel_mode = 'WALKING';
-          window.directionsResult = response;
-
-          // ルート情報から総距離と総所要時間を計算して表示
-          const route = response.routes[0];
-          if (route && route.legs && route.legs.length > 0) {
-            let totalDistance = 0;
-            let totalDuration = 0;
-
-            route.legs.forEach(leg => {
-              totalDistance += leg.distance.value; // 距離をメートルで加算
-              totalDuration += leg.duration.value; // 所要時間を秒で加算
-            });
-
-            // 計算結果をグローバルなルート情報に保存
-            window.routeData.total_distance = totalDistance;
-            window.routeData.total_duration = totalDuration;
+        try {
+          if (status !== "OK") {
+            console.error("Directionsエラー:", status, response);
           }
+          if (status === "OK"){
+            window.directionsRenderer.setDirections(response);
+            // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
+            window.routeData.travel_mode = 'WALKING';
+            window.directionsResult = response;
 
-          sessionStorage.setItem("directionsResult", JSON.stringify(response));
+            // ルート情報から総距離と総所要時間を計算して表示
+            const route = response.routes[0];
+            if (route && route.legs && route.legs.length > 0) {
+              let totalDistance = 0;
+              let totalDuration = 0;
 
-          // ルート描画完了のカスタムイベントを発行
-          // イベントにデータを含めたいときはdetailに入れるのがルール
-          const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
-          // 1行目で作ったカスタムイベントを実際に発信する
-          document.dispatchEvent(event);
-          resolve(status);
-        } else {
-          console.error("ルートの取得に失敗しました: " + status);
-          reject(status);
+              route.legs.forEach(leg => {
+                totalDistance += leg.distance.value; // 距離をメートルで加算
+                totalDuration += leg.duration.value; // 所要時間を秒で加算
+              });
+
+              // 計算結果をグローバルなルート情報に保存
+              window.routeData.total_distance = totalDistance;
+              window.routeData.total_duration = totalDuration;
+            }
+
+            sessionStorage.setItem("directionsResult", JSON.stringify(response));
+
+            // ルート描画完了のカスタムイベントを発行
+            // イベントにデータを含めたいときはdetailに入れるのがルール
+            const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
+            // 1行目で作ったカスタムイベントを実際に発信する
+            document.dispatchEvent(event);
+            resolve(status);
+          } else {
+            console.error("ルートの取得に失敗しました: " + status);
+            reject(status);
+          }
+        } catch (error) {
+          console.error("ルート描画処理中にエラーが発生しました:", error);
+          reject(error);
         }
       }
     );
@@ -115,7 +120,7 @@ export function walkRouteBtn() {
     walkDrawRouteBtn.addEventListener("click", async () => {
       // 連打防止：処理中はボタンを無効化し、テキストを変更
       walkDrawRouteBtn.disabled = true;
-      const originalText = walkDrawRouteBtn.textContent;
+      const originalText = walkDrawRouteBtn.innerHTML;
       walkDrawRouteBtn.textContent = "検索中...";
 
       try {
@@ -127,7 +132,7 @@ export function walkRouteBtn() {
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
         walkDrawRouteBtn.disabled = false;
-        walkDrawRouteBtn.textContent = originalText;
+        walkDrawRouteBtn.innerHTML = originalText;
       }
     });
   }else{

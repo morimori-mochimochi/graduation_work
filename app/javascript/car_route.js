@@ -98,12 +98,17 @@ export async function carDrawRoute(map = window.map) {
     }
 
     // 各徒歩ルートを非同期で取得して描画
-    walkingRoutes.forEach(async (walk) => {
-      const walkResponse = await directionsService.route({ ...walk, travelMode: 'WALKING' });
-      const walkRenderer = new google.maps.DirectionsRenderer({ map: map, preserveViewport: true, polylineOptions: { strokeColor: 'blue', strokeOpacity: 0.7, strokeWeight: 5 } });
-      walkRenderer.setDirections(walkResponse);
-      window.carRouteRenderers.push(walkRenderer);
-    });
+    // Promise.allを使って全ての非同期処理の完了を待つ
+    await Promise.all(walkingRoutes.map(async (walk) => {
+      try {
+        const walkResponse = await directionsService.route({ ...walk, travelMode: 'WALKING' });
+        const walkRenderer = new google.maps.DirectionsRenderer({ map: map, preserveViewport: true, polylineOptions: { strokeColor: 'blue', strokeOpacity: 0.7, strokeWeight: 5 } });
+        walkRenderer.setDirections(walkResponse);
+        window.carRouteRenderers.push(walkRenderer);
+      } catch (e) {
+        console.warn("駐車場からの徒歩ルート取得に失敗しました:", e);
+      }
+    }));
 
     // ナビゲーション用にメインの車ルートを保存
     window.routeData.travel_mode = 'DRIVING';
@@ -126,7 +131,7 @@ export function carRouteBtn() {
       // 連打防止：処理中はボタンを無効化し、テキストを変更
       // disabledプロパティ: クリックに無反応になる
       carDrawRouteBtn.disabled = true;
-      const originalText = carDrawRouteBtn.textContent;
+      const originalText = carDrawRouteBtn.innerHTML;
       carDrawRouteBtn.textContent = "検索中...";
 
       try {
@@ -137,7 +142,7 @@ export function carRouteBtn() {
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
         carDrawRouteBtn.disabled = false;
-        carDrawRouteBtn.textContent = originalText;
+        carDrawRouteBtn.innerHTML = originalText;
       }
     });
   }else{
