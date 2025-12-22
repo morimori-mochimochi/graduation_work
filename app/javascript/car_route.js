@@ -5,6 +5,9 @@ function isValidLatLng(point) {
 }
 
 export async function carDrawRoute(map = window.map) {
+  // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
+  sessionStorage.removeItem("directionsResult");
+
   await window.mapApiLoaded;
 
   let originPos;
@@ -120,10 +123,21 @@ export function carRouteBtn() {
 
   if (carDrawRouteBtn) {
     carDrawRouteBtn.addEventListener("click", async() => {
+      // 連打防止：処理中はボタンを無効化し、テキストを変更
+      // disabledプロパティ: クリックに無反応になる
+      carDrawRouteBtn.disabled = true;
+      const originalText = carDrawRouteBtn.textContent;
+      carDrawRouteBtn.textContent = "検索中...";
+
       try {
-        await carDrawRoute(window.map); 
+        await carDrawRoute(window.map);
       } catch (err) {
-        console.error("carDrawRoute failed:", err); //コード中で発生したエラーをログに記録する
+        console.error("carDrawRoute failed:", err);
+        // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
+      } finally {
+        // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
+        carDrawRouteBtn.disabled = false;
+        carDrawRouteBtn.textContent = originalText;
       }
     });
   }else{
