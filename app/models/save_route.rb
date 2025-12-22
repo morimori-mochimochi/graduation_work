@@ -23,4 +23,9 @@ class SaveRoute < ApplicationRecord
     parts << "#{minute}分" if minute.positive?
     parts.join
   end
+
+  # URLヘルパー(save_route_pathなど)が生成するIDをSigned IDに変更
+  def to_param
+    signed_id(purpose: :route_view)
+  end
 end

@@ -22,7 +22,7 @@ class SaveRoutesController < ApplicationController
   def create
     @save_route = current_user.save_routes.build(processed_route_params)
     if @save_route.save
-      render json: { message: t('.notice'), save_route_id: @save_route.id }, status: :created
+      render json: { message: t('.notice'), save_route_id: @save_route.signed_id(purpose: :route_view) }, status: :created
     else
       logger.error "ルートの保存に失敗しました: #{@save_route.errors.full_messages.join(', ')}"
       render json: @save_route.errors, status: :unprocessable_entity
@@ -60,7 +60,10 @@ class SaveRoutesController < ApplicationController
   end
 
   def set_save_route
-    @save_route = current_user.save_routes.find(params[:id])
+    route = SaveRoute.find_signed!(params[:id], purpose: :route_view)
+    @save_route = current_user.save_routes.find(route.id)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+    redirect_to save_routes_path, alert: 'URLが無効です。'
   end
 
   def save_route_params_for_new
