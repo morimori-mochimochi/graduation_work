@@ -21,6 +21,8 @@ ja:
       notice: "ルートを更新しました"
     destroy:
       notice: "ルートを削除しました"
+    set_save_route:
+      alert: 'URLが無効です。'
   notifications:
     create:
       notice: "%{time}に通知を設定しました。"

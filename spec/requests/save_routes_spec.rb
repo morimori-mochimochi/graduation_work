@@ -27,20 +27,21 @@ RSpec.describe "SaveRoutes", type: :request do
       it "一覧ページへリダイレクトされる" do
         # IDを直接指定してアクセス
         get "/save_routes/#{save_route.id}"
-        
+
         expect(response).to redirect_to(save_routes_path)
         follow_redirect!
-        expect(response.body).to include("URLが無効です")
+        expect(response.body).to include("URLが無効です。")
       end
     end
 
     context "改ざんされたIDでアクセスした場合" do
       it "一覧ページへリダイレクトされる" do
         # 正しいIDの末尾を変えてアクセス
-        invalid_id = save_route.signed_id(purpose: :route_view) + "invalid"
+        invalid_id = "#{save_route.to_param}invalid"
         get "/save_routes/#{invalid_id}"
 
         expect(response).to redirect_to(save_routes_path)
+        expect(flash[:alert]).to eq('URLが無効です。')
       end
     end
   end
