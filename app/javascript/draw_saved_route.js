@@ -4,8 +4,6 @@ export function initDrawSavedRoute(container) {
   if (!routeDataElement) {
     return;
   }
-
-  console.log("draw_saved_route.js: ルート描画を開始します。");
   
   const routeData = JSON.parse(routeDataElement.dataset.route);
   const mapElement = container.querySelector('#map');
