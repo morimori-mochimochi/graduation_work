@@ -1,5 +1,3 @@
-console.log("navigation.jsを始めます");
-
 import { fetchCurrentPos } from "./current_pos";
 
 // マーカーを滑らかに動かすための変数
@@ -22,7 +20,6 @@ export function stopNavigation() {
   if (watchId) {
     navigator.geolocation.clearWatch(watchId);
     watchId = null;
-    console.log("ナビゲーションを停止しました");
   }
 
   //描画されたルートを消す
@@ -56,19 +53,14 @@ function showArrivalMessage() {
     setTimeout(() => {
       el.classList.add('opacity-100');
     }, 10);
-    console.log("到着メッセージを表示しました");
   })
 }
 
 async function reroute(currentLatLng, destination, travelMode) {
-  console.log("リルート処理を開始します: ", currentLatLng, destination);
-
   const directionsService = new google.maps.DirectionsService();
-  console.log("rerouteの途中経過1");
 
   // リルートフラグを立てる
   isRerouting = true;
-  console.log("rerouteの途中経過2");
 
   const request = {
     origin: currentLatLng, // 現在地を新しい出発地とする
@@ -76,11 +68,9 @@ async function reroute(currentLatLng, destination, travelMode) {
     travelMode: travelMode, // 移動手段（元の設定を再利用）
     unitSystem: google.maps.UnitSystem.METRIC, // メートル記法で
   };
-  console.log("rerouteの途中経過3");
 
   try {
     const response = await directionsService.route(request);
-    console.log("rerouteの途中経過4");
 
     if (response.status === google.maps.DirectionsStatus.OK) {
       // 成功した場合、DirectionsResultを更新
@@ -91,7 +81,6 @@ async function reroute(currentLatLng, destination, travelMode) {
       // stepIndexをリセットして新たなルートの最初から追跡開始
       stepIndex = 0;
 
-      console.log("💮リルート完了。新ルートが描画された。");
       return true;
     } else {
       console.error("Directions APIからの応答が不正です: ", response.status);
@@ -105,7 +94,6 @@ async function reroute(currentLatLng, destination, travelMode) {
     // 連続リルートを防ぐため、リクエストの結果に関わらず一定時間待つ
     setTimeout(() => {
       isRerouting = false;
-      console.log("リルートクールダウン終了");
     }, REROUTE_COOLDOWN_MS);
   }
 }
@@ -171,7 +159,6 @@ export async function startNavigation() {
 
   // JSON文字列をオブジェクトに変換
   const directionsResult = JSON.parse(storedDirections);
-  console.log("★ startNavigation開始:", directionsResult);
 
   // 最初のルート情報から目的地と移動手段を取得
   const route_info = directionsResult.routes[0];
@@ -198,11 +185,9 @@ export async function startNavigation() {
   // 最初のルート情報を取得
   const route = directionsResult.routes[0].legs[0];
   const steps = route.steps;
-  console.log("ルート情報: steps:", steps);
 
   // ルート全体のルート情報を取得
   const routePath = directionsResult.routes[0].overview_path; //ポリラインの配列を取得
-  console.log("ルート情報: routePath:", routePath);
 
   // 現在地の追跡開始
   // 常に現在地を監視することでユーザの位置が変わるたびにこの関数が呼ばれる
@@ -271,7 +256,6 @@ export async function startNavigation() {
         new google.maps.Polyline({ path: updated_routePath }), // ルート全体のポリライン
         50 // 許容範囲(m)
       );
-      console.log("リルート判定", isNearRoute);
 
       // ルートから大きく逸脱している & リルート処理中でない場合
       if (!isNearRoute && !isRerouting) {
@@ -284,7 +268,6 @@ export async function startNavigation() {
 
       // リルート処理中の場合は、ステップ進行判定をスキップ
       if (isRerouting) {
-        console.log("リルート処理のため、ステップ進行をスキップします");
         return;
       }
 
@@ -302,10 +285,8 @@ export async function startNavigation() {
       if (distance < 30) {
         if (stepIndex < steps.length -1) {
           stepIndex++;
-          console.log("次のステップへ進みます:", steps[stepIndex].instructions);
         }else{
           //　最終目的地に到着
-          console.log("目的地に到着しました。ナビを終了します。");
           stopNavigation();
           showArrivalMessage();
         }
