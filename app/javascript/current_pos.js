@@ -25,7 +25,6 @@ export function fetchCurrentPos() {
         currentPos = newPos;
         window.currentPos = newPos; //既存コード互換のため
         resolve(newPos);
-        console.log("現在地取得完了:", currentPos);
       },
       (err) => reject(err),
       { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
@@ -41,10 +40,8 @@ export function getCurrentPos() {
 //現在地ボタンの初期化
 //ボタンをクリックすると現在地取得とマップの移動＆マーカー表示
 export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCar"]) {
-  console.log("現在地取得開始");
   buttonIds.forEach((buttonId) => {
     const btn = document.getElementById(buttonId);
-    console.log("btn:", btn);
     if (!btn) {
       console.warn(`ボタンが存在しません: ${buttonId}`);
       return;
@@ -57,10 +54,8 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
     btn.dataset.eventAttached = "true";
 
     btn.addEventListener("click", async(e) => {
-      console.log("クリックイベント発火:", e.target);
       try{
         const newPos = await fetchCurrentPos();
-        console.log("現在地取得完了:", newPos);
 
         const map = window.map;
         if (map) {

@@ -103,8 +103,6 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
 
   // 出発時刻をrouteDataに保存
   window.routeData.start_time = departureTime.toTimeString().split(' ')[0]; // "HH:MM:SS"形式
-  
-  console.log("departureTime:", routeData.start_time);
 
   let cumulativeDuration = 0;
   route.legs.forEach((leg, index) => {
@@ -117,11 +115,7 @@ function calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinati
       destinationMinuteEl.value = String(arrivalTime.getMinutes()).padStart(2, '0');
       // 到着時刻をrouteDataに保存
       window.routeData.destination.arrival_time = arrivalTime.toISOString();
-
-      console.log("到着時刻:", routeData.destination.arrival_time);
-
     } else { // 中継点
-
       // 中継点到着時刻を表示するspan要素を取得
       const arrivalTimeEl = document.getElementById(`relayArrivalTime_${index}`);
       
@@ -176,13 +170,9 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
   const arrivalTime = new Date();
   arrivalTime.setHours(destinationHour, destinationMinute, 0, 0);
 
-  console.log("arrivalTime:", arrivalTime);
-
   // 最終到着時刻をrouteDataに保存
   window.routeData.destination.arrival_time = arrivalTime.toISOString();
 
-  console.log("routeData after setting arrivalTime:", window.routeData);
-  
   let cumulativeDuration = 0;
   // reverseでlegsをゴールから近い順に並べ替え
   // ループが回るたびにゴールからの所要時間がcumulativeDurationに累積していく

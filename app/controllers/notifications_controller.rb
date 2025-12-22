@@ -13,6 +13,11 @@ class NotificationsController < ApplicationController
   private
 
   def set_save_route
-    @save_route = current_user.save_routes.find(params[:save_route_id])
+    # to_paramで署名付きIDが渡されるため、find_signed!で復号してから検索する
+    route = SaveRoute.find_signed!(params[:save_route_id], purpose: :route_view)
+    @save_route = current_user.save_routes.find(route.id)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+    # URLが無効、または他人のルートにアクセスしようとした場合
+    redirect_to save_routes_path, alert: t('save_routes.set_save_route.alert')
   end
 end

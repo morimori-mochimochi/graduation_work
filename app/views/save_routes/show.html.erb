@@ -105,14 +105,25 @@
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-17" %>
     <% end %>
 
+    <%# 実行日と出発時刻が設定されている場合のみ通知設定ボタンを表示 %>
     <% if @save_route.execution_date.present? && @save_route.start_time.present? %>
-      <%= button_to save_route_notifications_path(@save_route),
-        method: :post,
-        form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
-        class: "nav-link" do %>
-        <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+      <%# 通知が既に設定されているかチェック %>
+      <% if @notify_at.present? %>
+        <%# 通知設定済み: ボタンを無効化し、薄く表示 %>
+        <%= button_tag type: 'button', class: "nav-link", disabled: true, title: "通知は設定済みです" do %>
+          <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
+        <% end %>
+      <% else %>
+        <%# 通知設定可能: 通常のボタン %>
+        <%= button_to save_route_notifications_path(@save_route),
+          method: :post,
+          form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
+          class: "nav-link" do %>
+          <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+        <% end %>
       <% end %>
     <% else %>
+      <%# 前提条件未達: ボタンを無効化し、アラートを表示 %>
       <%= button_tag type: 'button', class: "nav-link", onclick: "alert('通知を設定するには、編集画面で実行日と出発時刻を設定してください。')" do %>
         <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
       <% end %>
