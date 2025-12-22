@@ -1,6 +1,4 @@
 export async function searchParking() {
-  console.log("searchParkingが呼ばれました");
-  
   // イベントデリゲーションを使って、動的に追加されるボタンにも対応
   document.addEventListener('click', async (event) => {
     // クリックした場所にsearch-nearby-parking-btnがあれば処理を続ける

@@ -86,9 +86,6 @@ export async function walkDrawRoute(start, destination){
             // 計算結果をグローバルなルート情報に保存
             window.routeData.total_distance = totalDistance;
             window.routeData.total_duration = totalDuration;
-
-            console.log(`総移動距離: ${totalDistance}メートル`);
-            console.log(`総所要時間: ${totalDuration}秒`);
           }
 
           sessionStorage.setItem("directionsResult", JSON.stringify(response));

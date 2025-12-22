@@ -20,8 +20,6 @@ export function initSaveRoute(container) {
     saveRouteBtn.addEventListener('click', async() => {
       // 'window.routeData'からルート情報を取得
       const routeData = window.routeData;
-      
-      console.log("routeDataの内容:", routeData);
 
       if (!routeData || !routeData.start?.point || !routeData.destination?.mainPoint?.point || !routeData.travel_mode) {
         console.error('ルート情報が見つかりません');
@@ -31,8 +29,6 @@ export function initSaveRoute(container) {
       const today = new Date();
       const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
       const defaultRouteName = `${formattedDate}のルート`;
-      console.log("defaultRouteName:", defaultRouteName);
-
 
       // LatLngオブジェクトから緯度経度を抽出
       const startPoint = {
@@ -53,7 +49,6 @@ export function initSaveRoute(container) {
           lng: routeData.destination.parkingLot.point.lng()
         } : null
       };
-      console.log("endPointの内容:", endPoint);
 
       // waypointも緯度経度のみを抽出
       const waypointsToSave =  (routeData.waypoints || []).map(wp => ({

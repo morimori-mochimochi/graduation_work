@@ -1,9 +1,6 @@
-console.log("set_marker module loaded");
 import { openInfoWindow } from './info_window.js';
 
 export async function initMarkerEvents() {
-  console.log("マーカーイベントが発火しました");
-
   // 新しいデータ構造をグローバルに初期化
   window.routeData = {
     start: { point: null, name: null },
@@ -19,8 +16,6 @@ export async function initMarkerEvents() {
     
   // #生成済みマップを取得
   const map = window.map;
-  console.log("生成済みマップを取得しました");
-
   if (!map) {
     console.warn("地図が読み込まれていません");
     return;
@@ -32,12 +27,8 @@ export async function initMarkerEvents() {
   // #マップクリックでマーカー配置
   google.maps.event.addListener(window.map, "click", (event) => {
     // Googleマップの既存POIマーカークリックかどうか判定
-    console.log("このマーカーがクリックされました:", selectedMarker);
-    
     if (!event.placeId) {
-      console.log("マップがクリックされました");
-    
-    // #既存のマーカーを削除
+     // #既存のマーカーを削除
       if (selectedMarker) {
         selectedMarker.setMap(null);
         if (window.activeInfoWindow) {
