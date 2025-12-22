@@ -20,8 +20,6 @@ import { initCalendar } from "./calendar_initializer.js"; // 新しいファイ�
 
 // ページ初期化のための共通関数
 function initializePage(container) {
-  console.log("initializePage called for container:", container);
-
   // Splideの初期化
   const el = container.querySelector('#splide');
   if (el) {
@@ -74,8 +72,6 @@ function initializePage(container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("barbaが呼ばれました");
-
   barba.init({
     transitions: [
       {
@@ -83,10 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
         async once({ next }) {
           await window.mapApiLoaded; // Google Maps APIの読み込みを待つ
           initializePage(next.container);
-          console.log("barbaの途中経過1");
         },
         leave({ current }) {
-          console.log("directionsResultが消えないか確認: ", window.directionsResult);
           return new Promise(resolve => {
             document.body.style.backgroundColor = '#FDF8F4';
             current.container.style.transform = 'translateX(0)';
@@ -96,24 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
               current.container.style.opacity = '0';
             });
             setTimeout(resolve, 1000);
-            console.log("ページ切り替えました");
           });
         },
         enter({ next }) {
           document.body.style.backgroundColor = '#FFEFE2';
           next.container.style.transform = 'translateX(100%)';
           next.container.style.transition = 'transform 1s ease, opacity 1s ease';
-          console.log("barbaの途中経過4");
           next.container.style.opacity = '1';
           requestAnimationFrame(() => {
             next.container.style.transform = 'translateX(0)';
-            console.log("barbaが完了しました");
           });
         },
         async afterEnter({ next }) {
           await window.mapApiLoaded; // APIの読み込みを待つ
           initializePage(next.container);
-          console.log("afterEnter hook: ページ初期化完了");
         },
       }
     ]
@@ -122,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Turbo Drive での遷移時（ログアウト時など）にも初期化を実行
 document.addEventListener('turbo:load', () => {
-  console.log("turbo:load が発火しました。ページを初期化します。");
   initializePage(document.body);
 });
 

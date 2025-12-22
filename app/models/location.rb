@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Location < ApplicationRecord # :nodoc:
+  encrypts :address
+
   belongs_to :user
 
   # numericality: 整数であるかどうかや、指定値以上(以下・未満・等しい)かどうかなどを検証
