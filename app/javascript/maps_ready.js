@@ -16,7 +16,6 @@ window.onGoogleMapsReady = async() => {
     await google.maps.importLibrary("places");
     await google.maps.importLibrary("geometry");
     await google.maps.importLibrary("routes");
-    console.log("✅ Google Maps 全ライブラリ初期化完了");
     // すべてのライブラリが読み込めたらPromiseを解決(resolve)します
     resolveMapApiLoaded();
   } catch (err) {

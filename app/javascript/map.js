@@ -1,8 +1,6 @@
 await window.mapApiLoaded;
 
 export function initMap(mapDiv) {
-  console.log("initMap呼び出し直前", !!window.google?.maps, mapDiv);
-
   const gmap = new google.maps.Map(mapDiv, {
     center: { lat: 35.6812, lng: 139.7671 },
     zoom: 15,

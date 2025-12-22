@@ -1,8 +1,6 @@
 
 // #geocodeAddreessはAPi読み込み後に初期化
 window.mapApiLoaded.then(() => {
-  console.log("APIの準備ができました");
-
   let geocoder = new google.maps.Geocoder();
 
   window.geocodeAddress = function(){
