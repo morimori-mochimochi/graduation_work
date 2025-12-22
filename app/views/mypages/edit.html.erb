@@ -26,6 +26,13 @@
           </label>
           <%= form.email_field :email, class: "input input-bordered", required: true %>
         </div>
+
+        <div class="form-control mt-4">
+          <label class="label">
+            <span class="label-text">現在のパスワード <br>（変更には入力が必要です）</span>
+          </label>
+          <%= form.password_field :current_password, class: "input input-bordered", required: true %>
+        </div>
       </div>
     </div>
 

@@ -8,7 +8,7 @@ class MypagesController < ApplicationController
   def edit; end
 
   def update
-    if current_user.update_without_password(user_params)
+    if current_user.update_with_password(user_params)
       redirect_to mypage_path, notice: t('.notice')
     else
       render :edit, status: :unprocessable_entity
@@ -24,6 +24,6 @@ class MypagesController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email)
+    params.require(:user).permit(:name, :email, :current_password)
   end
 end
