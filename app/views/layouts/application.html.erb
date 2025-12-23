@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Sketto</title>
+  <head prefix="og: http://ogp.me/ns#">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%# CSP: ブラウザに対してページで実行して良いJavaScriptに許可証（nonce/ナンス）を発行 %>
     <%= csp_meta_tag %>
+
+    <%= display_meta_tags(default_meta_tags) %>
+
     <%= favicon_link_tag('favicon.ico') %>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide/dist/css/splide.min.css">
     <link rel="stylesheet" href="/assets/builds/application.css" data-turbo-track="reload">
     <script type="module" src="/assets/builds/application.js" data-turbo-track="reload"></script>
