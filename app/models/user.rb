@@ -50,6 +50,22 @@ class User < ApplicationRecord # :nodoc:
     super && !line_connected?
   end
 
+  # LINEログインユーザーはパスワード（current_password）なしで更新できるようにする
+  def update_with_password(params, *options)
+    if line_connected?
+      params.delete(:current_password)
+
+      if params[:password].blank?
+        params.delete(:password)
+        params.delete(:password_confirmation)
+      end
+
+      update(params, *options)
+    else
+      super
+    end
+  end
+
   def self.find_or_initialize_by_line_auth(auth)
     # providerとline_login_uidでユーザーを検索、または新規作成(メモリ上)
     find_or_initialize_by(provider: auth.provider, line_login_uid: auth.uid)
