@@ -25,7 +25,7 @@ async function searchExactPlace(query) {
   // encodeはフォームに入力された日本語によって
   // URLが壊れないよう安全な形に変換する
   try {
-    const response = await fetch (`/locations/search?query=${encodeURIComponent(query)}`);
+    const response = await fetch(`/locations/search?query=${encodeURIComponent(query)}`);
     if (response.ok) {
       const dbLocations = await response.json();
       if (dbLocations.length > 0) {
@@ -34,7 +34,8 @@ async function searchExactPlace(query) {
           location: new google.maps.LatLng(loc.latitude, loc.longitude),
           displayName: loc.name,
           formattedAddress: loc.address,
-          isCustom: true // 自前DBからの結果であることを示すフラグ
+          isCustom: true, // 自前DBからの結果であることを示すフラグ
+          id: loc.id
         }));
         displayPlaces(places);
         return;

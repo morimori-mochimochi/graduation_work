@@ -22,14 +22,16 @@ import { initCalendar } from "./calendar_initializer.js"; // 新しいファイ�
 function initializePage(container) {
   // Splideの初期化
   const el = container.querySelector('#splide');
-  if (el) {
+  if (el && !el.classList.contains('is-initialized')) {
     new Splide(el, {
       type: 'loop',
+      lazyLoad: 'nearby', // 表示されるスライドの近くの画像だけを読み込む
       autoplay: true,
       interval: 3000,
       pauseOnHover: true,
       arrows: true,
-      pagination: true
+      pagination: true,
+      height: '380px', // 高さを指定しないとlazyLoadがうまく動かないことがある
     }).mount();
   }
   

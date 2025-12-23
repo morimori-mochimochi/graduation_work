@@ -33,11 +33,11 @@
             <li class="nav-item">
               <% if user_signed_in? %>
                 <%= link_to item[:path], class: "nav-link" do %>
-                  <%= image_tag item[:image], alt: item[:alt], class: "h-15" %>
+                  <%= image_tag item[:image], alt: item[:alt], class: "h-17" %>
                 <% end %>
               <% else %>
                 <%= button_tag type: 'button', class: "nav-link bg-transparent border-0", onclick: "alert('#{item[:message]}')" do %>
-                  <%= image_tag item[:image], alt: item[:alt], class: "btn_effect h-15 opacity-50" %>
+                  <%= image_tag item[:image], alt: item[:alt], class: "btn_effect h-17 opacity-50" %>
                 <% end %>
               <% end %>
             </li>
@@ -45,7 +45,7 @@
 
           <li class="nav-item">
             <%= link_to root_path, class: "nav-link" do %>
-              <%= image_tag "/images/top.png", alt: "load_top", class: "h-15" %>
+              <%= image_tag "/images/top.png", alt: "load_top", class: "h-17" %>
             <% end %>
           </li>
         </ul>
