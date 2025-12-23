@@ -55,13 +55,13 @@
 @media (max-width: 991.98px) {
   /* スマホ・タブレットのサイズを調整 */
   .navbar-nav .nav-item .nav-link img {
-    height: 30px !important;
+    height: 68px !important;
     width: auto !important; /* 比率維持のため */
   }
 
   /* ログアウトボタンの画像サイズを調整 */
   .navbar-nav .nav-item:last-child img {
-    height: 30px !important; 
+    height: 68px !important; 
     width: auto !important;
   }
   
