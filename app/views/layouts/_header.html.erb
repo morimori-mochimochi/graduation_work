@@ -21,7 +21,8 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <%# <ul> → メニュー項目のリスト %>
         <%  1 # navbar-nav → ナビゲーション用のリストスタイル.横並びに整列 %>
-        <ul class="navbar-nav ms-auto">
+        <%# gap-3 を追加してアイテム間の間隔を広げる（数字は 1~5 で調整可能） %>
+        <ul class="navbar-nav ms-auto gap-0">
           <%
             menu_items = [
               { path: calendar_path, image: "/images/calendar.png", alt: "calendar", message: "カレンダーの閲覧にはログインが必要です。" },
