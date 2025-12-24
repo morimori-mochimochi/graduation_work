@@ -95,7 +95,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     port: 587,
-    domain: 'https://sketto-houmon-support.com',
+    domain: 'sketto-houmon-support.com',
     address: "smtp.gmail.com",
     user_name: ENV["GMAIL_USERNAME"],
     password: ENV["GMAIL_PASSWORD"],
