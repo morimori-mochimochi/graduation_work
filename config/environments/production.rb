@@ -90,11 +90,8 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # 初期化の最後に設定を適用することで、他（Devise等）による上書きを防ぎます
-  config.after_initialize do
-    ActionMailer::Base.default_url_options = { host: 'sketto-houmon-support.com', protocol: 'https' }
-    Rails.application.routes.default_url_options = { host: 'sketto-houmon-support.com', protocol: 'https' }
-  end
+  config.action_mailer.default_url_options = { host: 'sketto-houmon-support.com', protocol: 'https' }
+  Rails.application.routes.default_url_options = { host: 'sketto-houmon-support.com', protocol: 'https' }
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
