@@ -29,6 +29,8 @@ export function openInfoWindow(marker, place) {
     const dropdown_menu = document.querySelector(".info-window-dropdown-menu");
     const save_btn = document.querySelector(".info-window-save-location");
 
+    console.log("save_btnが定義された");
+
     if (start_btn) {
       start_btn.addEventListener("click", function() {
         window.routeData.start = { point: place.point, name: place.name };
@@ -79,11 +81,20 @@ export function openInfoWindow(marker, place) {
 
     if (save_btn) {
       save_btn.addEventListener("click", function() {
-        const position = marker.getPosition ? marker.getPosition() : marker.position;
+        console.log("保存ボタンがクリックされました");
+        console.log("location[address]", place.address);
+        console.log("location[lat]", place.point.lat());
+        console.log("location[lng]", place.point.lng());
+
+        // placeオブジェクトから直接座標を取得する
+        // marker.positionはAdvancedMarkerElementの場合LatLngLiteral({lat: number, lng: number})を返すことがあり、.lat()メソッドがない場合があるため
+        const lat = typeof place.point.lat === 'function' ? place.point.lat() : place.point.lat;
+        const lng = typeof place.point.lng === 'function' ? place.point.lng() : place.point.lng;
+
         const params = new URLSearchParams({
           'location[address]': place.address,
-          'location[lat]': position.lat(),
-          'location[lng]': position.lng()
+          'location[lat]': lat,
+          'location[lng]': lng
         });
   
         // new_location_path にクエリパラメータを付けて遷移
