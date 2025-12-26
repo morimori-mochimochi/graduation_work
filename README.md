@@ -31,8 +31,28 @@
 カレンダー上に保存したルート表示するので、一眼で実施予定ルートを確認可能です。
 
 # ◾️使用方法
-<a href="https://gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c"><video width="600" autoplay muted loop playsinline controls><source src="https://i.gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c.mp4" type="video/mp4"/></video></a>
+  
+## 地点を選択
+https://github.com/user-attachments/assets/f696022c-5720-42f6-a17d-ace0b799c00f
+  
+## 地点を選択
+https://github.com/user-attachments/assets/59a937c6-46b7-4841-bfa8-ac294dd3dbb6
+  
+## ルート描画
+https://github.com/user-attachments/assets/14dec8bf-4495-498d-9ff4-dc4a454ba43e
 
+## ルート保存
+https://github.com/user-attachments/assets/ea45d2bf-fefb-4c15-9721-8c12781aafcb
+
+## ルート編集
+https://github.com/user-attachments/assets/d5805e99-19d5-4eff-9133-256ebb30b852
+
+## ルート編集
+https://github.com/user-attachments/assets/726b9201-d958-49cc-b874-50d14cefa2f6
+
+## 通知設定
+https://github.com/user-attachments/assets/6c147096-0f85-4fe3-93e3-7b17cb99139a
+  
 # ◾️ユーザーの獲得について
 
 ### 1 SNS(主にX)での利用者、レビューの獲得を行います。
