@@ -14,7 +14,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "destinations", force: :cascade do |t|
+  create_table "destinations", force: :cascade do |t|#
     t.bigint "location_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -54,7 +54,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
     t.index ["trip_plan_id"], name: "index_notify_times_on_trip_plan_id"
   end
 
-  create_table "parkings", force: :cascade do |t|
+  create_table "parkings", force: :cascade do |t|#
     t.decimal "lat", precision: 10, scale: 6, null: false
     t.decimal "lon", precision: 10, scale: 6, null: false
     t.string "address", null: false
@@ -65,7 +65,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
     t.string "floor"
   end
 
-  create_table "route_segments", force: :cascade do |t|
+  create_table "route_segments", force: :cascade do |t|#
     t.bigint "starting_point_id", null: false
     t.bigint "destination_id", null: false
     t.decimal "distance", precision: 8, scale: 2, null: false
@@ -76,7 +76,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
     t.index ["starting_point_id"], name: "index_route_segments_on_starting_point_id"
   end
 
-  create_table "routes", force: :cascade do |t|
+  create_table "routes", force: :cascade do |t|#
     t.bigint "user_id", null: false
     t.decimal "distance", precision: 8, scale: 2, null: false
     t.integer "duration", null: false
@@ -106,7 +106,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
     t.index ["user_id"], name: "index_save_routes_on_user_id"
   end
 
-  create_table "selected_route_segments", force: :cascade do |t|
+  create_table "selected_route_segments", force: :cascade do |t|#
     t.bigint "route_segment_id", null: false
     t.integer "order_index", null: false
     t.datetime "created_at", null: false
@@ -116,14 +116,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_11_102059) do
     t.index ["route_segment_id"], name: "index_selected_route_segments_on_route_segment_id"
   end
 
-  create_table "starting_points", force: :cascade do |t|
+  create_table "starting_points", force: :cascade do |t|#
     t.bigint "location_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["location_id"], name: "index_starting_points_on_location_id"
   end
 
-  create_table "trip_plans", force: :cascade do |t|
+  create_table "trip_plans", force: :cascade do |t|#
     t.bigint "user_id", null: false
     t.bigint "route_segment_id", null: false
     t.datetime "departure_time", null: false
