@@ -30,6 +30,9 @@
 ## 4 カレンダーでルートを閲覧
 カレンダー上に保存したルート表示するので、一眼で実施予定ルートを確認可能です。
 
+# ◾️使用方法
+[![Image from Gyazo](https://i.gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c.gif)](https://gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c)
+
 # ◾️ユーザーの獲得について
 
 ### 1 SNS(主にX)での利用者、レビューの獲得を行います。
@@ -59,5 +62,3 @@
 # ◾️ER図
 [![Image from Gyazo](https://i.gyazo.com/7e96586223b27f37598947e562bb49f4.jpg)](https://gyazo.com/7e96586223b27f37598947e562bb49f4)
 [URLはこちら](https://app.diagrams.net/?src=about#G1lW5tENcvqQzEesh9Gtb2Tra8_Y00TAHI#%7B%22pageId%22%3A%22R2lEEEUBdFMjLlhIrx00%22%7D)
-
-[![Image from Gyazo](https://i.gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c.gif)](https://gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c)
