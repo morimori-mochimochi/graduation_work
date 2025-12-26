@@ -31,7 +31,7 @@
 カレンダー上に保存したルート表示するので、一眼で実施予定ルートを確認可能です。
 
 # ◾️使用方法
-[![Image from Gyazo](https://i.gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c.gif)](https://gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c)
+<a href="https://gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c"><video width="600" autoplay muted loop playsinline controls><source src="https://i.gyazo.com/2d574a61ee5b20fb4b4f1564e6de290c.mp4" type="video/mp4"/></video></a>
 
 # ◾️ユーザーの獲得について
 
