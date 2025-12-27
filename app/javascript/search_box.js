@@ -148,13 +148,30 @@ function displayPlaces(places) {
     item.style.borderBottom = "1px solid #eee";
     item.style.padding = "5px";
     item.style.cursor = "pointer";
+    item.style.display = "flex";
+    // alignItems: "center": 横並びにした際、画像とテキストの高さが違っても、上下中央に揃う
+    item.style.alignItems = "center";
+    item.style.gap = "15px";
+
+    // 画像
+    if (place.photos && place.photos.length > 0) {
+      const img = document.createElement("img");
+      img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
+      img.style.width = "60px";
+      img.style.height = "60px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "4px";
+      item.appendChild(img);
+    }
+
+    const infoDiv = document.createElement("div");
+    infoDiv.style.flex = "1";
       
     // 自前DBからの結果の場合、「保存したスポット」アイコンとテキストを表示
     if (place.isCustom) {
       const savedSpotDiv = document.createElement("div");
       savedSpotDiv.style.display = "flex";
       savedSpotDiv.style.alignItems = "center";
-      savedSpotDiv.style.justifyContent = "center";
       savedSpotDiv.style.marginBottom = "5px";
 
       const savedIcon = document.createElement("img");
@@ -171,35 +188,26 @@ function displayPlaces(places) {
       
       savedSpotDiv.appendChild(savedIcon);
       savedSpotDiv.appendChild(savedText);
-      item.appendChild(savedSpotDiv);
+      infoDiv.appendChild(savedSpotDiv);
     }
 
     // 施設名
     const name = document.createElement("h4");
     name.textContent = place.displayName;
     name.style.margin = "0 0 3px 0";
+    name.style.fontSize = "1em";
 
     // 住所
     const address = document.createElement("p");
     address.textContent = place.formattedAddress || "";
-    address.style.margin = "0 0 3px 0";
+    address.style.margin = "0";
     address.style.fontSize = "0.9em";
     address.style.color = "#555";
 
-    // 画像
-    let img;
-    if (place.photos && place.photos.length > 0) {
-      img = document.createElement("img");
-      img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
-      img.style.display = "block";
-      // 検索結果コンテナの中央に配置
-      img.style.margin = "0 auto";
-      img.style.marginBottom = "3px";
-    }
+    infoDiv.appendChild(name);
+    infoDiv.appendChild(address);
+    item.appendChild(infoDiv);
 
-    item.appendChild(name);
-    if (img) item.appendChild(img);
-    item.appendChild(address);
     container.appendChild(item);
 
     //クリックでマップを移動
