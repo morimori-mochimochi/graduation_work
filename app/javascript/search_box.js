@@ -109,9 +109,11 @@ function displayPlaces(places) {
     container.style.overflowY = "auto";
     container.style.border = "1px solid #ccc";
     container.style.padding = "5px";
-    container.style.marginTop = "10px";
+    container.style.margin = "10px auto";
+    container.style.width = "90%";
     container.style.backgroundColor = "#FFFFFF";
     container.style.borderRadius = "8px"; 
+    container.style.textAlign = "center";
 
     mapDiv.parentNode.insertBefore(container, mapDiv.nextSibling);
   } else {
@@ -151,6 +153,7 @@ function displayPlaces(places) {
       const savedSpotDiv = document.createElement("div");
       savedSpotDiv.style.display = "flex";
       savedSpotDiv.style.alignItems = "center";
+      savedSpotDiv.style.justifyContent = "center";
       savedSpotDiv.style.marginBottom = "5px";
 
       const savedIcon = document.createElement("img");
@@ -188,6 +191,8 @@ function displayPlaces(places) {
       img = document.createElement("img");
       img.src = place.photos[0].getURI({ maxWidth: 100, maxHeight: 100 });
       img.style.display = "block";
+      // 検索結果コンテナの中央に配置
+      img.style.margin = "0 auto";
       img.style.marginBottom = "3px";
     }
 
