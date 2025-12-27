@@ -151,7 +151,6 @@ function displayPlaces(places) {
     item.style.display = "flex";
     // alignItems: "center": 横並びにした際、画像とテキストの高さが違っても、上下中央に揃う
     item.style.alignItems = "center";
-    item.style.gap = "15px";
 
     // 画像
     if (place.photos && place.photos.length > 0) {
@@ -161,6 +160,7 @@ function displayPlaces(places) {
       img.style.height = "60px";
       img.style.objectFit = "cover";
       img.style.borderRadius = "4px";
+      img.style.marginRight = "15px";
       item.appendChild(img);
     }
 
