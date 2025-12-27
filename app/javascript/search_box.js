@@ -56,6 +56,7 @@ async function searchExactPlace(query) {
     locationBias: center,
   };
 
+  // searchByText: Places LibraryのPlaceクラスが提供するメソッド
   const result = await Place.searchByText(request);
 
   // #結果が一件もなければ終了
