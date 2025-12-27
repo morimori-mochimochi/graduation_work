@@ -112,6 +112,7 @@ function displayPlaces(places) {
     container.style.padding = "5px";
     container.style.margin = "10px auto";
     container.style.width = "90%";
+    container.style.maxWidth = "700px";
     container.style.backgroundColor = "#FFFFFF";
     container.style.borderRadius = "8px"; 
     container.style.textAlign = "center";
