@@ -2,7 +2,7 @@ let resolveMapApiLoaded, rejectMapApiLoaded;
 
 // アプリケーション全体でGoogle Maps APIの読み込み状態を管理するためのPromise
 window.mapApiLoaded = new Promise((resolve, reject) => {
-  // Promiseのresolve/rejectをグローバル変数に保持して、他の場所から制御できるようにします
+  // Promiseのresolve/rejectをグローバル変数に保持して、他の場所から制御できるようにする
   resolveMapApiLoaded = resolve;
   rejectMapApiLoaded = reject;
 });
