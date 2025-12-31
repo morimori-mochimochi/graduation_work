@@ -161,3 +161,22 @@ function openParkingInfoWindow(marker, place, pointIndex) {
     });
   });
 }
+
+export function initClearParkingMarkersOnRouteDraw() {
+  const carBtn = document.getElementById("carDrawRoute");
+
+  const clearMarkers = () => {
+    if (window.parkingMarkers) {
+      window.parkingMarkers.forEach(m => m.map = null);
+      window.parkingMarkers = [];
+    }
+  };
+
+  // イベントリスナーの重複登録を防止
+  if (carBtn && !carBtn.dataset.parkingClearAttached) {
+    // clickしたらclearMarkersを呼ぶ
+    // clearMarkers() と書くと： 「今すぐこの関数を実行して！」という意味になる。
+    carBtn.addEventListener("click", clearMarkers);
+    carBtn.dataset.parkingClearAttached = "true";
+  }
+}

@@ -38,7 +38,7 @@ export function resetRoute() {
 
   // 5. UI表示をリセット
   const startPointEl = document.getElementById('startPoint');
-  if (startPointEl) startPointEl.textContent = '出発地';
+  if (startPointEl) startPointEl.textContent = '現在地';
 
   const destinationPointEl = document.getElementById("destinationPoint");
   if (destinationPointEl) destinationPointEl.textContent = '目的地';
