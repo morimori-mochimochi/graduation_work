@@ -5,7 +5,7 @@ import "./maps_ready";
 import "./geocode_address"
 import { initMarkerEvents } from "./set_marker";
 import { initSearchBox} from "./search_box";
-import { searchParking, initClearParkingMarkersOnRouteDraw } from "./search_parking";
+import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
@@ -49,7 +49,6 @@ function initializePage(container) {
       if (id === 'map') {
         initMarkerEvents();
         searchParking();
-        initClearParkingMarkersOnRouteDraw();
         walkRouteBtn();
         carRouteBtn();
         initCurrentPosBtn();
