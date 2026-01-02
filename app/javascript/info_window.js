@@ -133,6 +133,14 @@ export function createRelayPointElement(waypoint, index) {
   // templateをクローンして作った中継点UIから.relay-point-nameを探す
   clone.querySelector('.relay-point-name').textContent = waypoint.mainPoint.name;
 
+  // 駐車場が設定されている場合は表示を復元する
+  if (waypoint.parkingLot) {
+    const parkingInfoEl = clone.querySelector('.parking-info');
+    if (parkingInfoEl) {
+      parkingInfoEl.textContent = `P: ${waypoint.parkingLot.name || '選択した駐車場'}`;
+    }
+  }
+
   // 到着時刻表示用のspanにIDを割り当て、スタイルを適用
   const arrivalTimeEl = clone.querySelector('.relay-arrival-time');
   arrivalTimeEl.id = `relayArrivalTime_${index}`;

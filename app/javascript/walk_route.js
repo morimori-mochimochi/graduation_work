@@ -78,6 +78,10 @@ export async function walkDrawRoute(start, destination){
 
             // ルート情報から総距離と総所要時間を計算して表示
             const route = response.routes[0];
+            if (!route) {
+              console.error("ルートが見つかりませんでした:", response);
+              throw new Error("ルートが見つかりませんでした。");
+            }
             if (route && route.legs && route.legs.length > 0) {
               let totalDistance = 0;
               let totalDuration = 0;
@@ -102,9 +106,11 @@ export async function walkDrawRoute(start, destination){
             resolve(status);
           } else {
             console.error("ルートの取得に失敗しました: " + status);
+            console.error("Directions API error:", status, response);
             reject(status);
           }
         } catch (error) {
+          alert("ルートの検索に失敗しました: " + error.message);
           console.error("ルート描画処理中にエラーが発生しました:", error);
           reject(error);
         }

@@ -17,12 +17,15 @@ export async function searchParking() {
 
     // window.routeData.destination.mainPoint.point に入っている値を取り出す
     if (pointType === 'destination') {
+      // targetPointを中心として周辺の駐車場を探す
+      // もしデータが存在しない場合でもプログラムがエラーで停止することなくundefindedを返す
       targetPoint = window.routeData?.destination?.mainPoint?.point;
     } else if (pointType === 'relay' && relayPointItem) {
-      // relay-point-itemからインデックスを取得(中継点の「何番目か」を特定する)
+      // container.children: 中継点リストの親要素に含まれるすべての子要素（中継点の行）を取得する。
       const container = document.getElementById('relayPointsContainer');
-      // NodeListをArrayに変換してindexOfを使用(直接は使えないため)
-      // 押したボタンが含まれる.relay-point-itemが何番目か取得
+      // Array.from: 取得した子要素のリストをJSに変換
+      // indexOf(relayPointItem): クリックされたボタンが含まれる行が配列の中で何番目にあるか探す
+      // ex.)上から2番目の中継点なら1がpointIndexに代入される
       pointIndex = Array.from(container.children).indexOf(relayPointItem);
       if (pointIndex !== -1) {
         // pointIndex見つかったら中継点データの中から該当番号の座標を取り出す
@@ -46,7 +49,8 @@ export async function searchParking() {
     }
 
     try {
-      // Placesライブラリをロード
+      // Placesライブラリのみ取り出してPlaceという変数に代入する
+      // {}で囲むことでコードを端的にまとめられる
       const { Place } = await google.maps.importLibrary("places");
 
       // 検索条件を設定
@@ -160,4 +164,23 @@ function openParkingInfoWindow(marker, place, pointIndex) {
       infoWindow.close();
     });
   });
+}
+
+export function initClearParkingMarkersOnRouteDraw() {
+  const carBtn = document.getElementById("carDrawRoute");
+
+  const clearMarkers = () => {
+    if (window.parkingMarkers) {
+      window.parkingMarkers.forEach(m => m.map = null);
+      window.parkingMarkers = [];
+    }
+  };
+
+  // イベントリスナーの重複登録を防止
+  if (carBtn && !carBtn.dataset.parkingClearAttached) {
+    // clickしたらclearMarkersを呼ぶ
+    // clearMarkers() と書くと： 「今すぐこの関数を実行して！」という意味になる。
+    carBtn.addEventListener("click", clearMarkers);
+    carBtn.dataset.parkingClearAttached = "true";
+  }
 }
