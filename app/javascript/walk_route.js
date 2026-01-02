@@ -78,7 +78,6 @@ export async function walkDrawRoute(start, destination){
 
             // ルート情報から総距離と総所要時間を計算して表示
             const route = response.routes[0];
-            let route = response.routes[0];
             if (!route) {
               console.error("ルートが見つかりませんでした:", response);
               throw new Error("ルートが見つかりませんでした。");
