@@ -2,7 +2,7 @@ await window.mapApiLoaded;
 
 export function initMap(mapDiv) {
   const gmap = new google.maps.Map(mapDiv, {
-    center: { lat: 35.6812, lng: 139.7671 },
+    center: fetchCurrentPos(),
     zoom: 15,
     mapId: "56e6f7b7602076fe1ca74db5"
   });
