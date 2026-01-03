@@ -4,7 +4,7 @@ await window.mapApiLoaded;
 
 export function initMap(mapDiv) {
   const gmap = new google.maps.Map(mapDiv, {
-    center: { lat: 35.681236, lng: 139.767125 }, // 初期値（例: 東京駅）を設定
+    center: { lat: 35.681236, lng: 139.767125 }, // 即座にマップを表示するために初期値を具体的に設定
     zoom: 15,
     mapId: "56e6f7b7602076fe1ca74db5"
   });
