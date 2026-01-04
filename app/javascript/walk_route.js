@@ -3,7 +3,9 @@ import { fetchCurrentPos } from "./current_pos"
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
 }
-
+// export: この関数を他のファイルでも使えるように公開する、の意味
+// async: この関数は非同期処理を行います、の意味。
+// awaitを使って処理を一時待機できる
 export async function walkDrawRoute(start, destination){
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
