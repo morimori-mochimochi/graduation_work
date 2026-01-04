@@ -4,16 +4,15 @@ class CalendarsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    # pluckを使うことで、必要なカラムだけを効率的にDBから取得します。
-    # これにより、不要なデータをメモリにロードすることを防ぎ、パフォーマンスが向上します。
-    events_data = current_user.save_routes
-                              .where.not(execution_date: nil)
-                              .pluck(:id, :name, :start_time, :execution_date)
-    @events = events_data.map do |id, name, start_time, execution_date|
+    # SaveRoutesControllerでfind_signed!を使用しているため、signed_idを取得するためにモデルオブジェクトが必要です
+    routes = current_user.save_routes.where.not(execution_date: nil)
+    @events = routes.map do |route|
       {
-        title: "#{name} #{start_time&.strftime('%H:%M')}",
-        start: execution_date,
-        url: save_route_path(id)
+        title: "#{route.name} #{route.start_time&.strftime('%H:%M')}",
+        start: route.execution_date,
+        # 署名付きIDを使用して安全にルートを参照
+        # purpose: :route_view: 別の用途で作られた署名付きIDが使われても弾く
+        url: save_route_path(route.signed_id(purpose: :route_view))
       }
     end
   end
