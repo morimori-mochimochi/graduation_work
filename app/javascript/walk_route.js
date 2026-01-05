@@ -6,7 +6,7 @@ function isValidLatLng(point) {
 // export: この関数を他のファイルでも使えるように公開する、の意味
 // async: この関数は非同期処理を行います、の意味。
 // awaitを使って処理を一時待機できる
-export async function walkDrawRoute(start, destination){
+export async function walkDrawRoute() {
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
 
@@ -71,9 +71,6 @@ export async function walkDrawRoute(start, destination){
     directionsService.route(request,
       (response, status) => {
         try {
-          if (status !== "OK") {
-            console.error("Directionsエラー:", status, response);
-          }
           if (status === "OK"){
             window.directionsRenderer.setDirections(response);
             // DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
@@ -109,7 +106,6 @@ export async function walkDrawRoute(start, destination){
             document.dispatchEvent(event);
             resolve(status);
           } else {
-            console.error("ルートの取得に失敗しました: " + status);
             console.error("Directions API error:", status, response);
             reject(status);
           }
