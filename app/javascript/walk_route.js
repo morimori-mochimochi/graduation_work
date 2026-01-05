@@ -52,6 +52,8 @@ export async function walkDrawRoute(start, destination){
     if (location && isValidLatLng(location)) {
       waypoints.push({
         location: location,
+        // stopover: trueは経由地で立ち寄ることを意味する
+        // falseにすると通過点として扱われ、その地点を通過するだけになる
         stopover: true
       });
     }
@@ -74,7 +76,7 @@ export async function walkDrawRoute(start, destination){
           }
           if (status === "OK"){
             window.directionsRenderer.setDirections(response);
-            // # DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
+            // DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
             window.routeData.travel_mode = 'WALKING';
             window.directionsResult = response;
 
