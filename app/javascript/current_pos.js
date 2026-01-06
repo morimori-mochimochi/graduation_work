@@ -76,7 +76,7 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
 
           setTimeout( () => {
             window.currentPosMarker.setAnimation(null);
-          }, 1500);
+          }, 1300);
         }else{
           console.warn("マップがまだ存在しません")
         }
