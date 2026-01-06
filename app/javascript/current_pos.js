@@ -71,8 +71,12 @@ export function initCurrentPosBtn(buttonIds = ["currentPosBtn", "currentPosBtnCa
             position: newPos,
             map: map,
             title: "現在地",
-            animation: google.maps.Animation.BOUNCE,
+            animation: google.maps.Animation.BOUNCE
           });
+
+          setTimeout( () => {
+            window.currentPosMarker.setAnimation(null);
+          }, 1500);
         }else{
           console.warn("マップがまだ存在しません")
         }
