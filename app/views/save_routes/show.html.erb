@@ -67,7 +67,12 @@
 
         <% if @notify_at.present? %>
           <p><strong>通知日時:</strong> <%= @notify_at.strftime('%Y年%m月%d日 %H:%M') %></p>
-          <p><strong>通知先メールアドレス:</strong> <%= current_user.email %></p>
+          <div class=" flex items-center space-x-5">
+            <p><strong>通知先メールアドレス:</strong> <%= current_user.email %></p>
+            <%= link_to edit_mypage_path do %>
+              <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
