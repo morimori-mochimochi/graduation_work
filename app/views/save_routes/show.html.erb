@@ -1,3 +1,6 @@
+<%# JSONデータは複数回使用するため、変数に格納して再利用（パフォーマンス改善） %>
+<% route_json = @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]) %>
+
 <div class="container cute-title mx-auto px-4 py-8">
   <div class="flex justify-between items-center md-6">
     <h1 class="text-2xl font-bold"><%= @save_route.name %>の詳細</h1>
@@ -8,20 +11,15 @@
       <div class="space-y-2">
 
         <% if @save_route.execution_date.present? %>
-          <p><strong>実行日:</strong> <%= @save_route.execution_date.strftime('%Y年%m月%d日') %></p>
+          <p><strong>実行日:</strong> <%= @save_route.formatted_execution_date %></p>
         <% end %>
 
         <% if @save_route.travel_mode.present? %>
-          <p><strong>移動手段:</strong>
-            <%= case @save_route.travel_mode
-                when 'driving' then '車'
-                when 'walking' then '徒歩'
-                end %>
-          </p>
+          <p><strong>移動手段:</strong> <%= @save_route.travel_mode_ja %></p>
         <% end %>
 
         <% if @save_route.start_time.present? %>
-          <p><strong>出発時刻:</strong> <%= @save_route.start_time.strftime('%H:%M') %></p>
+          <p><strong>出発時刻:</strong> <%= @save_route.formatted_start_time %></p>
         <% end %>
 
         <p><strong>出発点:</strong> <%= @save_route.start_point['name'] %></p>
@@ -58,21 +56,27 @@
         </p>
 
         <% if @save_route.total_distance.present? %>
-          <p><strong>総移動距離:</strong> <%= (@save_route.total_distance / 1000.0).round(2) %> km</p>
+          <p><strong>総移動距離:</strong> <%= @save_route.total_distance_km %> km</p>
         <% end %>
 
         <% if @save_route.total_duration.present? %>
-          <p><strong>所要時間:</strong> <%= (@save_route.total_duration / 60.0).ceil %> 分</p>
+          <p><strong>所要時間:</strong> <%= @save_route.total_duration_minutes %> 分</p>
         <% end %>
 
         <% if @notify_at.present? %>
           <p><strong>通知日時:</strong> <%= @notify_at.strftime('%Y年%m月%d日 %H:%M') %></p>
+          <div class=" flex items-center space-x-5">
+            <p><strong>通知先メールアドレス:</strong> <%= current_user.email %></p>
+            <%= link_to edit_mypage_path do %>
+              <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
   </div>
   <div id="route-data"
-       data-route="<%= @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]) %>"
+       data-route="<%= route_json %>"
        style="display: none;">
   </div>
   <div id="map"></div>
@@ -97,7 +101,7 @@
       id: 'start-navigation-from-saved-route',
       class: 'nav-link',
       data: {
-        route: @save_route.to_json(only: [:travel_mode, :start_point, :end_point, :waypoints]),
+        route: route_json,
         car_navi_path: car_navigation_routes_path,
         walk_navi_path: walk_navigation_routes_path
       }
