@@ -16,6 +16,8 @@ export function initSetTime() {
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
+    // calculateTimesは引数が多いのでラップ関数を作成
+    // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っています。
     const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
     startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
     startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
