@@ -79,32 +79,40 @@ https://sketto-houmon-support.com/
 > [!IMPORTANT]
 > 一部のアニメーション機能が落ちる可能性があるため、ブラウザはGoogle Chromeをご利用ください。
 <br>
+
 ## 地点を選択
 https://github.com/user-attachments/assets/f696022c-5720-42f6-a17d-ace0b799c00f
+
 <br>
     
 ## 地点を選択
 https://github.com/user-attachments/assets/59a937c6-46b7-4841-bfa8-ac294dd3dbb6
+
 <br>
     
 ## ルート描画
 https://github.com/user-attachments/assets/14dec8bf-4495-498d-9ff4-dc4a454ba43e
+
 <br> 
     
 ## ルート保存
 https://github.com/user-attachments/assets/ea45d2bf-fefb-4c15-9721-8c12781aafcb
+
 <br>
     
 ## ルート編集
 https://github.com/user-attachments/assets/d5805e99-19d5-4eff-9133-256ebb30b852
+
 <br> 
     
 ## ルート編集
 https://github.com/user-attachments/assets/726b9201-d958-49cc-b874-50d14cefa2f6
+
 <br>
   
 ## 通知設定
 https://github.com/user-attachments/assets/6c147096-0f85-4fe3-93e3-7b17cb99139a
+
 <br>
 <br>
 
