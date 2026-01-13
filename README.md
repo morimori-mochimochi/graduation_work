@@ -145,7 +145,7 @@ https://github.com/user-attachments/assets/6c147096-0f85-4fe3-93e3-7b17cb99139a
 <br>
 
 <a id="anchor10"></a>    
-# 10. 📈 ER図　📉
+# 10. 📈 ER図 📉
   
     
 [![Image from Gyazo](https://i.gyazo.com/7e96586223b27f37598947e562bb49f4.jpg)](https://gyazo.com/7e96586223b27f37598947e562bb49f4)
