@@ -128,7 +128,7 @@ https://github.com/user-attachments/assets/6c147096-0f85-4fe3-93e3-7b17cb99139a
 | ログイン | devise + omniauth-line |
 | 開発環境 | Docker |
 | デプロイ | Render |
-| 地図 | Google maps Javascript |
+| 地図 | Google maps Javascript API|
 | 住所を地図座標に変換 | Geocoding API |
 | ルートのリアルタイム追跡 | Directions API + Maps Javascript API + Geolocation API |
 | 施設名の曖昧検索 | Places API |
