@@ -52,23 +52,18 @@ export function initRouteInformation() {
       timeString += `${hours}時間`;
     }
     timeString += `${minutes}分`;
-    // ルート情報を表示
-    const infoHtml = `
-      <div class="route-info-content" style="padding: 10px;">
-        <h4 style="margin: 0 0 10px 0; font-size: 1.1em; color: #333;">ルート情報</h4>
-        <div style="display: flex; justify-content: center; gap: 20px;">
-          <div>
-            <span style="font-size: 0.9em; color: #666;">総移動距離</span><br>
-            <span style="font-size: 1.2em; font-weight: bold;">${distanceKm} km</span>
-          </div>
-          <div>
-            <span style="font-size: 0.9em; color: #666;">所要時間</span><br>
-            <span style="font-size: 1.2em; font-weight: bold;">${timeString}</span>
-          </div>
-        </div>
-      </div>
-    `;
 
-    resultContainer.innerHTML = infoHtml;
+    const template = document.getElementById('route-info-template');
+    if (template) {
+      const clone = template.content.cloneNode(true);
+
+      const distanceEl = clone.querySelector('.route-total-distance');
+      if (distanceEl) distanceEl.textContent = `${distanceKm} km`;
+
+      const durationEl = clone.querySelector('.route-total-duration');
+      if (durationEl) durationEl.textContent = timeString;
+
+      resultContainer.appendChild(clone);
+    }
   });
 }
