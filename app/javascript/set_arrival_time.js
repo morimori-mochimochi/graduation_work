@@ -16,11 +16,17 @@ export function initSetTime() {
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
+    // calculateTimesは引数が多いのでラップ関数を作成
+    // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っている。
+    // optionsには、どの時刻が変更されたかの情報を入れる。
     const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
     startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
     startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
     destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
     destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+    // targetはrelayPointContainerの監視役
+    // 中身の「時間」と「分」のプルダウンが変更されると、変更を親要素に伝え、
+    // targetがどの子要素が変更されたかを特定する
     document.getElementById('relayPointsContainer').addEventListener('change', (e) => {
       if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
         // 出発時刻が設定されていれば順算、そうでなければ逆算を実行
@@ -50,14 +56,23 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
   const directionsResult = JSON.parse(storedDirections);
   const route = directionsResult.routes[0];
 
-  // ユーザーがどちらの時刻も設定していない場合、または出発時刻を変更した場合
-  // → 出発時刻を基準に順算する
-  if ((!isStartSet && !isDestinationSet) || isStartSet) {
+  // 計算の優先順位を決定するロジック
+  let calculateArrival = true; // デフォルトは到着時刻の計算（順算）
+
+  if (options.changed === 'destination') {
+    // ユーザーが到着時刻を変更した場合 -> 出発時刻を逆算する
+    calculateArrival = false;
+  } else if (options.changed === 'start') {
+    // ユーザーが出発時刻を変更した場合 -> 到着時刻を順算する
+    calculateArrival = true;
+  } else if (isDestinationSet && !isStartSet) {
+    // 明示的な変更がない（初期表示など）かつ、到着時刻だけ設定されている場合 -> 逆算
+    calculateArrival = false;
+  }
+
+  if (calculateArrival) {
     calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-  } 
-  // 到着時刻が設定されている場合（または変更された場合）
-  // → 到着時刻を基準に逆算する
-  else if (isDestinationSet && !isStartSet) {
+  } else {
     calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   }
 }
@@ -69,6 +84,7 @@ function getStayDuration(index) {
   let stayDuration = 0;
 
   if (stayHourEl && stayHourEl.value !== "") {
+    // parseInt: 文字列を整数に変換
     stayDuration += parseInt(stayHourEl.value, 10) * 3600; // 時間を秒に変換
   }
   if (stayMinuteEl && stayMinuteEl.value !== "") {
