@@ -11,31 +11,8 @@ export function initRouteInformation() {
       return;
     }
 
-    let resultContainer = document.getElementById("resultContainer");
-    
-    // コンテナが存在しない場合は新たに作成
-    if (!resultContainer) {
-      const mapDiv = document.getElementById("map");
-      if (!mapDiv) return;
-
-      resultContainer = document.createElement("div");
-      resultContainer.id = "resultContainer";
-      resultContainer.style.maxHeight = "200px";
-      resultContainer.style.overflowY = "auto";
-      resultContainer.style.border = "1px solid #ccc";
-      resultContainer.style.padding = "5px";
-      resultContainer.style.margin = "10px auto";
-      resultContainer.style.width = "90%";
-      resultContainer.style.maxWidth = "700px";
-      resultContainer.style.backgroundColor = "#FFFFFF";
-      resultContainer.style.borderRadius = "8px"; 
-      resultContainer.style.textAlign = "center";
-
-      // mapDiv.parentNode（map の親）を基準に
-      // mapDiv.nextSibling（map の次の兄弟）の直前に
-      // resultContainer を挿入する
-      mapDiv.parentNode.insertBefore(resultContainer, mapDiv.nextSibling);
-    }
+    const resultContainer = document.getElementById("resultContainer");
+    if (!resultContainer) return;
 
     resultContainer.innerHTML = '';
 

@@ -17,6 +17,7 @@
 @import "./components/slider.css"; 
 @import "./components/navbar_custom.css";
 @import "./components/calendar.css";
+@import "./components/route_info.css";
 /* @import "./pages/top.css"; */
 
 body {
