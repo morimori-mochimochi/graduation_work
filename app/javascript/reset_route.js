@@ -11,6 +11,8 @@ export function resetRoute() {
       mainPoint: { point: null, name: "目的地" },
       parkingLot: null
     };
+    delete window.routeData.total_distance;
+    delete window.routeData.total_duration;
   }
 
   // 2. セッションストレージからルート情報を削除
