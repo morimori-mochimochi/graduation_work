@@ -17,6 +17,8 @@ import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
 import { initDrawSavedRoute } from "./draw_saved_route";
 import { initCalendar } from "./calendar_initializer.js"; // 新しいファイルからインポート
+import { initRouteInformation } from "./route_information.js";
+
 
 // ページ初期化のための共通関数
 function initializePage(container) {
@@ -63,6 +65,7 @@ function initializePage(container) {
       initInfoWindow();
       initResetRouteBtn();
       initSaveRoute(container);
+      initRouteInformation();
     }
 
     // 保存済みルート詳細ページ用の初期化

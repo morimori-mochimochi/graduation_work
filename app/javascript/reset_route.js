@@ -34,10 +34,10 @@ export function resetRoute() {
   if (window.markers && window.markers.length > 0) {
     window.markers.forEach(marker => marker.setMap(null));
     window.markers = [];
-    const resultContainer = document.getElementById("resultContainer");
-    if (resultContainer) resultContainer.innerHTML = '';
   }
-
+  const resultContainer = document.getElementById("resultContainer");
+  if (resultContainer) resultContainer.innerHTML = '';
+  
   // 5. UI表示をリセット
   const startPointEl = document.getElementById('startPoint');
   if (startPointEl) startPointEl.textContent = '現在地';
