@@ -1,20 +1,23 @@
 let isInitialized = false;
 
 export function initRouteInformation() {
+  console.log("ルート情報を表示します");
+
   if (isInitialized) return;
   isInitialized = true;
 
   document.addEventListener('relayPointsRendered', () => {
     const routeData = window.routeData;
+    console.log("routeData:", routeData);
 
     if (!routeData || typeof routeData.total_distance === 'undefined' || typeof routeData.total_duration === 'undefined') {
       return;
     }
 
-    const resultContainer = document.getElementById("resultContainer");
-    if (!resultContainer) return;
+    const routeContainer = document.getElementById("routeContainer");
+    if (!routeContainer) return;
 
-    resultContainer.innerHTML = '';
+    routeContainer.innerHTML = '';
 
     // 距離と時間をフォーマット
     const distanceKm = (routeData.total_distance / 1000).toFixed(2);
@@ -40,7 +43,7 @@ export function initRouteInformation() {
       const durationEl = clone.querySelector('.route-total-duration');
       if (durationEl) durationEl.textContent = timeString;
 
-      resultContainer.appendChild(clone);
+      routeContainer.appendChild(clone);
     }
   });
 }

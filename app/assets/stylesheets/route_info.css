@@ -1,4 +1,4 @@
-#resultContainer {
+#routeContainer {
   max-height: 200px;
   overflow-y: auto;
   border: 1px solid #ccc;
@@ -11,7 +11,7 @@
   text-align: center;
 }
 /* 中身が空の場合は非表示にする（枠線などが残らないように） */
-#resultContainer:empty {
+#routeContainer:empty {
   display: none;
   border: none;
   padding: 0;

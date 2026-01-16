@@ -35,8 +35,12 @@ export function resetRoute() {
     window.markers.forEach(marker => marker.setMap(null));
     window.markers = [];
   }
+  // 検索結果をクリア
   const resultContainer = document.getElementById("resultContainer");
   if (resultContainer) resultContainer.innerHTML = '';
+  // ルート情報をクリア
+  const routeContainer = document.getElementById("routeContainer");
+  if (routeContainer) routeContainer.innerHTML = '';
   
   // 5. UI表示をリセット
   const startPointEl = document.getElementById('startPoint');
