@@ -11,6 +11,8 @@ export function resetRoute() {
       mainPoint: { point: null, name: "目的地" },
       parkingLot: null
     };
+    delete window.routeData.total_distance;
+    delete window.routeData.total_duration;
   }
 
   // 2. セッションストレージからルート情報を削除
@@ -32,10 +34,14 @@ export function resetRoute() {
   if (window.markers && window.markers.length > 0) {
     window.markers.forEach(marker => marker.setMap(null));
     window.markers = [];
-    const resultContainer = document.getElementById("resultContainer");
-    if (resultContainer) resultContainer.innerHTML = '';
   }
-
+  // 検索結果をクリア
+  const resultContainer = document.getElementById("resultContainer");
+  if (resultContainer) resultContainer.innerHTML = '';
+  // ルート情報をクリア
+  const routeContainer = document.getElementById("routeContainer");
+  if (routeContainer) routeContainer.innerHTML = '';
+  
   // 5. UI表示をリセット
   const startPointEl = document.getElementById('startPoint');
   if (startPointEl) startPointEl.textContent = '現在地';

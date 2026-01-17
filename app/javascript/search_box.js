@@ -1,5 +1,7 @@
 import { openInfoWindow } from './info_window.js';
 
+let isResultClearListenerAttached = false;
+
 export function highlightMarker(marker, place, duration = 1500) {
   if (!marker) return;
 
@@ -259,6 +261,18 @@ export function initSearchBox(container = document) {
       performSearch();  // ↑送信ボタンを押したときにブラウザが自動的にページ遷移してデータを送る動作        
     }
   });
+
+  if (!isResultClearListenerAttached) {
+    document.addEventListener('relayPointsRendered', () => {
+      const routeData = window.routeData;
+      // ルートが計算され、距離情報が存在する場合のみ検索結果を削除する
+      if (routeData && typeof routeData.total_distance !== 'undefined') {
+        const resultContainer = document.getElementById("resultContainer");
+        if (resultContainer) resultContainer.remove();
+      }
+    });
+    isResultClearListenerAttached = true;
+  }
 }
 
 export function clearSearchMarkersOnRouteDraw() {
