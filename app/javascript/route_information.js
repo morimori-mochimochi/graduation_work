@@ -43,6 +43,11 @@ export function initRouteInformation() {
       const durationEl = clone.querySelector('.route-total-duration');
       if (durationEl) durationEl.textContent = timeString;
 
+      const calorieEl = clone.querySelector('.calorie-burned');
+      if (calorieEl) {
+        calorieEl.textContent = `${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
+      }
+
       routeContainer.appendChild(clone);
     }
   });
