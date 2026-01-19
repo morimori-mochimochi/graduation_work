@@ -48,6 +48,13 @@ export function initRouteInformation() {
         calorieEl.textContent = `${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
       }
 
+      const gasConsumptionEl = clone.querySelector('.gas-consumption');
+      if (gasConsumptionEl) {
+        // ガソリン消費量を計算（リッターあたり15kmの時）
+        const gasConsumption = (distanceKm / 15).toFixed(2);
+        gasConsumptionEl.textContent = `${gasConsumption} L`;
+      }
+
       routeContainer.appendChild(clone);
     }
   });
