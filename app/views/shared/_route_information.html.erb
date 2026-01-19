@@ -13,8 +13,13 @@
         <span class="route-total-duration" style="font-size: 1.2em; font-weight: bold;"></span>
       </div>
       <div>
-        <span style="font-size: 0.7em; color: #666;">推定消費カロリー(体重50kg想定)</span><br>
-        <span class="calorie-burned" style="font-size: 1.2em; font-weight: bold;"></span>
+        <% if defined?(mode) && mode == walk %>
+          <span style="font-size: 0.7em; color: #666;">推定消費カロリー(体重50kg想定)</span><br>
+          <span class="calorie-burned" style="font-size: 1.2em; font-weight: bold;"></span>
+        <% else %>
+          <span style="font-size: 0.7em; color: #666;">推定ガソリン消費量(燃費15km/L想定)</span><br>
+          <span class="gas-consumption" style="font-size: 1.2em; font-weight: bold;"></span>
+        <% end %>
     </div>
   </div>
 </template>
