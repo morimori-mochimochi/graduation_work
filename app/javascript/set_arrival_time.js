@@ -6,16 +6,13 @@ export function initSetTime() {
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 中継点UIの描画完了を待ってから時刻計算を実行する
-  document.addEventListener('relayPointsRendered', (e) => {
-    // sessionStorageにルート情報がない場合は何もしない
-    if (!sessionStorage.getItem("directionsResult")) {
-      return;
-    }
-    // ルート情報があれば時刻を計算
-    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-    console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
-  });
+  // sessionStorageにルート情報がない場合は何もしない
+  if (!sessionStorage.getItem("directionsResult")) {
+    return;
+  }
+  // ルート情報があれば時刻を計算
+  calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+  console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
