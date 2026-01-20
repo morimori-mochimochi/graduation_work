@@ -61,7 +61,6 @@ function initializePage(container) {
     // マップの初期化状態に関わらず、毎回実行したい処理
     if (mapDiv && id === 'map') {
       initSearchBox(container);
-      initSetTime();
       initInfoWindow();
       initResetRouteBtn();
       initSaveRoute(container);
