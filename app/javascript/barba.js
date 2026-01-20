@@ -10,14 +10,12 @@ import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { walkRouteBtn } from "./walk_route";
 import { carRouteBtn } from "./car_route";
-import { initSetTime } from "./set_arrival_time";
 import { initInfoWindow } from "./info_window";
 import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
 import { initDrawSavedRoute } from "./draw_saved_route";
 import { initCalendar } from "./calendar_initializer.js"; // 新しいファイルからインポート
-import { initRouteInformation } from "./route_information.js";
 
 
 // ページ初期化のための共通関数
@@ -64,7 +62,6 @@ function initializePage(container) {
       initInfoWindow();
       initResetRouteBtn();
       initSaveRoute(container);
-      initRouteInformation();
     }
 
     // 保存済みルート詳細ページ用の初期化

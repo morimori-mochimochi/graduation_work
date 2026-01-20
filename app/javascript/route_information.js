@@ -6,6 +6,8 @@ export function initRouteInformation() {
   if (isInitialized) return;
   isInitialized = true;
 
+  console.log("initRouteInformation実行前のrelayPointRenderd", relayPointRenderd);
+  
   document.addEventListener('relayPointsRendered', () => {
     const routeData = window.routeData;
     console.log("routeData:", routeData);
