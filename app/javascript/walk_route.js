@@ -1,4 +1,6 @@
 import { fetchCurrentPos } from "./current_pos"
+import { initSetTime } from "./set_arrival_time";
+import { initRouteInformation } from "./route_information";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -145,6 +147,17 @@ export function walkRouteBtn() {
     console.warn("walkDrawRouteボタンが存在しません");
   }
 }
+
+function initRouteContent() {
+  document.addEventListener('routeDrawn', (event) => {
+    if (event.detail.status === 'OK') {
+      initRouteInformation();
+      initSetTime();
+    }
+  });
+}
+
+initRouteContent();
 
 // システムテストから呼び出せるように、関数をグローバルスコープに公開する
 window.walkDrawRoute = walkDrawRoute;
