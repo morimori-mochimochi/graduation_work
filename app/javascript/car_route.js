@@ -154,6 +154,7 @@ export function carRouteBtn() {
 }
 
 function initRouteContent() {
+  console.log("car_route.jsのinitRouteContentが実行されました");
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
       initRouteInformation();
