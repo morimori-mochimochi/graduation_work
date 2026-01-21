@@ -1,18 +1,20 @@
 export function initSetTime() {
   console.log("initSetTimeが呼ばれた");
 
-  const startHourEl = document.getElementById("startHour");
-  const startMinuteEl = document.getElementById("startMinute");
-  const destinationHourEl = document.getElementById("destinationHour");
-  const destinationMinuteEl = document.getElementById("destinationMinute");
+  if ('renderRelayPoints', () => {
+    const startHourEl = document.getElementById("startHour");
+    const startMinuteEl = document.getElementById("startMinute");
+    const destinationHourEl = document.getElementById("destinationHour");
+    const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // sessionStorageにルート情報がない場合は何もしない
-  if (!sessionStorage.getItem("directionsResult")) {
-    return;
-  }
-  // ルート情報があれば時刻を計算
-  calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-  console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
+    // sessionStorageにルート情報がない場合は何もしない
+    if (!sessionStorage.getItem("directionsResult")) {
+      return;
+    }
+    // ルート情報があれば時刻を計算
+    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
+  });
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
@@ -93,6 +95,8 @@ function getStayDuration(index) {
   if (stayMinuteEl && stayMinuteEl.value !== "") {
     stayDuration += parseInt(stayMinuteEl.value, 10) * 60; // 分を秒に変換
   }
+
+  console.log("中継点[' + index + ']の滞在時間（秒）:", stayDuration);
   return stayDuration;
 }
 
