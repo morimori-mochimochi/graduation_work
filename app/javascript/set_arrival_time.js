@@ -207,7 +207,16 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       cumulativeDuration += getStayDuration(legIndex - 1);
     }
 
-    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
+    // 秒単位で正確な出発時刻を計算
+    const legDepartureTimeRaw = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
+
+    // 表示用に時刻を調整する
+    // 逆算の場合、秒を切り捨てると分が減ってしまう
+    // これを防ぎ、順算（秒が切り捨てられる）の挙動と合わせるため、秒が0でない場合は1分加算して秒を切り捨てる
+    const legDepartureTime = new Date(legDepartureTimeRaw.getTime());
+    if (legDepartureTime.getSeconds() > 0 || legDepartureTime.getMilliseconds() > 0) {
+      legDepartureTime.setMinutes(legDepartureTime.getMinutes() + 1, 0, 0);
+    }
 
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
