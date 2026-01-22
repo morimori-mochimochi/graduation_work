@@ -1,44 +1,46 @@
 export function initSetTime() {
   console.log("initSetTimeが呼ばれた");
 
-  if ('renderRelayPoints', () => {
-    const startHourEl = document.getElementById("startHour");
-    const startMinuteEl = document.getElementById("startMinute");
-    const destinationHourEl = document.getElementById("destinationHour");
-    const destinationMinuteEl = document.getElementById("destinationMinute");
+  document.addEventListener('relayPointsRendered', (event) => {
 
-    // sessionStorageにルート情報がない場合は何もしない
-    if (!sessionStorage.getItem("directionsResult")) {
-      return;
-    }
-    // ルート情報があれば時刻を計算
-    calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-    console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
-  });
+    if ('renderRelayPoints', () => {
+      const startHourEl = document.getElementById("startHour");
+      const startMinuteEl = document.getElementById("startMinute");
+      const destinationHourEl = document.getElementById("destinationHour");
+      const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 時刻が手動で変更された場合も再計算を実行
-  if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
-    // calculateTimesは引数が多いのでラップ関数を作成
-    // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っている。
-    // optionsには、どの時刻が変更されたかの情報を入れる。
-    const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-    startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
-    startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
-    destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
-    destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
-    // targetはrelayPointContainerの監視役
-    // 中身の「時間」と「分」のプルダウンが変更されると、変更を親要素に伝え、
-    // targetがどの子要素が変更されたかを特定する
-    document.getElementById('relayPointsContainer').addEventListener('change', (e) => {
-      if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
-        // 出発時刻が設定されていれば順算、そうでなければ逆算を実行
-        const startIsSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
-        const changeType = startIsSet ? 'start': 'destination';
-        calculateWithElements({ changed: changeType });
+      // sessionStorageにルート情報がない場合は何もしない
+      if (!sessionStorage.getItem("directionsResult")) {
+        return;
       }
+      // ルート情報があれば時刻を計算
+      calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+      console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
     });
-  }
-  console.log("initSetTimeが計算されずに終了した");
+
+    // 時刻が手動で変更された場合も再計算を実行
+    if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
+      // calculateTimesは引数が多いのでラップ関数を作成
+      // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っている。
+      // optionsには、どの時刻が変更されたかの情報を入れる。
+      const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+      startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+      startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+      destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+      destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+      // targetはrelayPointContainerの監視役
+      // 中身の「時間」と「分」のプルダウンが変更されると、変更を親要素に伝え、
+      // targetがどの子要素が変更されたかを特定する
+      document.getElementById('relayPointsContainer').addEventListener('change', (e) => {
+        if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
+          // 出発時刻が設定されていれば順算、そうでなければ逆算を実行
+          const startIsSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
+          const changeType = startIsSet ? 'start': 'destination';
+          calculateWithElements({ changed: changeType });
+        }
+      });
+    }
+  });
 }
 
 function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
