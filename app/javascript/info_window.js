@@ -121,7 +121,7 @@ export function renderRelayPoints() {
   const event = new CustomEvent('relayPointsRendered');
   document.dispatchEvent(event);
 
-  console.log("中継点UIが再描画されました: ", relayPointsRendered);
+  console.log("中継点UIが再描画されました: ", event);
 }
 
 // 中継点要素をひな形から生成するヘルパー関数
