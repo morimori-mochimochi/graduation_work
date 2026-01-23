@@ -1,4 +1,6 @@
 import { fetchCurrentPos } from "./current_pos"
+import { initSetTime } from "./set_arrival_time";
+import { initRouteInformation } from "./route_information";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -117,6 +119,7 @@ export async function carDrawRoute(map = window.map) {
     const event = new CustomEvent('routeDrawn', { detail: { status: 'OK', response: response } });
     document.dispatchEvent(event);
     return "OK";
+    
   } catch (error) {
     console.error("ルートの取得に失敗しました:", error);
     alert("ルートの取得に失敗しました: " + (error.message || error));
@@ -149,5 +152,18 @@ export function carRouteBtn() {
   console.warn("carDrawRouteボタンが存在しません");
   }
 }
+
+function initRouteContent() {
+  console.log("car_route.jsのinitRouteContentが実行されました");
+  document.addEventListener('routeDrawn', (event) => {
+    if (event.detail.status === 'OK') {
+      initRouteInformation();
+      initSetTime();
+    }
+  });
+}
+
+// イベントリスナーを初期化時に一度だけ登録する
+initRouteContent();
 
 window.carDrawRoute = carDrawRoute;

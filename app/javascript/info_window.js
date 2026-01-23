@@ -120,6 +120,8 @@ export function renderRelayPoints() {
   // UI描画完了を通知するカスタムイベントを発行
   const event = new CustomEvent('relayPointsRendered');
   document.dispatchEvent(event);
+
+  console.log("中継点UIが再描画されました: ", event);
 }
 
 // 中継点要素をひな形から生成するヘルパー関数

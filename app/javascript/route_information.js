@@ -3,10 +3,11 @@ let isInitialized = false;
 export function initRouteInformation() {
   console.log("ルート情報を表示します");
 
-  if (isInitialized) return;
-  isInitialized = true;
+  document.addEventListener('relayPointsRenderd', (event) => {
 
-  document.addEventListener('relayPointsRendered', () => {
+    if (isInitialized) return;
+    isInitialized = true;
+  
     const routeData = window.routeData;
     console.log("routeData:", routeData);
 

@@ -1,44 +1,48 @@
 export function initSetTime() {
+  console.log("initSetTimeが呼ばれた");
+
   const startHourEl = document.getElementById("startHour");
   const startMinuteEl = document.getElementById("startMinute");
   const destinationHourEl = document.getElementById("destinationHour");
   const destinationMinuteEl = document.getElementById("destinationMinute");
 
-  // 中継点UIの描画完了を待ってから時刻計算を実行する
-  document.addEventListener('relayPointsRendered', (e) => {
+  document.addEventListener('relayPointsRendered', (event) => {
     // sessionStorageにルート情報がない場合は何もしない
     if (!sessionStorage.getItem("directionsResult")) {
       return;
     }
     // ルート情報があれば時刻を計算
     calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+    console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
   });
 
   // 時刻が手動で変更された場合も再計算を実行
   if (startHourEl && startMinuteEl && destinationHourEl && destinationMinuteEl) {
-    // calculateTimesは引数が多いのでラップ関数を作成
-    // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っている。
-    // optionsには、どの時刻が変更されたかの情報を入れる。
-    const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-    startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
-    startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
-    destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
-    destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
-    // targetはrelayPointContainerの監視役
-    // 中身の「時間」と「分」のプルダウンが変更されると、変更を親要素に伝え、
-    // targetがどの子要素が変更されたかを特定する
-    document.getElementById('relayPointsContainer').addEventListener('change', (e) => {
-      if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
-        // 出発時刻が設定されていれば順算、そうでなければ逆算を実行
-        const startIsSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
-        const changeType = startIsSet ? 'start': 'destination';
-        calculateWithElements({ changed: changeType });
-      }
-    });
+      // calculateTimesは引数が多いのでラップ関数を作成
+      // そこでoptionsだけを渡せば済む calculateWithElements という関数を作っている。
+      // optionsには、どの時刻が変更されたかの情報を入れる。
+      const calculateWithElements = (options) => calculateTimes(options, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
+      startHourEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+      startMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'start' }));
+      destinationHourEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+      destinationMinuteEl.addEventListener('change', () => calculateWithElements({ changed: 'destination' }));
+      // targetはrelayPointContainerの監視役
+      // 中身の「時間」と「分」のプルダウンが変更されると、変更を親要素に伝え、
+      // targetがどの子要素が変更されたかを特定する
+      document.getElementById('relayPointsContainer').addEventListener('change', (e) => {
+        if (e.target.classList.contains('stay-hour-select') || e.target.classList.contains('stay-minute-select')) {
+          // 出発時刻が設定されていれば順算、そうでなければ逆算を実行
+          const startIsSet = startHourEl.value !== "時" && startMinuteEl.value !== "分";
+          const changeType = startIsSet ? 'start': 'destination';
+          calculateWithElements({ changed: changeType });
+        }
+      });
   }
 }
 
 function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
+  console.log("culculateTimeが呼ばれた");
+
   // 時刻設定UIが存在しないページでは処理を中断
   if (!startHourEl || !startMinuteEl || !destinationHourEl || !destinationMinuteEl) {
     console.warn('時刻設定UIが見つからないため、時刻計算をスキップします。');
@@ -69,7 +73,7 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
     // 明示的な変更がない（初期表示など）かつ、到着時刻だけ設定されている場合 -> 逆算
     calculateArrival = false;
   }
-
+  console.log(`calculateTimes: calculateArrival = ${calculateArrival}`);
   if (calculateArrival) {
     calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   } else {
@@ -90,6 +94,8 @@ function getStayDuration(index) {
   if (stayMinuteEl && stayMinuteEl.value !== "") {
     stayDuration += parseInt(stayMinuteEl.value, 10) * 60; // 分を秒に変換
   }
+
+  console.log("中継点[' + index + ']の滞在時間（秒）:", stayDuration);
   return stayDuration;
 }
 
@@ -204,7 +210,16 @@ function calculateAndSetDepartureTime(route, startHourEl, startMinuteEl, destina
       cumulativeDuration += getStayDuration(legIndex - 1);
     }
 
-    const legDepartureTime = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
+    // 秒単位で正確な出発時刻を計算
+    const legDepartureTimeRaw = new Date(arrivalTime.getTime() - cumulativeDuration * 1000);
+
+    // 表示用に時刻を調整する
+    // 逆算の場合、秒を切り捨てると分が減ってしまう
+    // これを防ぎ、順算（秒が切り捨てられる）の挙動と合わせるため、秒が0でない場合は1分加算して秒を切り捨てる
+    const legDepartureTime = new Date(legDepartureTimeRaw.getTime());
+    if (legDepartureTime.getSeconds() > 0 || legDepartureTime.getMilliseconds() > 0) {
+      legDepartureTime.setMinutes(legDepartureTime.getMinutes() + 1, 0, 0);
+    }
 
     if (index === route.legs.length - 1) { // 最初の逆ループ(=最後のleg)は出発地
       startHourEl.value = String(legDepartureTime.getHours()).padStart(2, '0');
