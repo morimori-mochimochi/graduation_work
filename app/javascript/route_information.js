@@ -3,7 +3,9 @@ let isInitialized = false;
 export function initRouteInformation() {
   console.log("ルート情報を表示します");
 
-  document.addEventListener('relayPointsRenderd', (event) => {
+  document.addEventListener('relayPointsRendered', (event) => {
+
+    console.log("relayPointsRenderdイベントを受信しました");
 
     if (isInitialized) return;
     isInitialized = true;
