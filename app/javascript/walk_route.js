@@ -1,6 +1,7 @@
 import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
 import { initRouteInformation } from "./route_information";
+import { initResetRouteBtn } from "./reset_route";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -158,6 +159,7 @@ function initRouteContent() {
 }
 
 initRouteContent();
+initResetRouteBtn();
 
 // システムテストから呼び出せるように、関数をグローバルスコープに公開する
 window.walkDrawRoute = walkDrawRoute;
