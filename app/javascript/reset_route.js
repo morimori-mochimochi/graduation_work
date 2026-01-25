@@ -71,12 +71,6 @@ export function initResetRouteBtn() {
   const btn = document.getElementById("resetRouteBtn");
 
   if (btn) {
-    // イベントの重複登録を防ぐためのチェック
-    if (btn.dataset.resetEventAttached) {
-      return;
-    }
-    btn.dataset.resetEventAttached = 'true';
-
     btn.addEventListener("click", () => {
       resetRoute();
     });
