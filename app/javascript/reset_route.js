@@ -1,5 +1,7 @@
 import { renderRelayPoints } from './info_window.js';
 
+let isResetListenerAttached = false;
+
 export function resetRoute() {
   console.trace("resetRoute が呼び出されました"); // トレースログを追加
 
@@ -68,13 +70,17 @@ export function resetRoute() {
 }
 
 export function initResetRouteBtn() {
-  const btn = document.getElementById("resetRouteBtn");
+  // イベントリスナーの重複登録を防止
+  if (isResetListenerAttached) return;
+  isResetListenerAttached = true;
 
-  if (btn) {
-    btn.addEventListener("click", () => {
+  // イベントデリゲーションを使用
+  // documentに対してイベントを設定することで、ボタンがDOM上で置換されても動作し続ける
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("#resetRouteBtn");
+    if (btn) {
+      e.preventDefault(); // ボタンのデフォルト動作を防止
       resetRoute();
-    });
-  } else {
-    console.warn("リセットボタン(#resetRouteBtn)が見つかりませんでした。");
-  }
+    }
+  });
 }
