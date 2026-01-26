@@ -83,10 +83,6 @@ https://sketto-houmon-support.com/
 <br>
 <a id="anchor7"></a>  
 # 7. 🔰 使用方法 🔰
-  
-> [!IMPORTANT]
-> 一部のアニメーション機能が落ちる可能性があるため、ブラウザはGoogle Chromeをご利用ください。
-<br>
 
 ## 地点を選択
 https://github.com/user-attachments/assets/f696022c-5720-42f6-a17d-ace0b799c00f
