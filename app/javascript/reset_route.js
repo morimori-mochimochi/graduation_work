@@ -30,6 +30,7 @@ export function resetRoute() {
   if (window.carRouteRenderers) {
     window.carRouteRenderers.forEach(renderer => renderer.setMap(null));
     window.carRouteRenderers = [];
+    
   }
 
   // 4. 検索結果のマーカー（青いピン）をクリア
@@ -50,6 +51,10 @@ export function resetRoute() {
 
   const destinationPointEl = document.getElementById("destinationPoint");
   if (destinationPointEl) destinationPointEl.textContent = '目的地';
+
+  // 目的地駐車場の表示をクリア
+  const destinationParkingInfo = document.getElementById("destinationParkingInfo");
+  if (destinationParkingInfo) destinationParkingInfo.textContent = '';
 
   // 中継点UIをクリア（再描画）
   renderRelayPoints();
