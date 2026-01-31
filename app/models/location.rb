@@ -2,6 +2,8 @@
 
 class Location < ApplicationRecord # :nodoc:
   encrypts :address
+  encrypts :lat, type: :float
+  encrypts :lng, type: :float
 
   belongs_to :user
 
@@ -11,11 +13,4 @@ class Location < ApplicationRecord # :nodoc:
   validates :name, presence: true, length: { maximum: 20 },
                    uniqueness: { scope: :user_id, message: I18n.t('defaults.location_already_registered') }
 
-  def lat
-    super.to_f
-  end
-
-  def lng
-    super.to_f
-  end
 end
