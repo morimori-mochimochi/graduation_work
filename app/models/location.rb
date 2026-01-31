@@ -2,6 +2,7 @@
 
 class Location < ApplicationRecord # :nodoc:
   encrypts :address
+  encrypts :name, deterministic: true
 
   belongs_to :user
 
