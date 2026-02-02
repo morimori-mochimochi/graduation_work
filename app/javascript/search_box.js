@@ -74,6 +74,7 @@ async function searchExactPlace(query) {
 };
 
 function displayPlaces(places) {
+  console.log("paled API検索開始");
   const center = map.getCenter();
 
   // 距離順に並べ替え
