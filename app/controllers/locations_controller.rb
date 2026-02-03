@@ -42,8 +42,12 @@ class LocationsController < ApplicationController
     if user_signed_in?
       # ログインしているユーザーが保存した場所から検索
       # ActiveRecord::Base.sanitize_sql: %を無効化
-      query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
-      @locations = current_user.locations.where('name LIKE ?', query)
+      @locations = []
+      # 検索クエリ(SQL)がログに残らないようにsilenceブロックで囲む
+      ActiveRecord::Base.logger&.silence do
+        query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
+        @locations = current_user.locations.where('name LIKE ?', query).to_a
+      end
       render json: @locations.map { |loc|
         {
           id: loc.id, name: loc.name,
