@@ -44,6 +44,10 @@ class LocationsController < ApplicationController
       # ActiveRecord::Base.sanitize_sql: %を無効化
       @locations = []
       # 検索クエリ(SQL)がログに残らないようにsilenceブロックで囲む
+      # silenceブロック：このブロック内だけログ出力しない
+      # ActiveRecord::Base.logger: ログを出す担当者
+      # to_aをつけることでwhereメソッドが即時実行される
+      # そうでないとsilent句の外でクエリが実行されてログに残ってしまう
       ActiveRecord::Base.logger&.silence do
         query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
         @locations = current_user.locations.where('name LIKE ?', query).to_a
