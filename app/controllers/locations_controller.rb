@@ -39,32 +39,30 @@ class LocationsController < ApplicationController
   end
 
   def search
-    if user_signed_in?
-      # ログインしているユーザーが保存した場所から検索
-      # ActiveRecord::Base.sanitize_sql: %を無効化
-      @locations = []
-      # 検索クエリ(SQL)がログに残らないようにsilenceブロックで囲む
-      # silenceブロック：このブロック内だけログ出力しない
-      # ActiveRecord::Base.logger: ログを出す担当者
-      # to_aをつけることでwhereメソッドが即時実行される
-      # そうでないとsilent句の外でクエリが実行されてログに残ってしまう
-      ActiveRecord::Base.logger&.silence do
-        query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
-        @locations = current_user.locations.where('name LIKE ?', query).to_a
-      end
-      render json: @locations.map { |loc|
-        {
-          id: loc.id, name: loc.name,
-          address: loc.address, latitude: loc.lat,
-          longitude: loc.lng
-        }
-      }
-    else
-      render json: []
-    end
+    locations = user_signed_in? ? search_locations_for_current_user : []
+    render json: format_locations_as_json(locations)
   end
 
   private
+
+  def search_locations_for_current_user
+    # 検索クエリがログに残らないようにsilenceブロックで囲みます。
+    # .to_a をつけて、ブロック内でクエリを即時実行させることが重要です。
+    ActiveRecord::Base.logger&.silence do
+      query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query])}%"
+      current_user.locations.where('name LIKE ?', query).to_a
+    end
+  end
+
+  def format_locations_as_json(locations)
+    locations.map do |loc|
+      {
+        id: loc.id, name: loc.name,
+        address: loc.address, latitude: loc.lat,
+        longitude: loc.lng
+      }
+    end
+  end
 
   def location_params
     params.require(:location).permit(:name, :lat, :lng, :address)
