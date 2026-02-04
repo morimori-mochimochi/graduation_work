@@ -77,12 +77,19 @@ document.addEventListener('DOMContentLoaded', () => {
     transitions: [
       {
         name: 'slide-left',
+        sync: true,
         async once({ next }) {
           await window.mapApiLoaded; // Google Maps APIの読み込みを待つ
           initializePage(next.container);
         },
         leave({ current }) {
           return new Promise(resolve => {
+            // 遷移中は絶対配置にして重なり合うようにする
+            current.container.style.position = 'absolute';
+            current.container.style.top = '0';
+            current.container.style.left = '0';
+            current.container.style.width = '100%';
+
             document.body.style.backgroundColor = '#FDF8F4';
             current.container.style.transform = 'translateX(0)';
             current.container.style.transition = 'transform 1s ease, opacity 1s ease';
@@ -94,15 +101,30 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         },
         enter({ next }) {
-          document.body.style.backgroundColor = '#FFEFE2';
-          next.container.style.transform = 'translateX(100%)';
-          next.container.style.transition = 'transform 1s ease, opacity 1s ease';
-          next.container.style.opacity = '1';
-          requestAnimationFrame(() => {
-            next.container.style.transform = 'translateX(0)';
+          return new Promise(resolve => {
+            // 遷移中は絶対配置にして重なり合うようにする
+            next.container.style.position = 'absolute';
+            next.container.style.top = '0';
+            next.container.style.left = '0';
+            next.container.style.width = '100%';
+
+            document.body.style.backgroundColor = '#FFEFE2';
+            next.container.style.transform = 'translateX(100%)';
+            next.container.style.transition = 'transform 1s ease, opacity 1s ease';
+            next.container.style.opacity = '1';
+            requestAnimationFrame(() => {
+              next.container.style.transform = 'translateX(0)';
+            });
+            setTimeout(resolve, 1000);
           });
         },
         async afterEnter({ next }) {
+          // 遷移完了後にスタイルをリセット
+          next.container.style.position = '';
+          next.container.style.top = '';
+          next.container.style.left = '';
+          next.container.style.width = '';
+
           await window.mapApiLoaded; // APIの読み込みを待つ
           initializePage(next.container);
         },

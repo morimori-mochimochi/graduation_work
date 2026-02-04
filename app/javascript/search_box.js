@@ -27,9 +27,11 @@ async function searchExactPlace(query) {
   // encodeはフォームに入力された日本語によって
   // URLが壊れないよう安全な形に変換する
   try {
+    console.log("DB検索を実行中...");
     const response = await fetch(`/locations/search?query=${encodeURIComponent(query)}`);
     if (response.ok) {
       const dbLocations = await response.json();
+      console.log("自前DB検索結果: ", dbLocations);
       if (dbLocations.length > 0) {
         // Google Places APIの結果と同じ形式に変換
         const places = dbLocations.map(loc => ({
@@ -72,6 +74,7 @@ async function searchExactPlace(query) {
 };
 
 function displayPlaces(places) {
+  console.log("paled API検索開始");
   const center = map.getCenter();
 
   // 距離順に並べ替え
