@@ -38,7 +38,10 @@ export async function walkDrawRoute() {
   // #DirectionsRendererは検索したルートをマップに描画するクラス
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer({
-      map: window.map
+      map: window.map,
+      polylineOptions: {
+        strokeColor: 'red',
+      }
     });
   } else {
     // #既存のルートをクリア
