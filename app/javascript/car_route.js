@@ -140,7 +140,10 @@ export function drawRouteBtn() {
       drawRouteBtn.textContent = "検索中...";
 
       try {
-        await carDrawRoute(window.map);
+        await Promise.all([
+          carDrawRoute(window.map),
+          walkDrawRoute()
+        ]);
       } catch (err) {
         console.error("carDrawRoute failed:", err);
         // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
