@@ -160,6 +160,6 @@ function initRouteContent() {
 
 initRouteContent();
 initResetRouteBtn();
-
+  
 // システムテストから呼び出せるように、関数をグローバルスコープに公開する
 window.walkDrawRoute = walkDrawRoute;
