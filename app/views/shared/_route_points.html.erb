@@ -2,11 +2,11 @@
 <div class="point-selector flex flex-wrap items-center justify-center w-full">
   <%# 'mode'ローカル変数に応じて表示を切り替える %>
   <% if defined?(mode) && mode == :walk %>
-    <%= link_to car_routes_path do %>
+    <%= link_to # do %>
       <%= image_tag "/images/how_to_go_walk.png", alt: "go_walk", class: "btn_effect h-18" %>
     <% end %>
   <% else %>
-    <%= link_to walk_routes_path do %>
+    <%= link_to # do %>
       <%= image_tag "/images/how_to_go_car.png", alt: "go_to_car", class: "btn_effect h-18" %>
     <% end %>
   <% end %>

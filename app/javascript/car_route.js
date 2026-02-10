@@ -2,6 +2,7 @@ import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
 import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
+import { walkDrawRoute } from "./walk_route";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -128,15 +129,15 @@ export async function carDrawRoute(map = window.map) {
   }
 }
 export function drawRouteBtn() {
-  const carDrawRouteBtn = document.getElementById("carDrawRoute");
+  const drawRouteBtn = document.getElementById("drawRoute");
 
-  if (carDrawRouteBtn) {
-    carDrawRouteBtn.addEventListener("click", async() => {
+  if (drawRouteBtn) {
+    drawRouteBtn.addEventListener("click", async() => {
       // 連打防止：処理中はボタンを無効化し、テキストを変更
       // disabledプロパティ: クリックに無反応になる
-      carDrawRouteBtn.disabled = true;
-      const originalText = carDrawRouteBtn.innerHTML;
-      carDrawRouteBtn.textContent = "検索中...";
+      drawRouteBtn.disabled = true;
+      const originalText = drawRouteBtn.innerHTML;
+      drawRouteBtn.textContent = "検索中...";
 
       try {
         await carDrawRoute(window.map);
@@ -145,12 +146,12 @@ export function drawRouteBtn() {
         // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
-        carDrawRouteBtn.disabled = false;
-        carDrawRouteBtn.innerHTML = originalText;
+        drawRouteBtn.disabled = false;
+        drawRouteBtn.innerHTML = originalText;
       }
     });
   }else{
-  console.warn("carDrawRouteボタンが存在しません");
+  console.warn("drawRouteボタンが存在しません");
   }
 }
 

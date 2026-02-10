@@ -16,7 +16,6 @@ Rails.application.routes.draw do
 
   resources :routes, only: [:new, :create, :show] do
     collection do
-      get :walk
       get :car
       get :walk_navigation
       get :car_navigation
