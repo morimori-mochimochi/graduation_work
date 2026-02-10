@@ -141,11 +141,17 @@ export function drawRouteBtn() {
 
       try {
         await Promise.all([
-          carDrawRoute(window.map),
-          walkDrawRoute()
+          carDrawRoute(window.map).catch(e => { throw { source: 'car', error: e }; }),
+          walkDrawRoute().catch(e => { throw { source: 'walk', error: e }; })
         ]);
       } catch (err) {
-        console.error("carDrawRoute failed:", err);
+        if (err.source === 'car') {
+          console.error("carDrawRoute failed:", err.error);
+        } else if (err.source === 'walk') {
+          console.error("walkDrawRoute failed:", err.error);
+        } else {
+          console.error("Unexpected error:", err);
+        }
         // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
