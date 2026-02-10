@@ -127,7 +127,7 @@ export async function carDrawRoute(map = window.map) {
     throw error;
   }
 }
-export function carRouteBtn() {
+export function drawRouteBtn() {
   const carDrawRouteBtn = document.getElementById("carDrawRoute");
 
   if (carDrawRouteBtn) {
