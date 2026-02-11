@@ -4,7 +4,8 @@ import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
 import { walkDrawRoute } from "./walk_route";
 import { selectRouteModule } from "./select_route";
-import select from "daisyui/components/select";
+
+console.log("car_route.js: 読み込み開始");
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -188,3 +189,5 @@ initRouteContent();
 initResetRouteBtn();
 
 window.carDrawRoute = carDrawRoute;
+
+console.log("car_route.js: 読み込み完了");
