@@ -1,5 +1,3 @@
-console.log("select_route.js: モジュール読み込み");
-
 export function selectRouteModule(carResult, walkResult) {
   // ルート選択切り替え関数
   const selectRoute = (mode) => {

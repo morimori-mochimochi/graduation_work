@@ -5,8 +5,6 @@ import { initResetRouteBtn } from "./reset_route";
 import { walkDrawRoute } from "./walk_route";
 import { selectRouteModule } from "./select_route";
 
-console.log("car_route.js: 読み込み開始");
-
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
 }
@@ -175,7 +173,6 @@ export function drawRouteBtn() {
 }
 
 function initRouteContent() {
-  console.log("car_route.jsのinitRouteContentが実行されました");
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
       initRouteInformation();
@@ -189,5 +186,3 @@ initRouteContent();
 initResetRouteBtn();
 
 window.carDrawRoute = carDrawRoute;
-
-console.log("car_route.js: 読み込み完了");
