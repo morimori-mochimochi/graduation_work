@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe '時刻設定機能', type: :system, js: true do
   before do
     visit root_path
-    find("a[href='#{new_route_path}']").click
+    find("a[href='#{car_routes_path}']").click
     find("a[href='#{walk_routes_path}']").click
     # 2. walk.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。

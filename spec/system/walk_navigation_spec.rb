@@ -6,7 +6,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
   it '徒歩ルートを設定し、ナビゲーションを開始できる' do
     # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
     visit root_path
-    find("a[href='#{new_route_path}']").click
+    find("a[href='#{car_routes_path}']").click
     find("a[href='#{walk_routes_path}']").click
 
     # 2. walk.html.erbに遷移し、マップ表示を待つ

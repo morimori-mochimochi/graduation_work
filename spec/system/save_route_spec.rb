@@ -8,7 +8,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
   it '車ルートを設定し、ルートを保存できること' do
     sign_in user
     visit root_path
-    find("a[href='#{new_route_path}']").click
+    find("a[href='#{car_routes_path}']").click
     find("a[href='#{car_routes_path}']").click
 
     # 2. car.html.erbに遷移し、マップ表示を待つ

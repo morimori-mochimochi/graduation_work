@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'ナビゲーション機能', type: :system, js: true do
   it '車ルートを設定し、ナビゲーションを開始できること' do
     visit root_path
-    find("a[href='#{new_route_path}']").click
+    find("a[href='#{car_routes_path}']").click
     find("a[href='#{car_routes_path}']").click
 
     # 2. car.html.erbに遷移し、マップ表示を待つ

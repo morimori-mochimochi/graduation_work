@@ -10,7 +10,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
     before do
       visit root_path
-      find("a[href='#{new_route_path}']").click
+      find("a[href='#{car_routes_path}']").click
       find("a[href='#{car_routes_path}']").click
     end
 
