@@ -125,33 +125,6 @@ export async function walkDrawRoute() {
   });
 };
 
-export function walkRouteBtn() {
-  const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-    
-  if (walkDrawRouteBtn) {
-    walkDrawRouteBtn.addEventListener("click", async () => {
-      // 連打防止：処理中はボタンを無効化し、テキストを変更
-      walkDrawRouteBtn.disabled = true;
-      const originalText = walkDrawRouteBtn.innerHTML;
-      walkDrawRouteBtn.textContent = "検索中...";
-
-      try {
-        await walkDrawRoute(); // eventオブジェクトを渡さないように修正
-      } catch (error) {
-        // エラーはwalkDrawRoute内やfetchCurrentPosで発生する可能性がある
-        console.error("徒歩ルート検索エラー:", error);
-        alert("ルートの検索に失敗しました。");
-      } finally {
-        // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
-        walkDrawRouteBtn.disabled = false;
-        walkDrawRouteBtn.innerHTML = originalText;
-      }
-    });
-  }else{
-    console.warn("walkDrawRouteボタンが存在しません");
-  }
-}
-
 function initRouteContent() {
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {

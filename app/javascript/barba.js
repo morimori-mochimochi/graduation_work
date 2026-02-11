@@ -8,7 +8,6 @@ import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
-import { walkRouteBtn } from "./walk_route";
 import { drawRouteBtn } from "./car_route";
 import { initInfoWindow } from "./info_window";
 import { initResetRouteBtn } from "./reset_route";
@@ -49,7 +48,6 @@ function initializePage(container) {
       if (id === 'map') {
         initMarkerEvents();
         searchParking();
-        walkRouteBtn();
         drawRouteBtn();
         initCurrentPosBtn();
       } else if (id === 'naviMap' || id === 'carNaviMap') {
