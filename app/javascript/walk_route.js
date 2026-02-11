@@ -103,14 +103,8 @@ export async function walkDrawRoute() {
               window.routeData.total_duration = totalDuration;
             }
 
-            sessionStorage.setItem("directionsResult", JSON.stringify(response));
-
-            // ルート描画完了のカスタムイベントを発行
-            // イベントにデータを含めたいときはdetailに入れるのがルール
-            const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
-            // 1行目で作ったカスタムイベントを実際に発信する
-            document.dispatchEvent(event);
-            resolve(status);
+            // 呼び出し元で制御するため、ここでは保存せず結果とレンダラーを返す
+            resolve({ status: status, response: response, renderer: window.directionsRenderer });
           } else {
             console.error("Directions API error:", status, response);
             reject(status);
