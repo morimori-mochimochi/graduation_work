@@ -3,6 +3,8 @@ import { initSetTime } from "./set_arrival_time";
 import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
 import { walkDrawRoute } from "./walk_route";
+import { selectRouteModule } from "./select_route";
+import select from "daisyui/components/select";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -148,6 +150,9 @@ export function drawRouteBtn() {
           carDrawRoute(window.map).catch(e => { throw { source: 'car', error: e }; }),
           walkDrawRoute().catch(e => { throw { source: 'walk', error: e }; })
         ]);
+
+        selectRouteModule.selectRoute('car', carResult, walkResult);
+
       } catch (err) {
         if (err.source === 'car') {
           console.error("carDrawRoute failed:", err.error);
