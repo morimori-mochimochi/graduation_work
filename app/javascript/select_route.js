@@ -1,4 +1,4 @@
-function selectRouteModule(carResult, walkResult) {
+export function selectRouteModule(carResult, walkResult) {
   // ルート選択切り替え関数
   const selectRoute = (mode) => {
     const isCar = mode === 'car';
@@ -70,5 +70,9 @@ function selectRouteModule(carResult, walkResult) {
   createHitLine(walkResult, 'walk');
 
   // 初期状態は「車」を選択状態にする
-  selectRoute('car');
+  if (carResult && carResult.status === 'OK') {
+    selectRoute('car');
+  } else if (walkResult && walkResult.status === 'OK') {
+    selectRoute('walk');
+  }
 };

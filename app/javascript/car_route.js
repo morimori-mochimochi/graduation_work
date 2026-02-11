@@ -147,20 +147,20 @@ export function drawRouteBtn() {
         window.routeHitLines = [];
 
         const [carResult, walkResult] = await Promise.all([
-          carDrawRoute(window.map).catch(e => { throw { source: 'car', error: e }; }),
-          walkDrawRoute().catch(e => { throw { source: 'walk', error: e }; })
+          carDrawRoute(window.map).catch(e => { 
+            console.error("carDrawRoute failed:", e);
+            return null; 
+          }),
+          walkDrawRoute().catch(e => { 
+            console.error("walkDrawRoute failed:", e);
+            return null; 
+          })
         ]);
 
-        selectRouteModule.selectRoute('car', carResult, walkResult);
+        selectRouteModule(carResult, walkResult);
 
       } catch (err) {
-        if (err.source === 'car') {
-          console.error("carDrawRoute failed:", err.error);
-        } else if (err.source === 'walk') {
-          console.error("walkDrawRoute failed:", err.error);
-        } else {
-          console.error("Unexpected error:", err);
-        }
+        console.error("Unexpected error:", err);
         // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
