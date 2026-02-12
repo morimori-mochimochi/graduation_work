@@ -16,9 +16,8 @@ export function selectRouteModule(carResult, walkResult) {
     // 車ルートのスタイル更新
     if (carResult && carResult.renderers) {
       carResult.renderers.forEach((renderer, index) => {
-        const weight = isCar ? 8 : 4;
-        const color = isCar ? 'green' : 'gray'; // テスト用：選択されていない時はグレーにする
-        console.log(`CarRenderer[${index}] 更新: weight=${weight}, color=${color}`);
+        const weight = isCar ? 7 : 4;
+        const color = isCar ? 'green' : 'gray';
 
         renderer.setOptions({
           polylineOptions: {
@@ -32,9 +31,8 @@ export function selectRouteModule(carResult, walkResult) {
     }
     // 徒歩ルートのスタイル更新
     if (walkResult && walkResult.renderer) {
-      const weight = !isCar ? 8 : 4;
-      const color = !isCar ? 'red' : 'gray'; // テスト用
-      console.log(`WalkRenderer 更新: weight=${weight}, color=${color}`);
+      const weight = !isCar ? 7 : 4;
+      const color = !isCar ? 'red' : 'gray';
 
       walkResult.renderer.setOptions({
         polylineOptions: {
