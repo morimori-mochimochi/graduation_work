@@ -10,6 +10,7 @@ function isValidLatLng(point) {
 // async: この関数は非同期処理を行います、の意味。
 // awaitを使って処理を一時待機できる
 export async function walkDrawRoute() {
+  console.log("walkDrawRoute: 徒歩ルート描画開始");
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
 
