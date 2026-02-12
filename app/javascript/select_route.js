@@ -9,10 +9,6 @@ export function selectRouteModule(carResult, walkResult) {
       window.routeData.travel_mode = isCar ? 'DRIVING' : 'WALKING';
       window.directionsResult = selectedResult.response;
       sessionStorage.setItem("directionsResult", JSON.stringify(selectedResult.response));
-      
-      // イベント発火（所要時間表示などの更新用）
-      const event = new CustomEvent('routeDrawn', { detail: { status: 'OK', response: selectedResult.response } });
-      document.dispatchEvent(event);
     }
 
     // 2. 見た目の更新（選択された方を濃く、手前に表示）
