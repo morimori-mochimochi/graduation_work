@@ -10,7 +10,6 @@ function isValidLatLng(point) {
 // async: この関数は非同期処理を行います、の意味。
 // awaitを使って処理を一時待機できる
 export async function walkDrawRoute() {
-  console.log("walkDrawRoute: 徒歩ルート描画開始");
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
 
@@ -39,10 +38,7 @@ export async function walkDrawRoute() {
   // #DirectionsRendererは検索したルートをマップに描画するクラス
   if (!window.directionsRenderer) {
     window.directionsRenderer = new google.maps.DirectionsRenderer({
-      map: window.map,
-      polylineOptions: {
-        strokeColor: 'red',
-      }
+      map: window.map
     });
   } else {
     // #既存のルートをクリア
@@ -73,6 +69,8 @@ export async function walkDrawRoute() {
     waypoints: waypoints,
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
+
+  console.log("request:", request);
 
   return new Promise((resolve, reject) => {
     directionsService.route(request,
