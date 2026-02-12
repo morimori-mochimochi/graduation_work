@@ -19,8 +19,8 @@ export function selectRouteModule(carResult, walkResult) {
           polylineOptions: {
             strokeColor: 'green',
             strokeOpacity: isCar ? 1.0 : 0.3, // 選択時は不透明、非選択時は半透明
-            strokeWeight: isCar ? 6 : 4,
-            zIndex: isCar ? 10 : 1
+            strokeWeight: isCar ? 8 : 4, //選択時は太く表示
+            zIndex: isCar ? 10 : 1 //ルートの交差している時に数値の大きい方が手前に表示される
           }
         });
       });
@@ -31,7 +31,7 @@ export function selectRouteModule(carResult, walkResult) {
         polylineOptions: {
           strokeColor: 'red',
           strokeOpacity: !isCar ? 1.0 : 0.3,
-          strokeWeight: !isCar ? 6 : 4,
+          strokeWeight: !isCar ? 8 : 4,
           zIndex: !isCar ? 10 : 1
         }
       });
