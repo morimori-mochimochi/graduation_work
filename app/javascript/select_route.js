@@ -17,7 +17,14 @@ export function selectRouteModule(carResult, walkResult) {
     if (carResult && carResult.renderers) {
       carResult.renderers.forEach((renderer, index) => {
         const weight = isCar ? 7 : 4;
-        const color = isCar ? 'green' : 'gray';
+        
+        let color;
+        if (isCar) {
+          // 0番目は車ルート(緑)、それ以外は駐車場からの徒歩ルート(青)
+          color = (index === 0) ? 'green' : 'blue';
+        } else {
+          color = 'gray';
+        }
 
         renderer.setOptions({
           polylineOptions: {
@@ -32,7 +39,7 @@ export function selectRouteModule(carResult, walkResult) {
     // 徒歩ルートのスタイル更新
     if (walkResult && walkResult.renderer) {
       const weight = !isCar ? 7 : 4;
-      const color = !isCar ? 'red' : 'gray';
+      const color = !isCar ? 'blue' : 'gray';
 
       walkResult.renderer.setOptions({
         polylineOptions: {
