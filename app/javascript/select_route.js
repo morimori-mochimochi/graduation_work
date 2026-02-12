@@ -2,7 +2,6 @@ export function selectRouteModule(carResult, walkResult) {
   // ルート選択切り替え関数
   const selectRoute = (mode) => {
     const isCar = mode === 'car';
-    console.log(`ルート選択処理実行: ${mode}, isCar=${isCar}`);
     
     // 1. データの保存と更新
     const selectedResult = isCar ? carResult : walkResult;
