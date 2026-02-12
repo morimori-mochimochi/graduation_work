@@ -15,12 +15,16 @@ export function selectRouteModule(carResult, walkResult) {
     // 2. 見た目の更新（選択された方を濃く、手前に表示）
     // 車ルートのスタイル更新
     if (carResult && carResult.renderers) {
-      carResult.renderers.forEach(renderer => {
+      carResult.renderers.forEach((renderer, index) => {
+        const weight = isCar ? 8 : 4;
+        const color = isCar ? 'green' : 'gray'; // テスト用：選択されていない時はグレーにする
+        console.log(`CarRenderer[${index}] 更新: weight=${weight}, color=${color}`);
+
         renderer.setOptions({
           polylineOptions: {
-            strokeColor: 'green',
+            strokeColor: color,
             strokeOpacity: isCar ? 1.0 : 0.3,
-            strokeWeight: isCar ? 8 : 4,
+            strokeWeight: weight,
             zIndex: isCar ? 10 : 1 //ルートの交差している時に数値の大きい方が手前に表示される
           }
         });
@@ -28,11 +32,15 @@ export function selectRouteModule(carResult, walkResult) {
     }
     // 徒歩ルートのスタイル更新
     if (walkResult && walkResult.renderer) {
+      const weight = !isCar ? 8 : 4;
+      const color = !isCar ? 'red' : 'gray'; // テスト用
+      console.log(`WalkRenderer 更新: weight=${weight}, color=${color}`);
+
       walkResult.renderer.setOptions({
         polylineOptions: {
-          strokeColor: 'red',
+          strokeColor: color,
           strokeOpacity: !isCar ? 1.0 : 0.3,
-          strokeWeight: !isCar ? 8 : 4,
+          strokeWeight: weight,
           zIndex: !isCar ? 10 : 1
         }
       });
