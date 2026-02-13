@@ -66,6 +66,7 @@ export function selectRouteModule(carResult, walkResult) {
 
     // クリックイベント
     hitLine.addListener('click', () => {
+     console.log(`Route hit line clicked: ${mode}`);
       selectRoute(mode);
       // クリックされたことをユーザーにフィードバック（例: インフォウィンドウなど）しても良いが、
       // ここでは線の色が濃くなることでフィードバックとする
