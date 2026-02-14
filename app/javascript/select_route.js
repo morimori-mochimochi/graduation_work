@@ -1,4 +1,24 @@
 export function selectRouteModule(carResult, walkResult) {
+  // レンダラーのスタイルを更新して再描画するヘルパー関数
+  const updateRendererStyle = (renderer, { color, opacity, weight, zIndex }) => {
+    if (!renderer) return;
+
+    renderer.setOptions({
+      polylineOptions: {
+        strokeColor: color,
+        strokeOpacity: opacity,
+        strokeWeight: weight,
+        zIndex: zIndex
+      }
+    });
+
+    // スタイル変更を確実に反映させるため、現在のルート情報を再セットして再描画を促す
+    const currentDirections = renderer.getDirections();
+    if (currentDirections) {
+      renderer.setDirections(currentDirections);
+    }
+  };
+
   // ルート選択切り替え関数
   const selectRoute = (mode) => {
     console.log(`selectRoute called with mode: ${mode}`);
@@ -31,61 +51,24 @@ export function selectRouteModule(carResult, walkResult) {
     // 2. 見た目の更新（選択された方を濃く、手前に表示）
     // 車ルートのスタイル更新
     if (carResult && carResult.renderers) {
-      console.log(`Updating car renderers. Count: ${carResult.renderers.length}`);
       carResult.renderers.forEach((renderer, index) => {
-        const weight = isCar ? 7 : 4;
-        
-        let color;
-        if (isCar) {
-          // 0番目は車ルート(緑)、それ以外は駐車場からの徒歩ルート(青)
-          color = (index === 0) ? 'green' : 'blue';
-        } else {
-          color = 'gray';
-        }
-        
-        console.log(`Car renderer [${index}] - Setting color: ${color}, opacity: ${isCar ? 1.0 : 0.3}`);
-
-        renderer.setOptions({
-          polylineOptions: {
-            strokeColor: color,
-            strokeOpacity: isCar ? 1.0 : 0.3,
-            strokeWeight: weight,
-            zIndex: isCar ? 10 : 1 //ルートの交差している時に数値の大きい方が手前に表示される
-          }
+        updateRendererStyle(renderer, {
+          color: isCar ? ((index === 0) ? 'green' : 'blue') : 'gray',
+          opacity: isCar ? 1.0 : 0.3,
+          weight: isCar ? 7 : 4,
+          zIndex: isCar ? 10 : 1
         });
-
-        // スタイル変更を確実に反映させるため、現在のルート情報を再セットして再描画を促す
-        const currentDirections = renderer.getDirections();
-        if (currentDirections) {
-          renderer.setDirections(currentDirections);
-        }
       });
-    } else {
-      console.log("carResult or carResult.renderers is missing");
     }
     // 徒歩ルートのスタイル更新
     if (walkResult && walkResult.renderer) {
-      const weight = !isCar ? 7 : 4;
-      const color = !isCar ? 'blue' : 'gray';
-
-      console.log(`Walk renderer - Setting color: ${color}, opacity: ${!isCar ? 1.0 : 0.3}`);
-
-      walkResult.renderer.setOptions({
-        polylineOptions: {
-          strokeColor: color,
-          strokeOpacity: !isCar ? 1.0 : 0.3,
-          strokeWeight: weight,
-          zIndex: !isCar ? 10 : 1
-        }
+      const isWalkSelected = !isCar;
+      updateRendererStyle(walkResult.renderer, {
+        color: isWalkSelected ? 'blue' : 'gray',
+        opacity: isWalkSelected ? 1.0 : 0.3,
+        weight: isWalkSelected ? 7 : 4,
+        zIndex: isWalkSelected ? 10 : 1
       });
-
-      // スタイル変更を確実に反映させるため、現在のルート情報を再セットして再描画を促す
-      const currentDirections = walkResult.renderer.getDirections();
-      if (currentDirections) {
-        walkResult.renderer.setDirections(currentDirections);
-      }
-    } else {
-      console.log("walkResult or walkResult.renderer is missing");
     }
   };
 
