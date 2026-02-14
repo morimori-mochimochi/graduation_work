@@ -159,8 +159,7 @@ export function drawRouteBtn() {
         // どちらかのルート検索が成功した場合に、初回描画完了イベントを発火
         const successfulResult = (carResult && carResult.status === 'OK') ? carResult : walkResult;
         if (successfulResult && successfulResult.status === 'OK') {
-          // sessionStorageに初期ルート（車優先）を保存
-          sessionStorage.setItem("directionsResult", JSON.stringify(successfulResult.response));
+          // sessionStorageへの保存は selectRouteModule 内で行われるため、ここではイベント発火のみ行う
           const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
           document.dispatchEvent(event);
         }
