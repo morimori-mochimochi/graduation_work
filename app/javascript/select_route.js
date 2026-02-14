@@ -9,6 +9,23 @@ export function selectRouteModule(carResult, walkResult) {
     if (selectedResult && selectedResult.status === 'OK') {
       window.routeData.travel_mode = isCar ? 'DRIVING' : 'WALKING';
       sessionStorage.setItem("directionsResult", JSON.stringify(selectedResult.response));
+
+      // 選択されたルートの距離と所要時間を再計算して保存
+      const route = selectedResult.response.routes[0];
+      if (route && route.legs) {
+        let totalDistance = 0;
+        let totalDuration = 0;
+        route.legs.forEach(leg => {
+          totalDistance += leg.distance.value;
+          totalDuration += leg.duration.value;
+        });
+        window.routeData.total_distance = totalDistance;
+        window.routeData.total_duration = totalDuration;
+      }
+
+      // UI更新（距離・時間表示や到着時刻）のためにイベントを発火
+      const event = new CustomEvent('relayPointsRendered');
+      document.dispatchEvent(event);
     }
 
     // 2. 見た目の更新（選択された方を濃く、手前に表示）
