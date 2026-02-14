@@ -53,6 +53,12 @@ export function selectRouteModule(carResult, walkResult) {
             zIndex: isCar ? 10 : 1 //ルートの交差している時に数値の大きい方が手前に表示される
           }
         });
+
+        // スタイル変更を確実に反映させるため、現在のルート情報を再セットして再描画を促す
+        const currentDirections = renderer.getDirections();
+        if (currentDirections) {
+          renderer.setDirections(currentDirections);
+        }
       });
     } else {
       console.log("carResult or carResult.renderers is missing");
@@ -72,6 +78,12 @@ export function selectRouteModule(carResult, walkResult) {
           zIndex: !isCar ? 10 : 1
         }
       });
+
+      // スタイル変更を確実に反映させるため、現在のルート情報を再セットして再描画を促す
+      const currentDirections = walkResult.renderer.getDirections();
+      if (currentDirections) {
+        walkResult.renderer.setDirections(currentDirections);
+      }
     } else {
       console.log("walkResult or walkResult.renderer is missing");
     }
