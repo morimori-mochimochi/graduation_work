@@ -1,25 +1,20 @@
 export function selectRouteModule(carResult, walkResult) {
   // ルート選択切り替え関数
   const selectRoute = (mode) => {
-
-    console.log("selectRoute called with mode: ${mode}"); 
-
+    console.log(`selectRoute called with mode: ${mode}`);
     const isCar = mode === 'car';
     
     // 1. データの保存と更新
     const selectedResult = isCar ? carResult : walkResult;
     if (selectedResult && selectedResult.status === 'OK') {
       window.routeData.travel_mode = isCar ? 'DRIVING' : 'WALKING';
-      window.directionsResult = selectedResult.response;
       sessionStorage.setItem("directionsResult", JSON.stringify(selectedResult.response));
     }
 
     // 2. 見た目の更新（選択された方を濃く、手前に表示）
     // 車ルートのスタイル更新
     if (carResult && carResult.renderers) {
-
-      console.log("Updating car renderers. Count: ${carResult.renderers.length}");
-
+      console.log(`Updating car renderers. Count: ${carResult.renderers.length}`);
       carResult.renderers.forEach((renderer, index) => {
         const weight = isCar ? 7 : 4;
         
@@ -30,8 +25,8 @@ export function selectRouteModule(carResult, walkResult) {
         } else {
           color = 'gray';
         }
-
-        console.log("car renderer [${index}] - Setting color: ${color}, opacity: ${isCar ? 1.0 : 0.3}");
+        
+        console.log(`Car renderer [${index}] - Setting color: ${color}, opacity: ${isCar ? 1.0 : 0.3}`);
 
         renderer.setOptions({
           polylineOptions: {
@@ -43,14 +38,14 @@ export function selectRouteModule(carResult, walkResult) {
         });
       });
     } else {
-     console.log("carResult or carResult.renderers is missing");
+      console.log("carResult or carResult.renderers is missing");
     }
     // 徒歩ルートのスタイル更新
     if (walkResult && walkResult.renderer) {
       const weight = !isCar ? 7 : 4;
       const color = !isCar ? 'blue' : 'gray';
 
-      console.log("walk renderer - Setting color: ${color}, opacity: ${!iscar ? 1.0 : 0.3}");
+      console.log(`Walk renderer - Setting color: ${color}, opacity: ${!isCar ? 1.0 : 0.3}`);
 
       walkResult.renderer.setOptions({
         polylineOptions: {
@@ -61,7 +56,7 @@ export function selectRouteModule(carResult, walkResult) {
         }
       });
     } else {
-     console.log("walkResult or walkResult.renderer is missing");
+      console.log("walkResult or walkResult.renderer is missing");
     }
   };
 
