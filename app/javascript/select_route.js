@@ -53,8 +53,8 @@ export function selectRouteModule(carResult, walkResult) {
     if (carResult && carResult.renderers) {
       carResult.renderers.forEach((renderer, index) => {
         updateRendererStyle(renderer, {
-          color: isCar ? ((index === 0) ? 'green' : 'blue') : 'gray',
-          opacity: isCar ? 1.0 : 0.3,
+          color: isCar ? ((index === 0) ? 'green' : 'blue') : 'black',
+          opacity: isCar ? 1.0 : 0.4,
           weight: isCar ? 7 : 4,
           zIndex: isCar ? 10 : 1
         });
@@ -64,8 +64,8 @@ export function selectRouteModule(carResult, walkResult) {
     if (walkResult && walkResult.renderer) {
       const isWalkSelected = !isCar;
       updateRendererStyle(walkResult.renderer, {
-        color: isWalkSelected ? 'blue' : 'gray',
-        opacity: isWalkSelected ? 1.0 : 0.3,
+        color: isWalkSelected ? 'blue' : 'black',
+        opacity: isWalkSelected ? 1.0 : 0.4,
         weight: isWalkSelected ? 7 : 4,
         zIndex: isWalkSelected ? 10 : 1
       });
