@@ -50,6 +50,7 @@ export async function walkDrawRoute() {
   const waypoints = [];
   window.routeData.waypoints.forEach(wp => {
     // 徒歩ルートなので、駐車場の有無に関わらず本来の地点(mainPoint)を経由地とする
+    // 明示的に駐車場情報を無視して予期せぬ挙動を予防
     const location = wp.mainPoint?.point;
     if (location && isValidLatLng(location)) {
       waypoints.push({

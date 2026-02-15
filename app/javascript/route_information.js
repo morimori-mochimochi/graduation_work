@@ -2,9 +2,9 @@ export function initRouteInformation() {
   
   console.log("ルート情報を表示します");
 
-  document.addEventListener('relayPointsRendered', (event) => {
+  document.addEventListener('routeDrawn', (event) => {
 
-    console.log("relayPointsRenderdイベントを受信しました");
+    console.log("routeDrawnイベントを受信しました");
   
     const routeData = window.routeData;
     console.log("routeData:", routeData);
