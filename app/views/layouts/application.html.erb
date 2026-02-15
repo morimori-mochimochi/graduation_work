@@ -51,4 +51,18 @@
       <li><button class="info-window-set-relay-point btn h-9 btn-primary rounded-full">中継地に設定</button></li>
     </ul>
   </template>
+
+    <template id="route-info-template">
+    <div style="min-width:200px;">
+        <div class="info-window-mode" style="font-weight:bold;font-size:1.1em;margin-bottom:8px;text-align:center;"></div>
+        <p style="min-width:200px;">ルート情報</p>
+          <p class="route-total-distance"></p>
+          <p class="route-total-duration"></p>
+          <% if routeData.mode == :car %>
+            <p class="gas-consumption"></p>
+          <% else %>
+            <p class="calorie-burned"></p>
+          <% end %>
+    </div>
+  </template>  
 </html>
