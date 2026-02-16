@@ -25,13 +25,16 @@ function createInfoWindowContent() {
   const distance = window.routeData.total_distance || 0;
   const duration = window.routeData.total_duration || 0;
 
+  console.log("distance:", distance);
+  console.log("duration:", duration);
+
   // 距離と時間のフォーマット計算
   const distanceKm = (distance / 1000).toFixed(1);
-  
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
+
+  console.log("distanceKm:", distanceKm);
+
+  const minutes = Math.floor(duration % 3600);
   let timeString = "";
-  if (hours > 0) timeString += `${hours}時間`;
   timeString += `${minutes}分`;
 
   // モード判定: walk_route.jsではWALKINGをセット
