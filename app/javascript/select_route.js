@@ -1,3 +1,5 @@
+import { showRouteInfoWindow } from "./route_information";
+
 export function selectRouteModule(carResult, walkResult) {
   // レンダラーのスタイルを更新して再描画するヘルパー関数
   const updateRendererStyle = (renderer, { color, opacity, weight, zIndex }) => {
@@ -86,11 +88,12 @@ export function selectRouteModule(carResult, walkResult) {
     });
 
     // クリックイベント
-    hitLine.addListener('click', () => {
+    hitLine.addListener('click', (event) => {
      console.log(`Route hit line clicked: ${mode}`);
       selectRoute(mode);
       // クリックされたことをユーザーにフィードバック（例: インフォウィンドウなど）しても良いが、
       // ここでは線の色が濃くなることでフィードバックとする
+      showRouteInfoWindow(event.latLng);
     });
 
     window.routeHitLines.push(hitLine);

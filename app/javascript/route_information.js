@@ -1,59 +1,18 @@
-export function initRouteInformation() {
-  
+// InfoWindowのインスタンスを作成（１つを使い回す）
+let infoWindow;
+
+export function showRouteInfoWindow(latLng) {
   console.log("ルート情報を表示します");
 
-  // 現在描画されているルート上に透明な線を重ねてクリックイベントを検知可能にする
-  // そのために現在のルート情報を入れておくための配列を作る
-  let paths = [];
-
-  // 車ルート
-  if (window.carRouteRenderers && window.carRouteRenderers.length > 0) {
-    window.carRouteRenderers.forEach(renderer => {
-      const directions = renderer.getDirections();
-      if (directions && directions.routes && directions.routes.length > 0) {
-        // overview_path: ルート全体の大まかなパス
-        paths.push(directions.routes[0].overview_path)
-      }
-    });
+  if (!infoWindow) {
+    infoWindow = new google.maps.InfoWindow();
   }
 
-  if (window.walkRouteRenderer) {
-    const directions = window.walkRouteRenderer.getDirections();
-    if (directions && directions.routes && directions.routes.length > 0) {
-      paths.push(directions.routes[0].overview_path);
-    }
-  }
-
-  // ルートがなければ何もしない
-  if (paths.length === 0) return;
-
-  // Infowindowのインスタンスを作成（１つを使い回す）
-  const infoWindow = new google.maps.InfoWindow();
-
-  // 透明なポリラインを作成してクリックイベントを設定
-  paths.forEach(path => {
-    const hitLine = new google.maps.Polyline({
-      path: path,
-      strokeColor: 'transparent', // 透明
-      strokeOpacity: 0,
-      strokeWeight: 20, // 太くすることでクリックしやすくする
-      map: window.map,
-      zIndex: 100 // 最前面
-    });
-
-    // クリックイベント
-    hitLine.addListener('click', (event) => {
-      // クリックされた位置にInfowindowを表示
-      const content = createInfoWindowContent();
-      infoWindow.setContent(content);
-      // event.latLng: Google Maps APIがクリックを検知後自動生成して
-      // 関数の引数として渡してくれたもの
-      infoWindow.setPosition(event.latLng);
-      infoWindow.open(window.map);
-    });
-    // 配列に保存
-    window.routeHitLines.push(hitLine);
-  });
+  // クリックされた位置にInfowindowを表示
+  const content = createInfoWindowContent();
+  infoWindow.setContent(content);
+  infoWindow.setPosition(latLng);
+  infoWindow.open(window.map);
 }
 
 function createInfoWindowContent() {

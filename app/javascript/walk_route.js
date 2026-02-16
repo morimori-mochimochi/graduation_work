@@ -1,6 +1,5 @@
 import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
-import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
 
 function isValidLatLng(point) {
@@ -121,7 +120,6 @@ export async function walkDrawRoute() {
 function initRouteContent() {
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
-      initRouteInformation();
       initSetTime();
     }
   });

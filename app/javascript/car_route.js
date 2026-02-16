@@ -1,6 +1,5 @@
 import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
-import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
 import { walkDrawRoute } from "./walk_route";
 import { selectRouteModule } from "./select_route";
@@ -183,7 +182,6 @@ export function drawRouteBtn() {
 function initRouteContent() {
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
-      initRouteInformation();
       initSetTime();
     }
   });
