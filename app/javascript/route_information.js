@@ -54,12 +54,16 @@ function createInfoWindowContent() {
   } else {
     modeEl.textContent = "車ルート"
   }
+  console.log("modeEl:", modeEl);
 
   const distanceEl = clone.querySelector('.route-total-distance');
   if (distanceEl) distanceEl.textContent = `${distanceKm} km`;
 
   const durationEl = clone.querySelector('.route-total-duration');
   if (durationEl) durationEl.textContent = timeString;
+
+  console.log("infoWindowのdistanceEl:", distanceEl);
+  console.log("infoWindowのdurationEl:", durationEl);
 
   const gasEl = clone.querySelector('.gas-consumption');
   if (gasEl) {
