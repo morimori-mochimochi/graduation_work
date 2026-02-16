@@ -1,6 +1,4 @@
 export function initSetTime() {
-  console.log("initSetTimeが呼ばれた");
-
   const startHourEl = document.getElementById("startHour");
   const startMinuteEl = document.getElementById("startMinute");
   const destinationHourEl = document.getElementById("destinationHour");
