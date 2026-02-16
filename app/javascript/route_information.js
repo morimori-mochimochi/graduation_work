@@ -37,6 +37,8 @@ function createInfoWindowContent() {
   let timeString = "";
   timeString += `${minutes}分`;
 
+  console.log("timeString:", timeString);
+
   // モード判定: walk_route.jsではWALKINGをセット
   // そうでない時はDRIVINGと判定
   const isWalking = window.routeData.travel_mode === 'WALKING';
