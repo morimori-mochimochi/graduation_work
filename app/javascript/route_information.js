@@ -33,8 +33,12 @@ function createInfoWindowContent() {
 
   console.log("distanceKm:", distanceKm);
 
-  const minutes = Math.floor(duration % 3600);
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
   let timeString = "";
+  if (hours > 0) {
+    timeString += `${hours}時間`;
+  }
   timeString += `${minutes}分`;
 
   console.log("timeString:", timeString);
