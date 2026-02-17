@@ -58,10 +58,10 @@ function createInfoWindowContent() {
   console.log("modeEl:", modeEl);
 
   const distanceEl = clone.querySelector('.route-total-distance');
-  if (distanceEl) distanceEl.textContent = `${distanceKm} km`;
+  if (distanceEl) distanceEl.textContent = `総移動距離： ${distanceKm} km`;
 
   const durationEl = clone.querySelector('.route-total-duration');
-  if (durationEl) durationEl.textContent = timeString;
+  if (durationEl) durationEl.textContent = `所要時間： ${timeString}`;
 
   console.log("infoWindowのdistanceEl:", distanceEl);
   console.log("infoWindowのdurationEl:", durationEl);
@@ -70,12 +70,12 @@ function createInfoWindowContent() {
   if (gasEl) {
     // ガソリン消費量を計算（リッターあたり15kmの時）
     const gasConsumption = (distanceKm / 15).toFixed(2);
-    gasEl.textContent = `${gasConsumption} L`;
+    gasEl.textContent = `ガソリン消費量： ${gasConsumption} L`;
   }
 
   const calorieEl = clone.querySelector('.calorie-burned');
   if (calorieEl) {
-    calorieEl.textContent = `${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
+    calorieEl.textContent = `消費カロリー： ${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
   }
   return clone.firstElementChild;
 }
