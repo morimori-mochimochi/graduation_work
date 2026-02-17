@@ -63,7 +63,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     find("img[alt='startNavi']").click
 
     # 7. ナビゲーションページに遷移したことを確認
-    expect(page).to have_current_path(car_navigation_routes_path)
+    expect(page).to have_current_path(navigation_routes_path)
     expect(page).to have_selector("img[alt='stopNavi']")
   end
 end
