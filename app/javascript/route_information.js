@@ -19,6 +19,7 @@ function createInfoWindowContent() {
   // テンプレを取得
   const template = document.getElementById('route-info-template')
   // テンプレの中身を確認
+  // cloneNode：要素を風区政するメソッド
   const clone = template.content.cloneNode(true);
 
   // データを取得
