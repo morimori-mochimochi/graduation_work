@@ -50,7 +50,7 @@ function initializePage(container) {
         searchParking();
         drawRouteBtn();
         initCurrentPosBtn();
-      } else if (id === 'naviMap' || id === 'carNaviMap') {
+      } else if (id === 'naviMap') {
         startNavigation();
       }
     }

@@ -22,7 +22,7 @@
     </button>
     
    
-    <%= link_to(mode == :car ? car_navigation_routes_path : walk_navigation_routes_path, class: "appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]") do %>
+    <%= link_to navigation_routes_path, class: "appearance-none bg-transparent border-none p-0 m-0 mr-[-1rem]" do %>
       <%= image_tag "/images/startNavi.png", alt: "startNavi", class: "btn_effect h-19 -mt-1" %>
     <% end %>
 
