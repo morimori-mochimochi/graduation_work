@@ -57,8 +57,11 @@
       <div class="info-window-mode" style="font-weight:bold;font-size:1.1em;margin-bottom:8px;text-align:center;"></div>
       <div class="route-total-distance"></div>
       <div class="route-total-duration"></div>
-      <div class="gas-consumption"></div>
-      <div class="calorie-burned"></div>
+      <% if (info-window-mode == inWalking) %>
+        <div class="gas-consumption"></div>
+      <% else %>
+        <div class="calorie-burned"></div>
+      <% end %>
     </div>
   </template>  
 </html>
