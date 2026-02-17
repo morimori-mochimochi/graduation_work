@@ -67,15 +67,21 @@ function createInfoWindowContent() {
   console.log("infoWindowのdurationEl:", durationEl);
 
   const gasEl = clone.querySelector('.gas-consumption');
-  if (gasEl) {
-    // ガソリン消費量を計算（リッターあたり15kmの時）
-    const gasConsumption = (distanceKm / 15).toFixed(2);
-    gasEl.textContent = `ガソリン消費量： ${gasConsumption} L`;
-  }
-
   const calorieEl = clone.querySelector('.calorie-burned');
-  if (calorieEl) {
-    calorieEl.textContent = `消費カロリー： ${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
+
+  if (isWalking) {
+    // 徒歩の場合：ガソリン表示を削除し、カロリーを表示
+    if (gasEl) gasEl.remove();
+    if (calorieEl) {
+      calorieEl.textContent = `消費カロリー： ${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
+    }
+  } else {
+    // 車の場合：カロリー表示を削除し、ガソリンを表示
+    if (calorieEl) calorieEl.remove();
+    if (gasEl) {
+      const gasConsumption = (distanceKm / 15).toFixed(2);
+      gasEl.textContent = `ガソリン消費量： ${gasConsumption} L`;
+    }
   }
   return clone.firstElementChild;
 }
