@@ -7,9 +7,8 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
     visit root_path
     find("a[href='#{car_routes_path}']").click
-    find("a[href='#{walk_routes_path}']").click
 
-    # 2. walk.html.erbに遷移し、マップ表示を待つ
+    # 2. car.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
     expect(page).to have_current_path(walk_routes_path, ignore_query: true)
     # マップ表示まで待機

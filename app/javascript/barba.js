@@ -38,7 +38,7 @@ function initializePage(container) {
   initCalendar(container);
 
   // マップ関連の初期化
-  const mapIds = ['map', 'naviMap', 'carNaviMap'];
+  const mapIds = ['map', 'naviMap'];
   mapIds.forEach(id => {
     const mapDiv = container.querySelector(`#${id}`);
     if (mapDiv && !mapDiv.dataset.mapInitialized) {

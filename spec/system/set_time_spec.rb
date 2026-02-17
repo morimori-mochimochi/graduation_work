@@ -6,10 +6,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
   before do
     visit root_path
     find("a[href='#{car_routes_path}']").click
-    find("a[href='#{walk_routes_path}']").click
     # 2. walk.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
-    expect(page).to have_current_path(walk_routes_path, ignore_query: true)
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
     # マップ表示まで待機
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
@@ -41,7 +40,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
         document.getElementById('startPoint').textContent = "東京駅";
         document.getElementById('destinationPoint').textContent = "東京タワー";
         // ルート検索を直接実行し、完了を待つ
-        await window.walkDrawRoute();
+        await window.drawRoute();
         done(); // walkDrawRouteの完了後にテストを再開
       });
     JS
@@ -115,7 +114,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       expect(page).to have_selector('#route-menu', visible: true)
 
       # 5. 再度ルート検索を実行
-      find('#walkDrawRoute').click
+      find('#drawRoute').click
 
       # 6. 時刻計算が完了するのを待つ
       # 中継点の出発時刻が表示されれば計算完了とみなす

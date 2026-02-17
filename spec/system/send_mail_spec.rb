@@ -42,7 +42,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 1. ルート作成ページにアクセス
     visit root_path
     find("a[href='#{car_routes_path}']").click
-    find("a[href='#{walk_routes_path}']").click
 
     expect(page).to have_current_path(walk_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
