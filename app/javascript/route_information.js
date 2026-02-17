@@ -21,11 +21,6 @@ function createInfoWindowContent() {
   // テンプレの中身を確認
   const clone = template.content.cloneNode(true);
 
-  // 【デバッグ用】テンプレートの中身をコンソールに出力して確認する
-  const debugDiv = document.createElement('div');
-  debugDiv.appendChild(clone.cloneNode(true));
-  console.log("Template HTML Content:", debugDiv.innerHTML);
-
   // データを取得
   const distance = window.routeData.total_distance || 0;
   const duration = window.routeData.total_duration || 0;
@@ -81,5 +76,5 @@ function createInfoWindowContent() {
   if (calorieEl) {
     calorieEl.textContent = `${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
   }
-  return clone;
+  return clone.firstElementChild;
 }
