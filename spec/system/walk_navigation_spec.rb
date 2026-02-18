@@ -10,7 +10,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
 
     # 2. car.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
-    expect(page).to have_current_path(walk_routes_path, ignore_query: true)
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
     # マップ表示まで待機
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')

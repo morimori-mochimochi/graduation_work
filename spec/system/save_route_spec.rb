@@ -57,7 +57,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
               return;
             }
             const result = await window.carDrawRoute();
-            done(result); // 成功したら"OK"が返る
+            done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
             done("Error in carDrawRoute: " + e.message);
