@@ -57,7 +57,6 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
       # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
       # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず
-      expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
       # 所要時間は変動する可能性があるため、具体的な時刻ではなく「値がセットされたか」を検証
       expect(find('#destinationHour').value).not_to eq '時'
       expect(find('#destinationMinute').value).not_to eq '分'

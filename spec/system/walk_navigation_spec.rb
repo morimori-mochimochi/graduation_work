@@ -46,11 +46,12 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     JS
 
     # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
+
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
     find("img[alt='startNavi']").click
-
+    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
+    
     # 7. ナビゲーションページに遷移したことを確認
     expect(page).to have_current_path(walk_navigation_routes_path)
     expect(page).to have_selector("img[alt='stopNavi']")
