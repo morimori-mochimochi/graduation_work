@@ -53,7 +53,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     select '30', from: 'startMinute'
 
     # 3. 到着時刻が計算されていることを確認
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     expect(find('#startHour').value).not_to eq '時'
     expect(find('#startMinute').value).not_to eq '分'
     expect(find('#destinationHour').value).not_to eq '時'

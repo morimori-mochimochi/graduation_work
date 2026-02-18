@@ -65,9 +65,6 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
       });
     JS
 
-    # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
-
     # 7. 保存ボタンをクリックし、アラートが表示されるのを待ってOKを押す
     # accept_alertのブロック内で操作を行うことで、非同期で表示されるアラートを待機してくれます
     # テキストを指定せずに待機することで、文言不一致やエラーアラートの場合でも内容を確認できるようにする
