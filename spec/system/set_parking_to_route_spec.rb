@@ -51,7 +51,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
           try {
             const result = await window.carDrawRoute();
-            done(result); // 成功したら"OK"が返る
+            done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             done("Error in carDrawRoute: " + e.message);
           }
