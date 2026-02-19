@@ -47,12 +47,11 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           document.getElementById('startPoint').textContent = "東京駅";
           document.getElementById('destinationPoint').textContent = "東京タワー";
           // ルート検索を直接実行し、完了を待つ
-          await window.carDrawRoute();
-          done(); // calkDrawRouteの完了後にテストを再開
+          const result = await window.carDrawRoute();
 
           if (result.status == 'OK') {
-            window.routeData.traval_mode = 'DRIVING ';
-            sessionStorage.setItem('directionsResult", JSON.stringify(result.response));
+            window.routeData.travel_mode = 'DRIVING';
+            sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
             const route = result.response.routes[0];
             let totalDistance = 0;
             let totalDuration = 0;
@@ -60,10 +59,10 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
               totalDistance += leg.distance.value;
               totalDuration += leg.duration.value;
             });
-            window.rotueData.total_distance = totalDistance;
+            window.routeData.total_distance = totalDistance;
             window.routeData.total_duration = totalDuration;
           }
-          done(result.status); 
+          done(result.status);
         } catch (e) {
           done("Error in carDrawRoute: " + e.message);
         }
