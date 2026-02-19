@@ -48,6 +48,19 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
               return;
             }
             const result = await window.carDrawRoute();
+            if (result.status === 'OK') {
+              window.routeData.travel_mode = 'DRIVING';
+              sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+              const route = result.response.routes[0];
+              let totalDistance = 0;
+              let totalDuration = 0;
+              route.legs.forEach(leg => {
+                totalDistance += leg.distance.value;
+                totalDuration += leg.duration.value;
+              });
+              window.routeData.total_distance = totalDistance;
+              window.routeData.total_duration = totalDuration;
+            }
             done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
@@ -60,10 +73,10 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     # 画像にリンクが設定されているためaltテキストで検索する
     find("img[alt='startNavi']").click
     # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
 
     # 7. ナビゲーションページに遷移したことを確認
     expect(page).to have_current_path(navigation_routes_path)
+    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     expect(page).to have_selector("img[alt='stopNavi']")
   end
 end

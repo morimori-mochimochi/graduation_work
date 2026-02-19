@@ -63,10 +63,10 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
       # 6.「ナビ開始」ボタンをクリック
       find("img[alt='startNavi']").click
-      expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
-      
+
       # 7.ナビゲーションページに遷移したことを確認
       expect(page).to have_current_path(navigation_routes_path)
+      expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
       expect(page).to have_selector("img[alt='stopNavi']")
     end
   end
