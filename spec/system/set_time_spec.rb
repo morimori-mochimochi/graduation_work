@@ -48,7 +48,22 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           document.getElementById('destinationPoint').textContent = "東京タワー";
           // ルート検索を直接実行し、完了を待つ
           await window.carDrawRoute();
-          done(); // walkDrawRouteの完了後にテストを再開
+          done(); // calkDrawRouteの完了後にテストを再開
+
+          if (result.status == 'OK') {
+            window.routeData.traval_mode = 'DRIVING ';
+            sessionStorage.setItem('directionsResult", JSON.stringify(result.response));
+            const route = result.response.routes[0];
+            let totalDistance = 0;
+            let totalDuration = 0;
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value;
+              totalDuration += leg.duration.value;
+            });
+            window.rotueData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+          }
+          done(result.status); 
         } catch (e) {
           done("Error in carDrawRoute: " + e.message);
         }
@@ -87,6 +102,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
       # 2. ルートを設定し、検索を実行
       set_route
+
 
       # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
       # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず

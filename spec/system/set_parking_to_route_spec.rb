@@ -52,7 +52,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
           try {
             const result = await window.carDrawRoute();
             if (result.status == 'OK') {
-              window.routeData.travel_mode = 'DRIVING;
+              window.routeData.travel_mode = 'DRIVING';
               sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
               const route = result.response.routes[0];
               let totalDistance = 0;
