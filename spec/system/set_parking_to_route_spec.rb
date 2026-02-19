@@ -51,7 +51,20 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
           try {
             const result = await window.carDrawRoute();
-            done(result.status); // 成功したら"OK"が返る
+            if (result.status == 'OK') {
+              window.routeData.travel_mode = 'DRIVING;
+              sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+              const route = result.response.routes[0];
+              let totalDistance = 0;
+              let totalDuration = 0;
+              route.legs.forEach(leg => {
+                totalDistance += leg.distance.value;
+                totalDuration += leg.duration.value;
+              });
+              window.routeData.totalDistance = totalDistance;
+              window.routeData.totalDuration = totalDuration;
+            }
+            done(result.status); // 成功したら"OK"が返る  
           } catch (e) {
             done("Error in carDrawRoute: " + e.message);
           }
