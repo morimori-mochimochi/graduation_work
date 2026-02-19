@@ -34,5 +34,7 @@ if (script) {
     rejectMapApiLoaded?.(new Error("Google Maps API script の読み込みに失敗しました"));
   });
 } else {
-  console.error("Google Maps API script が見つかりませんでした");
+  const msg = "Google Maps API script が見つかりませんでした";
+  console.error(msg);
+  rejectMapApiLoaded?.(new Error(msg));
 }

@@ -26,22 +26,34 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       const waypoints_from_ruby = JSON.parse(arguments[2]);
       const done = arguments[3];
 
-      window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
-        const start = new google.maps.LatLng(start_location);
-        const destination = new google.maps.LatLng(destination_location);
+      // window.mapApiLoadedが未定義の時のガード節
+      if (!window.mapApiLoaded) {
+        done("Error: window.mapApiLoaded is undefined ");
+        return;
+      }
 
-        const waypoints = waypoints_from_ruby.map(wp => ({ mainPoint: { point: new google.maps.LatLng(wp.point), name: wp.name } }));
-        window.routeData = {
-          start: { point: start },
-          destination: { mainPoint: { point: destination } },
-          waypoints: waypoints
-        };
-        // 画面にも設定を反映
-        document.getElementById('startPoint').textContent = "東京駅";
-        document.getElementById('destinationPoint').textContent = "東京タワー";
-        // ルート検索を直接実行し、完了を待つ
-        await window.drawRoute();
-        done(); // walkDrawRouteの完了後にテストを再開
+      window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
+        try {
+          const start = new google.maps.LatLng(start_location);
+          const destination = new google.maps.LatLng(destination_location);
+
+          const waypoints = waypoints_from_ruby.map(wp => ({ mainPoint: { point: new google.maps.LatLng(wp.point), name: wp.name } }));
+          window.routeData = {
+            start: { point: start },
+            destination: { mainPoint: { point: destination } },
+            waypoints: waypoints
+          };
+          // 画面にも設定を反映
+          document.getElementById('startPoint').textContent = "東京駅";
+          document.getElementById('destinationPoint').textContent = "東京タワー";
+          // ルート検索を直接実行し、完了を待つ
+          await window.carDrawRoute();
+          done(); // walkDrawRouteの完了後にテストを再開
+        } catch (e) {
+          done("Error in carDrawRoute: " + e.message);
+        }
+      }).catch((e) => {
+        done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
   end
