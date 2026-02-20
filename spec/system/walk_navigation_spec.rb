@@ -30,22 +30,45 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
       const done = arguments[2];
 
       window.mapApiLoaded.then(async () => {
-          const start = new google.maps.LatLng(start_location);
-          const destination = new google.maps.LatLng(destination_location);
+        const start = new google.maps.LatLng(start_location);
+        const destination = new google.maps.LatLng(destination_location);
 
-          // walkDrawRouteが参照するwindow.routeDataをセットアップ
-          window.routeData = {
-            start: { point: start },
-            destination: { mainPoint: { point: destination } },
-            waypoints: []
-          };
+        // walkDrawRouteが参照するwindow.routeDataをセットアップ
+        window.routeData = {
+          start: { point: start },
+          destination: { mainPoint: { point: destination } },
+          waypoints: []
+        };    
+
+        try {
+          if (typeof window.walkDrawRoute !== 'function'){
+            done("Error: window.walkDrawRoute is not a function");
+            return;
+          }
+
           // walkDrawRouteが完了するのを待ってからテストを再開する
-          await walkDrawRoute();
-          done();
+          const result = await window.walkDrawRoute();
+          if (result.status === 'OK') {
+            window.routeData.travel_mode = 'WALKING';
+            sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+            const route = result.response.routes[0];
+            let totalDistance = 0;
+            let totalDuration = 0;
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value;
+              totalDuration += leg.duration.value;
+            });
+            window.routeData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+          }
+          done(result.status); // 成功したら"OK"が返る
+        } catch(e) {
+          done("Error: mapApiLoaded rejected: " + e.message);
+        }
+      }).catch((e) => {
+        done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
-
-    # 5. ルート情報がsessionStorageに保存されるのを待つ
 
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
