@@ -61,8 +61,8 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
                 totalDistance += leg.distance.value;
                 totalDuration += leg.duration.value;
               });
-              window.routeData.totalDistance = totalDistance;
-              window.routeData.totalDuration = totalDuration;
+              window.routeData.total_distance = totalDistance;
+              window.routeData.total_duration = totalDuration;
             }
             done(result.status); // 成功したら"OK"が返る  
           } catch (e) {
