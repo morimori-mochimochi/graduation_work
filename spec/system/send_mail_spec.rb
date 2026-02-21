@@ -32,8 +32,22 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
         document.getElementById('startPoint').textContent = start_location.name;
         document.getElementById('destinationPoint').textContent = destination_location.name;
         // ルート検索を直接実行し、完了を待つ
-        await window.walkDrawRoute();
-        done(); // walkDrawRouteの完了後にテストを再開
+        const result = await window.carDrawRoute();
+
+        if (result.status == 'OK') {
+          window.routeData.travel_mode = 'DRIVING';
+          sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
+          const route = result.response.routes[0];
+          let totalDistance = 0;
+          let totalDuration = 0;
+          route.legs.forEach(leg => {
+            totalDistance += leg.distance.value;
+            totalDuration += leg.duration.value;
+          });
+          window.routeData.total_distance = totalDistance;
+          window.routeData.total_duration = totalDuration;
+        }
+        done(); // carDrawRouteの完了後にテストを再開
       });
     JS
   end
