@@ -57,6 +57,19 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
               return;
             }
             const result = await window.carDrawRoute();
+            if (result.status === 'OK') {
+              window.routeData.travel_mode = 'DRIVING';
+              sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+              const route = result.response.routes[0];
+              let totalDistance = 0;
+              let totalDuration = 0;
+              route.legs.forEach(leg => {
+                totalDistance += leg.distance.value;
+                totalDuration += leg.duration.value;
+              });
+              window.routeData.total_distance = totalDistance;
+              window.routeData.total_duration = totalDuration;
+            }
             done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
