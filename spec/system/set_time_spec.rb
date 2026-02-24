@@ -61,6 +61,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
             });
             window.routeData.total_distance = totalDistance;
             window.routeData.total_duration = totalDuration;
+            // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
+            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+            document.dispatchEvent(event);
           }
           done(result.status);
         } catch (e) {
