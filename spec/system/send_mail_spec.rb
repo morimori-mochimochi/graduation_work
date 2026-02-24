@@ -14,7 +14,8 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     start_location = { lat: 35.6812, lng: 139.7671, name: '東京駅' }.to_json
     destination_location = { lat: 35.6586, lng: 139.7454, name: '東京タワー' }.to_json
 
-    page.evaluate_async_script(<<~JS, start_location, destination_location)
+    # 実行結果(status)を受け取るように変更
+    status = page.evaluate_async_script(<<~JS, start_location, destination_location)
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
       const done = arguments[2];
@@ -50,9 +51,12 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
           const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
           document.dispatchEvent(event);
         }
-        done(); // carDrawRouteの完了後にテストを再開
+        done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
       });
     JS
+
+    # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
+    expect(status).to eq 'OK'
   end
 
   it 'ルート保存後に通知設定をすると、出発時刻の通知メールが送信されること' do
