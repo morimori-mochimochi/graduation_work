@@ -46,6 +46,9 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
           });
           window.routeData.total_distance = totalDistance;
           window.routeData.total_duration = totalDuration;
+          // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
+          const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+          document.dispatchEvent(event);
         }
         done(); // carDrawRouteの完了後にテストを再開
       });
@@ -60,12 +63,12 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
     # 2. ルートを描画
+    # この時点で routeDrawn イベントが発火し、時刻計算の準備が整う
     set_route
 
     # ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
     select '10', from: 'startHour'
     select '30', from: 'startMinute'
-
     # 3. 到着時刻が計算されていることを確認
     expect(find('#startHour').value).not_to eq '時'
     expect(find('#startMinute').value).not_to eq '分'
