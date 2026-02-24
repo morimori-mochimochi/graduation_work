@@ -20,7 +20,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
     destination_location = { lat: 35.6586, lng: 139.7454 }.to_json
     waypoints_json = waypoints.to_json
 
-    page.evaluate_async_script(<<~JS, start_location, destination_location, waypoints_json)
+    result = page.evaluate_async_script(<<~JS, start_location, destination_location, waypoints_json)
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
       const waypoints_from_ruby = JSON.parse(arguments[2]);
@@ -73,6 +73,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
         done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
+    expect(result).to eq 'OK'
   end
 
   context '出発時刻を設定した場合' do
