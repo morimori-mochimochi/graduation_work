@@ -16,11 +16,11 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
   # 共通のルート設定処理をヘルパーメソッドに切り出し
   def set_route(waypoints: [])
-    start_location = { lat: 35.6812, lng: 139.7671 }.to_json
-    destination_location = { lat: 35.6586, lng: 139.7454 }.to_json
+    start_location = { lat: 35.6812, lng: 139.7671, name: '東京駅' }.to_json
+    destination_location = { lat: 35.6586, lng: 139.7454, name: '東京タワー' }.to_json
     waypoints_json = waypoints.to_json
 
-    result = page.evaluate_async_script(<<~JS, start_location, destination_location, waypoints_json)
+    status = page.evaluate_async_script(<<~JS, start_location, destination_location, waypoints_json)
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
       const waypoints_from_ruby = JSON.parse(arguments[2]);
@@ -39,13 +39,13 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
           const waypoints = waypoints_from_ruby.map(wp => ({ mainPoint: { point: new google.maps.LatLng(wp.point), name: wp.name } }));
           window.routeData = {
-            start: { point: start },
-            destination: { mainPoint: { point: destination } },
+            start: { point: start, name: start_location.name },
+            destination: { mainPoint: { point: destination, name: destination_location.name } },
             waypoints: waypoints
           };
           // 画面にも設定を反映
-          document.getElementById('startPoint').textContent = "東京駅";
-          document.getElementById('destinationPoint').textContent = "東京タワー";
+          document.getElementById('startPoint').textContent = start_location.name;
+          document.getElementById('destinationPoint').textContent = destination_location.name;
           // ルート検索を直接実行し、完了を待つ
           const result = await window.carDrawRoute();
 
@@ -58,13 +58,23 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           }
           done(result.status);
         } catch (e) {
+          console.error(e);
           done("Error in carDrawRoute: " + e.message);
         }
       }).catch((e) => {
+        console.error(e);
         done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
-    expect(result).to eq 'OK'
+
+    if status != 'OK'
+      puts "========= JS Error in set_route ========="
+      puts "Status: #{status}"
+      puts "Browser Logs:"
+      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n")
+      puts "========================================="
+    end
+    expect(status).to eq 'OK'
   end
 
   context '出発時刻を設定した場合' do
