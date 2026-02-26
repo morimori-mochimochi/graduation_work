@@ -20,40 +20,69 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
       const destination_location = JSON.parse(arguments[1]);
       const done = arguments[2];
 
+      if (!window.mapApiLoaded) {
+        done("Error: window.mapApiLoaded is undefined");
+        return;
+      }
+
       window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
-        const start = new google.maps.LatLng(start_location);
-        const destination = new google.maps.LatLng(destination_location);
+        try {
+          const start = new google.maps.LatLng(start_location);
+          const destination = new google.maps.LatLng(destination_location);
 
-        window.routeData = {
-          start: { point: start, name: start_location.name },
-          destination: { mainPoint: { point: destination, name: destination_location.name } },
-          waypoints: []
-        };
-        // 画面にも設定を反映
-        document.getElementById('startPoint').textContent = start_location.name;
-        document.getElementById('destinationPoint').textContent = destination_location.name;
-        // ルート検索を直接実行し、完了を待つ
-        const result = await window.carDrawRoute();
+          window.routeData = {
+            start: { point: start, name: start_location.name },
+            destination: { mainPoint: { point: destination, name: destination_location.name } },
+            waypoints: []
+          };
+          
+          // 画面にも設定を反映
+          const startEl = document.getElementById('startPoint');
+          const destEl = document.getElementById('destinationPoint');
+          if (!startEl || !destEl) {
+            throw new Error("Start or Destination element not found in DOM");
+          }
+          startEl.textContent = start_location.name;
+          destEl.textContent = destination_location.name;
 
-        if (result.status == 'OK') {
-          window.routeData.travel_mode = 'DRIVING';
-          sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
-          const route = result.response.routes[0];
-          let totalDistance = 0;
-          let totalDuration = 0;
-          route.legs.forEach(leg => {
-            totalDistance += leg.distance.value;
-            totalDuration += leg.duration.value;
-          });
-          window.routeData.total_distance = totalDistance;
-          window.routeData.total_duration = totalDuration;
-          // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-          const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
-          document.dispatchEvent(event);
+          // ルート検索を直接実行し、完了を待つ
+          if (typeof window.carDrawRoute !== 'function') {
+            throw new Error("window.carDrawRoute is not a function");
+          }
+          const result = await window.carDrawRoute();
+
+          if (result.status == 'OK') {
+            window.routeData.travel_mode = 'DRIVING';
+            sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
+            const route = result.response.routes[0];
+            let totalDistance = 0;
+            let totalDuration = 0;
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value;
+              totalDuration += leg.duration.value;
+            });
+            window.routeData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+            // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
+            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+            document.dispatchEvent(event);
+          }
+          done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
+        } catch (e) {
+          done("Error: " + e.message);
         }
-        done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
+      }).catch((e) => {
+        done("Error in mapApiLoaded: " + e.message);
       });
     JS
+
+    if status != 'OK'
+      puts "========= JS Error in set_route ========="
+      puts "Status: #{status}"
+      puts "Browser Logs:"
+      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n")
+      puts "========================================="
+    end
 
     # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
     expect(status).to eq 'OK'
