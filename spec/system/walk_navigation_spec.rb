@@ -67,7 +67,7 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
     expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     
     # 7. ナビゲーションページに遷移したことを確認
-    expect(page).to have_current_path(walk_navigation_routes_path)
+    expect(page).to have_current_path(navigation_routes_path)
     expect(page).to have_selector("img[alt='stopNavi']")
   end
 end
