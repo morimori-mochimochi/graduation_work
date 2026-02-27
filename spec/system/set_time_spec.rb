@@ -54,11 +54,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
 
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-            document.addEventListener('routeDrawn', (event) =>{
-              if (event.detail.status === 'OK') {
-                initSetTime();
-              }
-            });
+            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+            document.dispatchEvent(event);
+            initSetTime();
           }
           done(result.status);
         } catch (e) {
@@ -70,16 +68,6 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
         done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
-
-    # JSの実行結果をチェックし、失敗していればログを出力してテストを失敗させる
-    if status != 'OK'
-      puts "\n" # ログを見やすくするために改行
-      puts "========= JavaScript Error in set_route ========="
-      puts "Status: #{status}"
-      puts "Browser Logs:"
-      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n")
-      puts "================================================"
-    end
     expect(status).to eq 'OK'
   end
 
