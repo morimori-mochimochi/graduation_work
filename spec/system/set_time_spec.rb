@@ -56,7 +56,6 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
             const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
             document.dispatchEvent(event);
-            initSetTime();
           }
           done(result.status);
         } catch (e) {

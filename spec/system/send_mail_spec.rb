@@ -54,12 +54,10 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-            document.addEventListener('routeDrawn', (event) =>{
-              if (event.detail.status === 'OK') {
-                initSetTime();
-              }
-            });
-           }
+            // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
+            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+            document.dispatchEvent(event);
+          }
           done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
         } catch (e) {
           done("Error: " + e.message);
