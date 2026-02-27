@@ -79,18 +79,17 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
     expect(page).to have_selector('#map')
     # 2. ルートを描画
-    # この時点で routeDrawn イベントが発火し、時刻計算の準備が整う
-    # ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
+    set_route
+
+    # 3. ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
     select '10', from: 'startHour'
     select '30', from: 'startMinute'
 
-    set_route
-
-    # 3. 到着時刻が計算されていることを確認
+    # 4. 到着時刻が計算されていることを確認
     expect(find('#startHour').value).to eq '10'
     expect(find('#startMinute').value).to eq '30'
-    expect(page).to have_no_selector('#destinationHour', selected: '時')
-    expect(page).to have_no_selector('#destinationMinute', selected: '分')
+    expect(page).to have_no_select('destinationHour', selected: '時')
+    expect(page).to have_no_select('destinationMinute', selected: '分')
 
     # 4. ルートを保存
     find('#saveRouteBtn').click
