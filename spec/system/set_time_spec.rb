@@ -140,12 +140,15 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
       # 6. 時刻計算が完了するのを待つ
       # 中継点の出発時刻が表示されれば計算完了とみなす
-      expect(find('#relayDepartureTime_0')).to have_text(/発/, wait: 10)
+      # 要素が存在し、かつ指定したテキストが含まれるまで待機
+      expect(page).to have_selector('#relayDepartureTime_0', text: /発/, wait: 10)
 
       # 7. 各時刻が計算されていることを確認
-      expect(find('#relayArrivalTime_0').text).not_to eq '--:--'
-      expect(find('#destinationHour').value).not_to eq '時'
-      expect(find('#destinationMinute').value).not_to eq '分'
+      # expect(page).to have_no_select(..., selected: '時'): セレクトボックスの選択状態が
+      # '時' ではなくなるまで待機します。
+      expect(page).to have_no_selector('#relayArrivalTime_0', text: '--:--')
+      expect(page).to have_no_select('destinationHour', selected: '時')
+      expect(page).to have_no_select('destinationMinute', selected: '分')
     end
   end
 end
