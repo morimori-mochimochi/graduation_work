@@ -36,7 +36,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
             waypoints: []
           };
           
-          // 画面にも設定を反映
           const startEl = document.getElementById('startPoint');
           const destEl = document.getElementById('destinationPoint');
           if (!startEl || !destEl) {
@@ -55,9 +54,12 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
-            document.dispatchEvent(event);
-          }
+            document.addEventListener('routeDrawn', (event) =>{
+              if (event.detail.status === 'OK') {
+                initSetTime();
+              }
+            });
+           }
           done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
         } catch (e) {
           done("Error: " + e.message);
@@ -66,14 +68,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
         done("Error in mapApiLoaded: " + e.message);
       });
     JS
-
-    if status != 'OK'
-      puts "========= JS Error in set_route ========="
-      puts "Status: #{status}"
-      puts "Browser Logs:"
-      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n")
-      puts "========================================="
-    end
 
     # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
     expect(status).to eq 'OK'
