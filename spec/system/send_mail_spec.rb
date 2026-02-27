@@ -89,8 +89,8 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     # 3. 到着時刻が計算されていることを確認
     expect(find('#startHour').value).to eq '10'
     expect(find('#startMinute').value).to eq '30'
-    expect(find('#destinationHour').value).not_to eq '時'
-    expect(find('#destinationMinute').value).not_to eq '分'
+    expect(page).to have_no_selector('#destinationHour', selected: '時')
+    expect(page).to have_no_selector('#destinationMinute', selected: '分')
 
     # 4. ルートを保存
     find('#saveRouteBtn').click
