@@ -85,21 +85,21 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
   context '出発時刻を設定した場合' do
     it 'ルート検索後に到着時刻が自動で計算・表示されること' do
+      # 1. ルートを設定し、検索を実行
+      # これにより、時刻フィールドが現在時刻などで初期化される
+      set_route
 
-      # 1. 出発地と目的地を設定
+      # 2. ルート検索後に、出発時刻を '09:00' に設定
+      # この時点で到着時刻が再計算されるはず
       select '09', from: 'startHour'
       select '00', from: 'startMinute'
-      
-      # 2. ルートを設定し、検索を実行
-      set_route     
 
-      # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
-      # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず
+      # 3. 時刻が正しく設定・計算されていることを確認
       # 所要時間は変動する可能性があるため、具体的な時刻ではなく「値がセットされたか」を検証
       expect(find('#destinationHour').value).not_to eq '時'
       expect(find('#destinationMinute').value).not_to eq '分'
 
-      # 5. 念の為、出発時刻が変更されていないことも確認
+      # 出発時刻が意図通り '09:00' になっていること
       expect(find('#startHour').value).to eq '09'
       expect(find('#startMinute').value).to eq '00'
     end
@@ -107,22 +107,19 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
   context '到着時刻を設定した場合' do
     it 'ルート検索後に出発時刻が自動で逆算・表示されること' do
-      # 1. 出発地と目的地を設定
+      # 1. ルートを設定し、検索を実行
+      set_route
+
+      # 2. ルート検索後に、到着時刻を '09:00' に設定
       select '09', from: 'destinationHour'
       select '00', from: 'destinationMinute'
 
-      # 2. ルートを設定し、検索を実行
-      set_route
-
-
-      # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
-      # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず
-      expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
       # 出発時刻が逆算されて表示されるのを待つ
-      #expect(find('#startHour').value).not_to eq '時'
-      #expect(find('#startMinute').value).not_to eq '分'
+      # '時' ではないことを確認すれば、何らかの値がセットされたことがわかる
+      expect(find('#startHour').value).not_to eq '時'
+      expect(find('#startMinute').value).not_to eq '分'
 
-      # 5. 念の為、到着時刻が変更されていないことも確認
+      # 4. 念の為、到着時刻が変更されていないことも確認
       expect(find('#destinationHour').value).to eq '09'
       expect(find('#destinationMinute').value).to eq '00'
     end
@@ -132,13 +129,13 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
     let(:parking) { attributes_for(:location, :parking_near_tower) }
 
     it '滞在時間を考慮して各地点の時刻が計算・表示されること' do
-      # 1. 出発時刻を09:00に設定
-      select '09', from: 'startHour'
-      select '00', from: 'startMinute'
-
-      # 2. ルートを設定し、検索を実行（東京タワー駐車場を中継点として渡す）
+      # 1. ルートを設定し、検索を実行（東京タワー駐車場を中継点として渡す）
       waypoints = [{ point: { lat: parking[:lat], lng: parking[:lng] }, name: parking[:name] }]
       set_route(waypoints: waypoints)
+
+      # 2. 出発時刻を09:00に設定
+      select '09', from: 'startHour'
+      select '00', from: 'startMinute'
 
       # 3. ルート検索完了後、中継点のUIが表示されるのを待つ
       expect(page).to have_selector('#relayPointsContainer .relay-point-item')
