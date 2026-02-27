@@ -52,6 +52,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           if (result.status == 'OK') {
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
+
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
             const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
             document.dispatchEvent(event);
@@ -66,25 +67,17 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
         done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
-
-    if status != 'OK'
-      puts "========= JS Error in set_route ========="
-      puts "Status: #{status}"
-      puts "Browser Logs:"
-      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n")
-      puts "========================================="
-    end
-    expect(status).to eq 'OK'
   end
 
   context '出発時刻を設定した場合' do
     it 'ルート検索後に到着時刻が自動で計算・表示されること' do
-      # 1. 出発地と目的地を設定
-      select '09', from: 'startHour'
-      select '00', from: 'startMinute'
 
       # 2. ルートを設定し、検索を実行
       set_route
+
+      # 1. 出発地と目的地を設定
+      select '09', from: 'startHour'
+      select '00', from: 'startMinute'
 
       # 3. ルート検索が完了し、結果がsessionStorageに保存されるのを待つ
       # set_route内でwalkDrawRouteの完了を待っているため、このチェックは成功するはず

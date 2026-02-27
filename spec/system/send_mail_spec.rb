@@ -54,15 +54,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
           if (result.status == 'OK') {
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
-            const route = result.response.routes[0];
-            let totalDistance = 0;
-            let totalDuration = 0;
-            route.legs.forEach(leg => {
-              totalDistance += leg.distance.value;
-              totalDuration += leg.duration.value;
-            });
-            window.routeData.total_distance = totalDistance;
-            window.routeData.total_duration = totalDuration;
             // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
             const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
             document.dispatchEvent(event);
@@ -97,14 +88,15 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     expect(page).to have_selector('#map')
     # 2. ルートを描画
     # この時点で routeDrawn イベントが発火し、時刻計算の準備が整う
-    set_route
-
     # ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
     select '10', from: 'startHour'
     select '30', from: 'startMinute'
+
+    set_route
+
     # 3. 到着時刻が計算されていることを確認
-    expect(find('#startHour').value).not_to eq '時'
-    expect(find('#startMinute').value).not_to eq '分'
+    expect(find('#startHour').value).to eq '10'
+    expect(find('#startMinute').value).to eq '30'
     expect(find('#destinationHour').value).not_to eq '時'
     expect(find('#destinationMinute').value).not_to eq '分'
 
