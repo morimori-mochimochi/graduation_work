@@ -45,6 +45,21 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
       window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
         console.log("set_route: mapApiLoaded resolved");
+
+        // window.map が初期化されるのを待つ
+        if (!window.map) {
+          console.log("set_route: Waiting for window.map...");
+          await new Promise(resolve => {
+            const checkMap = setInterval(() => {
+              if (window.map) {
+                clearInterval(checkMap);
+                resolve();
+              }
+            }, 100);
+          });
+          console.log("set_route: window.map is ready");
+        }
+
         try {
           const start = new google.maps.LatLng(start_location);
           const destination = new google.maps.LatLng(destination_location);
