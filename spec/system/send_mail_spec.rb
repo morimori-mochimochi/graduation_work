@@ -7,6 +7,24 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
   before do
     sign_in user
+    # 1. ルート作成ページにアクセス
+    visit root_path
+    find("a[href='#{car_routes_path}']").click
+
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
+    expect(page).to have_selector('#map')
+
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      const check = () => {
+        if (window.map instanceof google.maps.Map) {
+          done();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    JS
   end
 
   # 共通のルート設定処理をヘルパーメソッドに切り出し
@@ -70,12 +88,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
   end
 
   it 'ルート保存後に通知設定をすると、出発時刻の通知メールが送信されること' do
-    # 1. ルート作成ページにアクセス
-    visit root_path
-    find("a[href='#{car_routes_path}']").click
-
-    expect(page).to have_current_path(car_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')
     # 2. ルートを描画
     set_route
 
