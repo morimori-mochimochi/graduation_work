@@ -52,11 +52,7 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           if (result.status == 'OK') {
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
-
-            // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
-            document.dispatchEvent(event);
-          }
+         }
           done(result.status);
         } catch (e) {
           console.error(e);

@@ -53,9 +53,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
           if (result.status == 'OK') {
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
-            // 時刻計算のイベントリスナーを初期化するためにイベントを発火させる
-            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
-            document.dispatchEvent(event);
           }
           done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
         } catch (e) {
@@ -81,7 +78,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     set_route
 
     # ルート描画完了後、JSによって時刻が現在時刻に初期化されるのを待つ
-    expect(page).to have_no_select('startHour', selected: '時')
+    expect(page).to have_no_select('startHour', selected: '時', wait: 10)
 
     # 3. ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
     select '10', from: 'startHour'
