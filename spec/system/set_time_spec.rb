@@ -3,6 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe '時刻設定機能', type: :system, js: true do
+  # テスト失敗時にブラウザのコンソールログを出力する
+  after do |example|
+    if example.exception
+      puts "=== Browser Logs (On Failure) ==="
+      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n") if page.driver.browser.respond_to?(:logs)
+    end
+  end
+
   before do
     visit root_path
     find("a[href='#{car_routes_path}']").click
@@ -26,13 +34,17 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       const waypoints_from_ruby = JSON.parse(arguments[2]);
       const done = arguments[3];
 
+      console.log("set_route: Start");
+
       // window.mapApiLoadedが未定義の時のガード節
       if (!window.mapApiLoaded) {
+        console.error("set_route: window.mapApiLoaded is undefined");
         done("Error: window.mapApiLoaded is undefined ");
         return;
       }
 
       window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
+        console.log("set_route: mapApiLoaded resolved");
         try {
           const start = new google.maps.LatLng(start_location);
           const destination = new google.maps.LatLng(destination_location);
@@ -47,19 +59,22 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
           document.getElementById('startPoint').textContent = start_location.name;
           document.getElementById('destinationPoint').textContent = destination_location.name;
           // ルート検索を直接実行し、完了を待つ
+          console.log("set_route: Calling carDrawRoute");
           const result = await window.carDrawRoute();
+          console.log("set_route: carDrawRoute finished with status: " + result.status);
 
           if (result.status == 'OK') {
             window.routeData.travel_mode = 'DRIVING';
             sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
+            console.log("set_route: Data set to sessionStorage");
          }
           done(result.status);
         } catch (e) {
-          console.error(e);
+          console.error("set_route: Error caught", e);
           done("Error in carDrawRoute: " + e.message);
         }
       }).catch((e) => {
-        console.error(e);
+        console.error("set_route: mapApiLoaded rejected", e);
         done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
@@ -72,6 +87,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # これにより、時刻フィールドが現在時刻などで初期化される
       set_route
 
+      # ルート描画完了後、JSによって時刻が現在時刻に初期化されるのを待つ
+      expect(page).to have_field('startHour', with: /\d+/, wait: 10)
+
       # 2. ルート検索後に、出発時刻を '09:00' に設定
       # この時点で到着時刻が再計算されるはず
       select '09', from: 'startHour'
@@ -79,8 +97,8 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
 
       # 3. 時刻が正しく設定・計算されていることを確認
       # 所要時間は変動する可能性があるため、具体的な時刻ではなく「値がセットされたか」を検証
-      expect(find('#destinationHour').value).not_to eq '時'
-      expect(find('#destinationMinute').value).not_to eq '分'
+      expect(page).to have_no_select('destinationHour', selected: '時')
+      expect(page).to have_no_select('destinationMinute', selected: '分')
 
       # 出発時刻が意図通り '09:00' になっていること
       expect(find('#startHour').value).to eq '09'
@@ -93,14 +111,17 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 1. ルートを設定し、検索を実行
       set_route
 
+      # ルート描画完了後、JSによって時刻が現在時刻に初期化されるのを待つ
+      expect(page).to have_field('startHour', with: /\d+/, wait: 10)
+
       # 2. ルート検索後に、到着時刻を '09:00' に設定
       select '09', from: 'destinationHour'
       select '00', from: 'destinationMinute'
 
       # 出発時刻が逆算されて表示されるのを待つ
       # '時' ではないことを確認すれば、何らかの値がセットされたことがわかる
-      expect(find('#startHour').value).not_to eq '時'
-      expect(find('#startMinute').value).not_to eq '分'
+      expect(page).to have_no_select('startHour', selected: '時')
+      expect(page).to have_no_select('startMinute', selected: '分')
 
       # 4. 念の為、到着時刻が変更されていないことも確認
       expect(find('#destinationHour').value).to eq '09'
@@ -115,6 +136,9 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
       # 1. ルートを設定し、検索を実行（東京タワー駐車場を中継点として渡す）
       waypoints = [{ point: { lat: parking[:lat], lng: parking[:lng] }, name: parking[:name] }]
       set_route(waypoints: waypoints)
+
+      # ルート描画完了後、JSによって時刻が現在時刻に初期化されるのを待つ
+      expect(page).to have_field('startHour', with: /\d+/, wait: 10)
 
       # 2. 出発時刻を09:00に設定
       select '09', from: 'startHour'
