@@ -20,6 +20,21 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
     # マップ表示まで待機
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
+
+    # Google Mapsの初期化完了（window.mapがMapインスタンスになる）を待つ
+    # InvalidValueError: setMap: not an instance of Map を防ぐため、
+    # DOM要素ではなくMapオブジェクトになっていることを確認してからテストを進める
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      const check = () => {
+        if (window.map instanceof google.maps.Map) {
+          done();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    JS
   end
 
   # 共通のルート設定処理をヘルパーメソッドに切り出し
