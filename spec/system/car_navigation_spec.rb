@@ -6,7 +6,6 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
   it '車ルートを設定し、ナビゲーションを開始できること' do
     visit root_path
     find("a[href='#{car_routes_path}']").click
-    find("a[href='#{car_routes_path}']").click
 
     # 2. car.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。

@@ -11,7 +11,6 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
     before do
       visit root_path
       find("a[href='#{car_routes_path}']").click
-      find("a[href='#{car_routes_path}']").click
     end
 
     it 'FactoryBotで定義した地図データを使ってルート検索をできる' do
@@ -72,7 +71,6 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       JS
 
       expect(result).to eq('OK')
-
       # 6.「ナビ開始」ボタンをクリック
       find("img[alt='startNavi']").click
 
