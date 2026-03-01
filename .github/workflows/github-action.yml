@@ -57,11 +57,12 @@ jobs:
       - name: Yarn install
         run: yarn install --check-files
 
-      - name: Precompile assets
-        env:
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bundle exec rails assets:precompile
+      - name: Build assets
+        run: |
+          yarn build
+          yarn build:css
+          mkdir -p public/assets
+          cp -r app/assets/builds public/assets/
 
       - name: Database create and migrate
         run: |
