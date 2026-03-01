@@ -34,7 +34,11 @@ RSpec.describe '時刻設定機能', type: :system, js: true do
     destination_location = { lat: 35.6586, lng: 139.7454, name: '東京タワー' }.to_json
     waypoints_json = waypoints.to_json
 
-    status = page.evaluate_async_script(draw_route_with_waypoints_script, start_location, destination_location, waypoints_json)
+    status = page.evaluate_async_script(
+      draw_route_with_waypoints_script,
+      start_location, destination_location,
+      waypoints_json
+    )
     expect(status).to eq 'OK'
   end
 
