@@ -3,17 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe '時刻設定機能', type: :system, js: true do
-  # テスト失敗時にブラウザのコンソールログを出力する
-  after do |example|
-    if example.exception
-      puts "=== Browser Logs (On Failure) ==="
-      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n") if page.driver.browser.respond_to?(:logs)
-    end
-  end
-
   before do
-    visit root_path
-    find("a[href='#{car_routes_path}']").click
+    visit car_routes_path
     # 2. walk.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
     expect(page).to have_current_path(car_routes_path, ignore_query: true)

@@ -64,7 +64,7 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
               window.routeData.total_distance = totalDistance;
               window.routeData.total_duration = totalDuration;
             }
-            done(result.status); // 成功したら"OK"が返る  
+            done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             done("Error in carDrawRoute: " + e.message);
           }
@@ -72,7 +72,6 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       JS
 
       expect(result).to eq('OK')
-
 
       # 6.「ナビ開始」ボタンをクリック
       find("img[alt='startNavi']").click

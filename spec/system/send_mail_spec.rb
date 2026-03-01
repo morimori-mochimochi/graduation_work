@@ -33,7 +33,14 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     destination_location = { lat: 35.6586, lng: 139.7454, name: '東京タワー' }.to_json
 
     # 実行結果(status)を受け取るように変更
-    status = page.evaluate_async_script(<<~JS, start_location, destination_location)
+    status = page.evaluate_async_script(draw_route_script, start_location, destination_location)
+
+    # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
+    expect(status).to eq 'OK'
+  end
+
+  def draw_route_script
+    <<~JS
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
       const done = arguments[2];
@@ -53,7 +60,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
             destination: { mainPoint: { point: destination, name: destination_location.name } },
             waypoints: []
           };
-          
+
           const startEl = document.getElementById('startPoint');
           const destEl = document.getElementById('destinationPoint');
           if (!startEl || !destEl) {
@@ -82,9 +89,6 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
         done("Error in mapApiLoaded: " + e.message);
       });
     JS
-
-    # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
-    expect(status).to eq 'OK'
   end
 
   it 'ルート保存後に通知設定をすると、出発時刻の通知メールが送信されること' do
