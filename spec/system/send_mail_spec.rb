@@ -12,6 +12,14 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     find("a[href='#{car_routes_path}']").click
 
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
+
+    # デバッグ用: #mapが見つからない（非表示含む）場合、ブラウザのコンソールログを出力する
+    unless page.has_selector?('#map')
+      puts "========== Browser Logs (send_mail_spec) =========="
+      puts page.driver.browser.logs.get(:browser).map(&:message).join("\n") if page.driver.browser.respond_to?(:logs)
+      puts "==================================================="
+    end
+
     expect(page).to have_selector('#map')
 
     page.evaluate_async_script(<<~JS)
