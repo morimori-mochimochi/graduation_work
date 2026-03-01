@@ -78,7 +78,10 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
       alert_text = page.accept_alert(wait: 10) do
         # #saveRouteBtnが画像の場合、親要素をクリックすることでイベント発火を確実にします
         btn = find('#saveRouteBtn')
-        btn.tag_name == 'img' ? btn.find(:xpath, '..').click : btn.click
+        target = btn.tag_name == 'img' ? btn.find(:xpath, '..') : btn
+
+        # CI環境でのクリック動作を安定させるため、JSで直接クリックを実行する
+        page.execute_script("arguments[0].click();", target)
       end
     rescue Capybara::ModalNotFound => e
       Rails.logger.error "=== Browser Logs (On Failure) ==="

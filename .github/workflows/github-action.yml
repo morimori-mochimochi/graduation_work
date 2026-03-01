@@ -27,7 +27,7 @@ jobs:
           --health-retries 10
 
       selenium:
-        image: seleniarm/standalone-chromium:latest
+        image: selenium/standalone-chrome:latest
         ports:
           - "4444:4444"
 
