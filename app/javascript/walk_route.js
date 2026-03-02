@@ -16,6 +16,12 @@ export async function walkDrawRoute() {
     window.walkRouteRenderer = null;
   }
 
+  // 既存の徒歩アイコンマーカーをクリア
+  if (window.walkIconMarker) {
+    window.walkIconMarker.setMap(null);
+    window.walkIconMarker = null;
+  }
+
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
 
@@ -69,8 +75,6 @@ export async function walkDrawRoute() {
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
-  console.log("request:", request);
-
   return new Promise((resolve, reject) => {
     directionsService.route(request,
       (response, status) => {
@@ -96,6 +100,25 @@ export async function walkDrawRoute() {
                 totalDuration += leg.duration.value; // 所要時間を秒で加算
               });
 
+              const walkIcon = {
+                // Google Material Icons "directions_walk"
+                path: 'M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7',
+                fillColor: '#4285F4', // 徒歩ルートの色(blue)に合わせる
+                fillOpacity: 1,
+                strokeWeight: 1,
+                strokeColor: 'white',
+                rotation: 0,
+                scale: 1.3,
+                anchor: new google.maps.Point(12, 12),
+              };
+
+              window.walkIconMarker = new google.maps.Marker({
+                position: route.legs[0].start_location,
+                map: window.map,
+                icon: walkIcon,
+                title: '徒歩ルート',
+                zIndex: 100
+              });
               // 計算結果をグローバルなルート情報に保存
               window.routeData.total_distance = totalDistance;
               window.routeData.total_duration = totalDuration;
