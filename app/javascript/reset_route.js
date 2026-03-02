@@ -35,6 +35,16 @@ export function resetRoute() {
     window.walkRouteRenderer.setMap(null);
     window.walkRouteRenderer = null;
   }
+  // 車ルートのアイコンマーカーをクリア
+  if (window.carIconMarker) {
+    window.carIconMarker.setMap(null);
+    window.carIconMarker = null;
+  }
+  // 徒歩ルートのアイコンマーカーをクリア
+  if (window.walkIconMarker) {
+    window.walkIconMarker.setMap(null);
+    window.walkIconMarker = null;
+  }
 
   // 4. 検索結果のマーカー（青いピン）をクリア
   if (window.markers && window.markers.length > 0) {
