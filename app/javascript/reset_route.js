@@ -19,10 +19,9 @@ export function resetRoute() {
 
   // 2. セッションストレージからルート情報を削除
   sessionStorage.removeItem("directionsResult");
-  window.directionsResult = null;
 
   // 3. 地図上のルート描画をクリア
-  // 徒歩ルート用
+  // 古い徒歩ルート用（navigation.jsなどで使われている可能性があるため残す）
   if (window.directionsRenderer) {
     window.directionsRenderer.setMap(null);
   }
@@ -30,7 +29,11 @@ export function resetRoute() {
   if (window.carRouteRenderers) {
     window.carRouteRenderers.forEach(renderer => renderer.setMap(null));
     window.carRouteRenderers = [];
-    
+  }
+  // 新しい徒歩ルート用
+  if (window.walkRouteRenderer) {
+    window.walkRouteRenderer.setMap(null);
+    window.walkRouteRenderer = null;
   }
 
   // 4. 検索結果のマーカー（青いピン）をクリア

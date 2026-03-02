@@ -8,8 +8,7 @@ import { initSearchBox} from "./search_box";
 import { searchParking } from "./search_parking";
 import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
-import { walkRouteBtn } from "./walk_route";
-import { carRouteBtn } from "./car_route";
+import { drawRouteBtn } from "./car_route";
 import { initInfoWindow } from "./info_window";
 import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
@@ -39,7 +38,7 @@ function initializePage(container) {
   initCalendar(container);
 
   // マップ関連の初期化
-  const mapIds = ['map', 'naviMap', 'carNaviMap'];
+  const mapIds = ['map', 'naviMap'];
   mapIds.forEach(id => {
     const mapDiv = container.querySelector(`#${id}`);
     if (mapDiv && !mapDiv.dataset.mapInitialized) {
@@ -49,10 +48,9 @@ function initializePage(container) {
       if (id === 'map') {
         initMarkerEvents();
         searchParking();
-        walkRouteBtn();
-        carRouteBtn();
+        drawRouteBtn();
         initCurrentPosBtn();
-      } else if (id === 'naviMap' || id === 'carNaviMap') {
+      } else if (id === 'naviMap') {
         startNavigation();
       }
     }

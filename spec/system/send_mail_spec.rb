@@ -7,6 +7,25 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
 
   before do
     sign_in user
+    # 1. ルート作成ページにアクセス
+    visit root_path
+    find("a[href='#{car_routes_path}']").click
+
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
+
+    expect(page).to have_selector('#map')
+
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      const check = () => {
+        if (window.map instanceof google.maps.Map) {
+          done();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    JS
   end
 
   # 共通のルート設定処理をヘルパーメソッドに切り出し
@@ -14,51 +33,81 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     start_location = { lat: 35.6812, lng: 139.7671, name: '東京駅' }.to_json
     destination_location = { lat: 35.6586, lng: 139.7454, name: '東京タワー' }.to_json
 
-    page.evaluate_async_script(<<~JS, start_location, destination_location)
+    # 実行結果(status)を受け取るように変更
+    status = page.evaluate_async_script(draw_route_script, start_location, destination_location)
+
+    # ルート描画が成功('OK')していることを確認。失敗していればここでテストが落ちる。
+    expect(status).to eq 'OK'
+  end
+
+  def draw_route_script
+    <<~JS
       const start_location = JSON.parse(arguments[0]);
       const destination_location = JSON.parse(arguments[1]);
       const done = arguments[2];
 
-      window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
-        const start = new google.maps.LatLng(start_location);
-        const destination = new google.maps.LatLng(destination_location);
+      if (!window.mapApiLoaded) {
+        done("Error: window.mapApiLoaded is undefined");
+        return;
+      }
 
-        window.routeData = {
-          start: { point: start, name: start_location.name },
-          destination: { mainPoint: { point: destination, name: destination_location.name } },
-          waypoints: []
-        };
-        // 画面にも設定を反映
-        document.getElementById('startPoint').textContent = start_location.name;
-        document.getElementById('destinationPoint').textContent = destination_location.name;
-        // ルート検索を直接実行し、完了を待つ
-        await window.walkDrawRoute();
-        done(); // walkDrawRouteの完了後にテストを再開
+      window.mapApiLoaded.then(async () => { // mapApiLoadedを待つ
+        try {
+          const start = new google.maps.LatLng(start_location);
+          const destination = new google.maps.LatLng(destination_location);
+
+          window.routeData = {
+            start: { point: start, name: start_location.name },
+            destination: { mainPoint: { point: destination, name: destination_location.name } },
+            waypoints: []
+          };
+
+          const startEl = document.getElementById('startPoint');
+          const destEl = document.getElementById('destinationPoint');
+          if (!startEl || !destEl) {
+            throw new Error("Start or Destination element not found in DOM");
+          }
+          startEl.textContent = start_location.name;
+          destEl.textContent = destination_location.name;
+
+          // ルート検索を直接実行し、完了を待つ
+          if (typeof window.carDrawRoute !== 'function') {
+            throw new Error("window.carDrawRoute is not a function");
+          }
+          const result = await window.carDrawRoute();
+
+          if (result.status == 'OK') {
+            window.routeData.travel_mode = 'DRIVING';
+            sessionStorage.setItem('directionsResult', JSON.stringify(result.response));
+            const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+            document.dispatchEvent(event);
+          }
+          done(result.status); // carDrawRouteのステータスをRuby側に返してテストを再開
+        } catch (e) {
+          done("Error: " + e.message);
+        }
+      }).catch((e) => {
+        done("Error in mapApiLoaded: " + e.message);
       });
     JS
   end
 
   it 'ルート保存後に通知設定をすると、出発時刻の通知メールが送信されること' do
-    # 1. ルート作成ページにアクセス
-    visit root_path
-    find("a[href='#{new_route_path}']").click
-    find("a[href='#{walk_routes_path}']").click
-
-    expect(page).to have_current_path(walk_routes_path, ignore_query: true)
-    expect(page).to have_selector('#map')
     # 2. ルートを描画
     set_route
 
-    # ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
+    # ルート描画完了後、JSによって時刻が現在時刻に初期化されるのを待つ
+    expect(page).to have_field('startHour', with: /\d+/, wait: 10)
+
+    # 3. ルート描画後に時刻を設定する (値はゼロ埋めされた文字列)
     select '10', from: 'startHour'
     select '30', from: 'startMinute'
 
-    # 3. 到着時刻が計算されていることを確認
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
-    expect(find('#startHour').value).not_to eq '時'
-    expect(find('#startMinute').value).not_to eq '分'
-    expect(find('#destinationHour').value).not_to eq '時'
-    expect(find('#destinationMinute').value).not_to eq '分'
+    # 4. 到着時刻が計算されていることを確認
+    expect(find('#startHour').value).to eq '10'
+    expect(find('#startMinute').value).to eq '30'
+    expect(page).to have_no_select('destinationHour', selected: '時')
+    expect(page).to have_no_select('destinationMinute', selected: '分')
 
     # 4. ルートを保存
     find('#saveRouteBtn').click

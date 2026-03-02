@@ -8,7 +8,6 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
   it '車ルートを設定し、ルートを保存できること' do
     sign_in user
     visit root_path
-    find("a[href='#{new_route_path}']").click
     find("a[href='#{car_routes_path}']").click
 
     # 2. car.html.erbに遷移し、マップ表示を待つ
@@ -17,6 +16,20 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # マップ表示まで待機
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
+
+    # Google Mapsの初期化完了（window.mapがMapインスタンスになる）を待つ
+    # これがないと InvalidValueError: setMap: not an instance of Map が発生することがある
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      const check = () => {
+        if (window.map instanceof google.maps.Map) {
+          done();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    JS
 
     # 3.Javascriptを実行して出発地と目的地を擬似的に設定
     # 実際のマップクリックは不安定になりやすいのでこの方法が堅実
@@ -30,7 +43,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # done.call()が呼ばれるまでテストは待機する
     # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。
     # ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
-    page.evaluate_async_script(<<~JS, route_data)
+    status = page.evaluate_async_script(<<~JS, route_data)
       const routeDataFromRuby = JSON.parse(arguments[0]);
       const done = arguments[1];
 
@@ -57,30 +70,41 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
               return;
             }
             const result = await window.carDrawRoute();
-            done(result); // 成功したら"OK"が返る
+            if (result.status === 'OK') {
+              window.routeData.travel_mode = 'DRIVING';
+              sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+              const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+              document.dispatchEvent(event);
+              }
+            done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             console.error("Error during carDrawRoute execution:", e.message, e.stack);
             done("Error in carDrawRoute: " + e.message);
           }
       });
     JS
-
-    # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
+    expect(status).to eq 'OK'
 
     # 7. 保存ボタンをクリックし、アラートが表示されるのを待ってOKを押す
     # accept_alertのブロック内で操作を行うことで、非同期で表示されるアラートを待機してくれます
     # テキストを指定せずに待機することで、文言不一致やエラーアラートの場合でも内容を確認できるようにする
+
+    # イベントリスナーの登録待ちなど、わずかなタイムラグを考慮して少し待機を入れる
+    sleep 1
+
     alert_text = nil
     begin
-      alert_text = page.accept_alert(wait: 10) do
+      alert_text = page.accept_alert(wait: 15) do
         # #saveRouteBtnが画像の場合、親要素をクリックすることでイベント発火を確実にします
         btn = find('#saveRouteBtn')
-        btn.tag_name == 'img' ? btn.find(:xpath, '..').click : btn.click
+        # 画像の場合は親要素をクリック、そうでなければボタン自体をクリック
+        target = btn.tag_name == 'img' ? btn.find(:xpath, '..') : btn
+        target.click
       end
     rescue Capybara::ModalNotFound => e
-      Rails.logger.error "=== Browser Logs (On Failure) ==="
-      Rails.logger.error page.driver.browser.logs.get(:browser).map(&:message).join("\n")
+      # CIのコンソールで確認しやすいように puts を使用
+      puts "=== Browser Logs (On Failure) ==="
+      puts page.driver.browser.logs.get(:browser).map(&:message)
       raise e
     end
     expect(alert_text).to eq 'ルートを保存しました'

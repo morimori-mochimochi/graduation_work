@@ -18,6 +18,6 @@ export function initMap(mapDiv) {
       gmap.setCenter(pos);
     }
   }).catch((e) => {
-    console.warn("現在地の取得に失敗しました", e);
+    console.warn(`現在地の取得に失敗しました Code: ${e.code}, Message: ${e.message}`);
   });
 }

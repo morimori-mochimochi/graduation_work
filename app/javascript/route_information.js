@@ -1,60 +1,87 @@
-export function initRouteInformation() {
-  
+// InfoWindowのインスタンスを作成（１つを使い回す）
+let infoWindow;
+
+export function showRouteInfoWindow(latLng) {
   console.log("ルート情報を表示します");
 
-  document.addEventListener('relayPointsRendered', (event) => {
+  if (!infoWindow) {
+    infoWindow = new google.maps.InfoWindow();
+  }
 
-    console.log("relayPointsRenderdイベントを受信しました");
-  
-    const routeData = window.routeData;
-    console.log("routeData:", routeData);
+  // クリックされた位置にInfowindowを表示
+  const content = createInfoWindowContent();
+  infoWindow.setContent(content);
+  infoWindow.setPosition(latLng);
+  infoWindow.open(window.map);
+}
 
-    if (!routeData || typeof routeData.total_distance === 'undefined' || typeof routeData.total_duration === 'undefined') {
-      return;
+function createInfoWindowContent() {
+  // テンプレを取得
+  const template = document.getElementById('route-info-template')
+  // テンプレの中身を確認
+  // cloneNode：要素を風区政するメソッド
+  const clone = template.content.cloneNode(true);
+
+  // データを取得
+  const distance = window.routeData.total_distance || 0;
+  const duration = window.routeData.total_duration || 0;
+
+  console.log("distance:", distance);
+  console.log("duration:", duration);
+
+  // 距離と時間のフォーマット計算
+  const distanceKm = (distance / 1000).toFixed(1);
+
+  console.log("distanceKm:", distanceKm);
+
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
+  let timeString = "";
+  if (hours > 0) {
+    timeString += `${hours}時間`;
+  }
+  timeString += `${minutes}分`;
+
+  console.log("timeString:", timeString);
+
+  // モード判定: walk_route.jsではWALKINGをセット
+  // そうでない時はDRIVINGと判定
+  const isWalking = window.routeData.travel_mode === 'WALKING';
+
+  // 要素を取得
+  const modeEl = clone.querySelector('.info-window-mode');
+  if (isWalking) {
+    modeEl.textContent = "徒歩ルート"
+  } else {
+    modeEl.textContent = "車ルート"
+  }
+  console.log("modeEl:", modeEl);
+
+  const distanceEl = clone.querySelector('.route-total-distance');
+  if (distanceEl) distanceEl.textContent = `総移動距離： ${distanceKm} km`;
+
+  const durationEl = clone.querySelector('.route-total-duration');
+  if (durationEl) durationEl.textContent = `所要時間： ${timeString}`;
+
+  console.log("infoWindowのdistanceEl:", distanceEl);
+  console.log("infoWindowのdurationEl:", durationEl);
+
+  const gasEl = clone.querySelector('.gas-consumption');
+  const calorieEl = clone.querySelector('.calorie-burned');
+
+  if (isWalking) {
+    // 徒歩の場合：ガソリン表示を削除し、カロリーを表示
+    if (gasEl) gasEl.remove();
+    if (calorieEl) {
+      calorieEl.textContent = `消費カロリー： ${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
     }
-
-    const routeContainer = document.getElementById("routeContainer");
-    if (!routeContainer) return;
-
-    routeContainer.innerHTML = '';
-
-    // 距離と時間をフォーマット
-    const distanceKm = (routeData.total_distance / 1000).toFixed(2);
-    // round: 四捨五入
-    const totalMinutes = Math.round(routeData.total_duration / 60);
-    // floor: 切り捨て
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    let timeString = "";
-    if (hours > 0) {
-      timeString += `${hours}時間`;
+  } else {
+    // 車の場合：カロリー表示を削除し、ガソリンを表示
+    if (calorieEl) calorieEl.remove();
+    if (gasEl) {
+      const gasConsumption = (distanceKm / 15).toFixed(2);
+      gasEl.textContent = `ガソリン消費量： ${gasConsumption} L`;
     }
-    timeString += `${minutes}分`;
-
-    const template = document.getElementById('route-info-template');
-    if (template) {
-      const clone = template.content.cloneNode(true);
-
-      const distanceEl = clone.querySelector('.route-total-distance');
-      if (distanceEl) distanceEl.textContent = `${distanceKm} km`;
-
-      const durationEl = clone.querySelector('.route-total-duration');
-      if (durationEl) durationEl.textContent = timeString;
-
-      const calorieEl = clone.querySelector('.calorie-burned');
-      if (calorieEl) {
-        calorieEl.textContent = `${(distanceKm * 0.5 * 50).toFixed(0)} kcal`;
-      }
-
-      const gasConsumptionEl = clone.querySelector('.gas-consumption');
-      if (gasConsumptionEl) {
-        // ガソリン消費量を計算（リッターあたり15kmの時）
-        const gasConsumption = (distanceKm / 15).toFixed(2);
-        gasConsumptionEl.textContent = `${gasConsumption} L`;
-      }
-
-      routeContainer.appendChild(clone);
-    }
-  });
+  }
+  return clone.firstElementChild;
 }

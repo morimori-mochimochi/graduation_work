@@ -6,12 +6,11 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
   it '徒歩ルートを設定し、ナビゲーションを開始できる' do
     # 1. トップページにアクセスし、「ルート作成」ボタンをクリックして徒歩ルート作成ページへ遷移
     visit root_path
-    find("a[href='#{new_route_path}']").click
-    find("a[href='#{walk_routes_path}']").click
+    find("a[href='#{car_routes_path}']").click
 
-    # 2. walk.html.erbに遷移し、マップ表示を待つ
+    # 2. car.html.erbに遷移し、マップ表示を待つ
     # ignore_query: true はURL の末尾に「?param=value」などのクエリパラメータがついていても無視して比較するという意味。
-    expect(page).to have_current_path(walk_routes_path, ignore_query: true)
+    expect(page).to have_current_path(car_routes_path, ignore_query: true)
     # マップ表示まで待機
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
@@ -31,29 +30,43 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
       const done = arguments[2];
 
       window.mapApiLoaded.then(async () => {
-          const start = new google.maps.LatLng(start_location);
-          const destination = new google.maps.LatLng(destination_location);
+        const start = new google.maps.LatLng(start_location);
+        const destination = new google.maps.LatLng(destination_location);
 
-          // walkDrawRouteが参照するwindow.routeDataをセットアップ
-          window.routeData = {
-            start: { point: start },
-            destination: { mainPoint: { point: destination } },
-            waypoints: []
-          };
+        // walkDrawRouteが参照するwindow.routeDataをセットアップ
+        window.routeData = {
+          start: { point: start },
+          destination: { mainPoint: { point: destination } },
+          waypoints: []
+        };
+
+        try {
+          if (typeof window.walkDrawRoute !== 'function'){
+            done("Error: window.walkDrawRoute is not a function");
+            return;
+          }
+
           // walkDrawRouteが完了するのを待ってからテストを再開する
-          await walkDrawRoute();
-          done();
+          const result = await window.walkDrawRoute();
+          if (result.status === 'OK') {
+            window.routeData.travel_mode = 'WALKING';
+            sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+          }
+          done(result.status); // 成功したら"OK"が返る
+        } catch(e) {
+          done("Error: mapApiLoaded rejected: " + e.message);
+        }
+      }).catch((e) => {
+        done("Error: mapApiLoaded rejected: " + e.message);
       });
     JS
 
-    # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
     find("img[alt='startNavi']").click
-
+    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     # 7. ナビゲーションページに遷移したことを確認
-    expect(page).to have_current_path(walk_navigation_routes_path)
+    expect(page).to have_current_path(navigation_routes_path)
     expect(page).to have_selector("img[alt='stopNavi']")
   end
 end

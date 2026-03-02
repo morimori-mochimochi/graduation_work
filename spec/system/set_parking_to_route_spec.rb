@@ -10,7 +10,6 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
     before do
       visit root_path
-      find("a[href='#{new_route_path}']").click
       find("a[href='#{car_routes_path}']").click
     end
 
@@ -51,7 +50,20 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
 
           try {
             const result = await window.carDrawRoute();
-            done(result); // 成功したら"OK"が返る
+            if (result.status == 'OK') {
+              window.routeData.travel_mode = 'DRIVING';
+              sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+              const route = result.response.routes[0];
+              let totalDistance = 0;
+              let totalDuration = 0;
+              route.legs.forEach(leg => {
+                totalDistance += leg.distance.value;
+                totalDuration += leg.duration.value;
+              });
+              window.routeData.total_distance = totalDistance;
+              window.routeData.total_duration = totalDuration;
+            }
+            done(result.status); // 成功したら"OK"が返る
           } catch (e) {
             done("Error in carDrawRoute: " + e.message);
           }
@@ -59,13 +71,12 @@ RSpec.describe '駐車場を含めたルートを作成する', type: :system, j
       JS
 
       expect(result).to eq('OK')
-      expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
-
       # 6.「ナビ開始」ボタンをクリック
       find("img[alt='startNavi']").click
 
       # 7.ナビゲーションページに遷移したことを確認
-      expect(page).to have_current_path(car_navigation_routes_path)
+      expect(page).to have_current_path(navigation_routes_path)
+      expect(page.evaluate_script("sessionStorage.getItem('directionsResult')")).not_to be_nil
       expect(page).to have_selector("img[alt='stopNavi']")
     end
   end

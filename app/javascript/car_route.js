@@ -1,11 +1,15 @@
 import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
-import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
+import { walkDrawRoute } from "./walk_route";
+import { selectRouteModule } from "./select_route";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
 }
+
+// クリック判定用の透明ポリラインを管理する配列
+window.routeHitLines = [];
 
 export async function carDrawRoute(map = window.map) {
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
@@ -113,13 +117,8 @@ export async function carDrawRoute(map = window.map) {
       }
     }));
 
-    // ナビゲーション用にメインの車ルートを保存
-    window.routeData.travel_mode = 'DRIVING';
-    window.directionsResult = response;
-    sessionStorage.setItem("directionsResult", JSON.stringify(response));
-    const event = new CustomEvent('routeDrawn', { detail: { status: 'OK', response: response } });
-    document.dispatchEvent(event);
-    return "OK";
+    // 呼び出し元で制御するため、ここでは保存せず結果とレンダラーを返す
+    return { status: "OK", response: response, renderers: window.carRouteRenderers };
     
   } catch (error) {
     console.error("ルートの取得に失敗しました:", error);
@@ -127,38 +126,62 @@ export async function carDrawRoute(map = window.map) {
     throw error;
   }
 }
-export function carRouteBtn() {
-  const carDrawRouteBtn = document.getElementById("carDrawRoute");
+export function drawRouteBtn() {
+  const drawRouteBtn = document.getElementById("drawRoute");
 
-  if (carDrawRouteBtn) {
-    carDrawRouteBtn.addEventListener("click", async() => {
+  if (drawRouteBtn) {
+    drawRouteBtn.addEventListener("click", async() => {
       // 連打防止：処理中はボタンを無効化し、テキストを変更
       // disabledプロパティ: クリックに無反応になる
-      carDrawRouteBtn.disabled = true;
-      const originalText = carDrawRouteBtn.innerHTML;
-      carDrawRouteBtn.textContent = "検索中...";
+      drawRouteBtn.disabled = true;
+      const originalText = drawRouteBtn.innerHTML;
+      drawRouteBtn.textContent = "検索中...";
 
       try {
-        await carDrawRoute(window.map);
+        // 既存のクリック判定用ラインを削除
+        if (window.routeHitLines) {
+          window.routeHitLines.forEach(line => line.setMap(null));
+        }
+        window.routeHitLines = [];
+
+        const [carResult, walkResult] = await Promise.all([
+          carDrawRoute(window.map).catch(e => { 
+            console.error("carDrawRoute failed:", e);
+            return null; 
+          }),
+          walkDrawRoute().catch(e => { 
+            console.error("walkDrawRoute failed:", e);
+            return null; 
+          })
+        ]);
+
+        // どちらかのルート検索が成功した場合に、初回描画完了イベントを発火
+        const successfulResult = (carResult && carResult.status === 'OK') ? carResult : walkResult;
+        if (successfulResult && successfulResult.status === 'OK') {
+          // sessionStorageへの保存は selectRouteModule 内で行われるため、ここではイベント発火のみ行う
+          const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+          document.dispatchEvent(event);
+        }
+
+        selectRouteModule(carResult, walkResult);
+
       } catch (err) {
-        console.error("carDrawRoute failed:", err);
+        console.error("Unexpected error:", err);
         // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
       } finally {
         // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
-        carDrawRouteBtn.disabled = false;
-        carDrawRouteBtn.innerHTML = originalText;
+        drawRouteBtn.disabled = false;
+        drawRouteBtn.innerHTML = originalText;
       }
     });
   }else{
-  console.warn("carDrawRouteボタンが存在しません");
+  console.warn("drawRouteボタンが存在しません");
   }
 }
 
 function initRouteContent() {
-  console.log("car_route.jsのinitRouteContentが実行されました");
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
-      initRouteInformation();
       initSetTime();
     }
   });

@@ -1,6 +1,5 @@
 import { fetchCurrentPos } from "./current_pos"
 import { initSetTime } from "./set_arrival_time";
-import { initRouteInformation } from "./route_information";
 import { initResetRouteBtn } from "./reset_route";
 
 function isValidLatLng(point) {
@@ -10,6 +9,13 @@ function isValidLatLng(point) {
 // async: この関数は非同期処理を行います、の意味。
 // awaitを使って処理を一時待機できる
 export async function walkDrawRoute() {
+  // 既存の徒歩ルート描画をクリア
+  // この関数は drawRouteBtn からのみ呼ばれる想定のため、ここでクリア処理を行う
+  if (window.walkRouteRenderer) {
+    window.walkRouteRenderer.setMap(null);
+    window.walkRouteRenderer = null;
+  }
+
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
 
@@ -34,23 +40,16 @@ export async function walkDrawRoute() {
   // #directionsServiceは出発地、目的地、移動手段等をリクエストとして送信すると、GoogleのDirectionsAPIに問い合わせを行うクラス
   const directionsService = new google.maps.DirectionsService();
 
-  // #取得したルートをマップに表示
-  // #DirectionsRendererは検索したルートをマップに描画するクラス
-  if (!window.directionsRenderer) {
-    window.directionsRenderer = new google.maps.DirectionsRenderer({
-      map: window.map
-    });
-  } else {
-    // #既存のルートをクリア
-    window.directionsRenderer.setMap(null);
-  }
-  // #どのマップにルートを描画するかを指定
-  window.directionsRenderer.setMap(window.map);
+  // この徒歩ルート専用のDirectionsRendererを生成
+  const walkRenderer = new google.maps.DirectionsRenderer({
+    map: window.map,
+  });
 
   // 新しいデータ構造から徒歩ルートの経由地リストを作成
   const waypoints = [];
   window.routeData.waypoints.forEach(wp => {
     // 徒歩ルートなので、駐車場の有無に関わらず本来の地点(mainPoint)を経由地とする
+    // 明示的に駐車場情報を無視して予期せぬ挙動を予防
     const location = wp.mainPoint?.point;
     if (location && isValidLatLng(location)) {
       waypoints.push({
@@ -70,15 +69,17 @@ export async function walkDrawRoute() {
     optimizeWaypoints: true // ウェイポイントの順序を最適化
   };
 
+  console.log("request:", request);
+
   return new Promise((resolve, reject) => {
     directionsService.route(request,
       (response, status) => {
         try {
           if (status === "OK"){
-            window.directionsRenderer.setDirections(response);
+            walkRenderer.setDirections(response);
+            window.walkRouteRenderer = walkRenderer; // リセット処理などのためにグローバルにも保存
             // DirectionsResultはDirectionsServiceから返ってきた検索結果本体。ただのオブジェクトで、ルートの全情報が格納されている
             window.routeData.travel_mode = 'WALKING';
-            window.directionsResult = response;
 
             // ルート情報から総距離と総所要時間を計算して表示
             const route = response.routes[0];
@@ -100,14 +101,8 @@ export async function walkDrawRoute() {
               window.routeData.total_duration = totalDuration;
             }
 
-            sessionStorage.setItem("directionsResult", JSON.stringify(response));
-
-            // ルート描画完了のカスタムイベントを発行
-            // イベントにデータを含めたいときはdetailに入れるのがルール
-            const event = new CustomEvent('routeDrawn', { detail: { status: status, response: response } });
-            // 1行目で作ったカスタムイベントを実際に発信する
-            document.dispatchEvent(event);
-            resolve(status);
+            // 呼び出し元で制御するため、ここでは保存せず結果とレンダラーを返す
+            resolve({ status: status, response: response, renderer: walkRenderer });
           } else {
             console.error("Directions API error:", status, response);
             reject(status);
@@ -122,37 +117,9 @@ export async function walkDrawRoute() {
   });
 };
 
-export function walkRouteBtn() {
-  const walkDrawRouteBtn = document.getElementById("walkDrawRoute");
-    
-  if (walkDrawRouteBtn) {
-    walkDrawRouteBtn.addEventListener("click", async () => {
-      // 連打防止：処理中はボタンを無効化し、テキストを変更
-      walkDrawRouteBtn.disabled = true;
-      const originalText = walkDrawRouteBtn.innerHTML;
-      walkDrawRouteBtn.textContent = "検索中...";
-
-      try {
-        await walkDrawRoute(); // eventオブジェクトを渡さないように修正
-      } catch (error) {
-        // エラーはwalkDrawRoute内やfetchCurrentPosで発生する可能性がある
-        console.error("徒歩ルート検索エラー:", error);
-        alert("ルートの検索に失敗しました。");
-      } finally {
-        // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
-        walkDrawRouteBtn.disabled = false;
-        walkDrawRouteBtn.innerHTML = originalText;
-      }
-    });
-  }else{
-    console.warn("walkDrawRouteボタンが存在しません");
-  }
-}
-
 function initRouteContent() {
   document.addEventListener('routeDrawn', (event) => {
     if (event.detail.status === 'OK') {
-      initRouteInformation();
       initSetTime();
     }
   });
@@ -160,6 +127,6 @@ function initRouteContent() {
 
 initRouteContent();
 initResetRouteBtn();
-
+  
 // システムテストから呼び出せるように、関数をグローバルスコープに公開する
 window.walkDrawRoute = walkDrawRoute;

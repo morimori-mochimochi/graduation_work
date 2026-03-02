@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe 'ナビゲーション機能', type: :system, js: true do
   it '車ルートを設定し、ナビゲーションを開始できること' do
     visit root_path
-    find("a[href='#{new_route_path}']").click
     find("a[href='#{car_routes_path}']").click
 
     # 2. car.html.erbに遷移し、マップ表示を待つ
@@ -32,38 +31,51 @@ RSpec.describe 'ナビゲーション機能', type: :system, js: true do
       const done = arguments[1];
 
       window.mapApiLoaded.then(async () => {
-          // carDrawRouteが参照するwindow.routeDataをセットアップ
-          // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
-          window.routeData = {
-            start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
-            destination: {
-              mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) }
-            },
-            waypoints: routeDataFromRuby.waypoints
-          };
+        // carDrawRouteが参照するwindow.routeDataをセットアップ
+        // Rubyから渡されたデータをGoogle MapsのLatLngオブジェクトに変換
+        window.routeData = {
+          start: { point: new google.maps.LatLng(routeDataFromRuby.start.point) },
+          destination: {
+            mainPoint: { point: new google.maps.LatLng(routeDataFromRuby.destination.mainPoint.point) }
+          },
+          waypoints: routeDataFromRuby.waypoints
+        };
 
-          try {
-            if (typeof window.carDrawRoute !== 'function'){
-              done("Error: window.carDrawRoute is not a function");
-              return;
-            }
-            const result = await window.carDrawRoute();
-            done(result); // 成功したら"OK"が返る
-          } catch (e) {
-            console.error("Error during carDrawRoute execution:", e.message, e.stack);
-            done("Error in carDrawRoute: " + e.message);
+        try {
+          if (typeof window.carDrawRoute !== 'function'){
+            done("Error: window.carDrawRoute is not a function");
+            return;
           }
+          const result = await window.carDrawRoute();
+          if (result.status === 'OK') {
+            window.routeData.travel_mode = 'DRIVING';
+            sessionStorage.setItem("directionsResult", JSON.stringify(result.response));
+            const route = result.response.routes[0];
+            let totalDistance = 0;
+            let totalDuration = 0;
+            route.legs.forEach(leg => {
+              totalDistance += leg.distance.value;
+              totalDuration += leg.duration.value;
+            });
+            window.routeData.total_distance = totalDistance;
+            window.routeData.total_duration = totalDuration;
+          }
+          done(result.status); // 成功したら"OK"が返る
+        } catch (e) {
+          console.error("Error during carDrawRoute execution:", e.message, e.stack);
+          done("Error in carDrawRoute: " + e.message);
+        }
       });
     JS
 
-    # 5. ルート情報がsessionStorageに保存されるのを待つ
-    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     # 6.「ナビ開始」ボタンをクリック
     # 画像にリンクが設定されているためaltテキストで検索する
     find("img[alt='startNavi']").click
+    # 5. ルート情報がsessionStorageに保存されるのを待つ
 
     # 7. ナビゲーションページに遷移したことを確認
-    expect(page).to have_current_path(car_navigation_routes_path)
+    expect(page).to have_current_path(navigation_routes_path)
+    expect(page).to have_javascript("sessionStorage.getItem('directionsResult')")
     expect(page).to have_selector("img[alt='stopNavi']")
   end
 end

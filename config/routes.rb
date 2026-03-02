@@ -14,12 +14,10 @@ Rails.application.routes.draw do
 
   resource :mypage, only: [:show, :edit, :update, :destroy]
 
-  resources :routes, only: [:new, :create, :show] do
+  resources :routes, only: [:create, :show] do
     collection do
-      get :walk
       get :car
-      get :walk_navigation
-      get :car_navigation
+      get :navigation
     end
   end
 

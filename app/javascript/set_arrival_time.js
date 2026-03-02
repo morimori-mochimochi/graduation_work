@@ -1,6 +1,4 @@
 export function initSetTime() {
-  console.log("initSetTimeが呼ばれた");
-
   const startHourEl = document.getElementById("startHour");
   const startMinuteEl = document.getElementById("startMinute");
   const destinationHourEl = document.getElementById("destinationHour");
@@ -13,7 +11,6 @@ export function initSetTime() {
     }
     // ルート情報があれば時刻を計算
     calculateTimes({}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
-    console.log("relayPointsRenderedイベントを受け取り、時刻計算を実行した");
   });
 
   // 時刻が手動で変更された場合も再計算を実行
@@ -41,8 +38,6 @@ export function initSetTime() {
 }
 
 function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl) {
-  console.log("culculateTimeが呼ばれた");
-
   // 時刻設定UIが存在しないページでは処理を中断
   if (!startHourEl || !startMinuteEl || !destinationHourEl || !destinationMinuteEl) {
     console.warn('時刻設定UIが見つからないため、時刻計算をスキップします。');
@@ -73,7 +68,6 @@ function calculateTimes(options = {}, startHourEl, startMinuteEl, destinationHou
     // 明示的な変更がない（初期表示など）かつ、到着時刻だけ設定されている場合 -> 逆算
     calculateArrival = false;
   }
-  console.log(`calculateTimes: calculateArrival = ${calculateArrival}`);
   if (calculateArrival) {
     calculateAndSetArrivalTime(route, startHourEl, startMinuteEl, destinationHourEl, destinationMinuteEl);
   } else {
