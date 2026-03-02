@@ -17,6 +17,20 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # Capybaraの待機機能(#mapが表示されるまでデフォルトで数秒待ってくれる)
     expect(page).to have_selector('#map')
 
+    # Google Mapsの初期化完了（window.mapがMapインスタンスになる）を待つ
+    # これがないと InvalidValueError: setMap: not an instance of Map が発生することがある
+    page.evaluate_async_script(<<~JS)
+      const done = arguments[0];
+      const check = () => {
+        if (window.map instanceof google.maps.Map) {
+          done();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    JS
+
     # 3.Javascriptを実行して出発地と目的地を擬似的に設定
     # 実際のマップクリックは不安定になりやすいのでこの方法が堅実
     route_data = {
@@ -29,7 +43,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # done.call()が呼ばれるまでテストは待機する
     # <<~JS ... JS (ヒアドキュメント): Rubyの機能で、複数行にわたる文字列を記述するための記法。
     # ここでは、実行したいJavaScriptコード全体を一つの文字列としてexecute_async_scriptメソッドに渡す。
-    page.evaluate_async_script(<<~JS, route_data)
+    status = page.evaluate_async_script(<<~JS, route_data)
       const routeDataFromRuby = JSON.parse(arguments[0]);
       const done = arguments[1];
 
@@ -69,6 +83,7 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
           }
       });
     JS
+    expect(status).to eq 'OK'
 
     # 7. 保存ボタンをクリックし、アラートが表示されるのを待ってOKを押す
     # accept_alertのブロック内で操作を行うことで、非同期で表示されるアラートを待機してくれます
