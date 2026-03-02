@@ -73,19 +73,23 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
     # 7. 保存ボタンをクリックし、アラートが表示されるのを待ってOKを押す
     # accept_alertのブロック内で操作を行うことで、非同期で表示されるアラートを待機してくれます
     # テキストを指定せずに待機することで、文言不一致やエラーアラートの場合でも内容を確認できるようにする
+    
+    # イベントリスナーの登録待ちなど、わずかなタイムラグを考慮して少し待機を入れる
+    sleep 1
+
     alert_text = nil
     begin
-      alert_text = page.accept_alert(wait: 10) do
+      alert_text = page.accept_alert(wait: 15) do
         # #saveRouteBtnが画像の場合、親要素をクリックすることでイベント発火を確実にします
         btn = find('#saveRouteBtn')
+        # 画像の場合は親要素をクリック、そうでなければボタン自体をクリック
         target = btn.tag_name == 'img' ? btn.find(:xpath, '..') : btn
-
-        # CI環境でのクリック動作を安定させるため、JSで直接クリックを実行する
-        page.execute_script("arguments[0].click();", target)
+        target.click
       end
     rescue Capybara::ModalNotFound => e
-      Rails.logger.error "=== Browser Logs (On Failure) ==="
-      Rails.logger.error page.driver.browser.logs.get(:browser).map(&:message).join("\n")
+      # CIのコンソールで確認しやすいように puts を使用
+      puts "=== Browser Logs (On Failure) ==="
+      puts page.driver.browser.logs.get(:browser).map(&:message)
       raise e
     end
     expect(alert_text).to eq 'ルートを保存しました'
