@@ -9,7 +9,7 @@ RSpec.describe '出発時刻通知メール', type: :system, js: true do
     sign_in user
     # 1. ルート作成ページにアクセス
     visit root_path
-    find("a[href='#{car_routes_path}']").click
+    visit car_routes_path
 
     expect(page).to have_current_path(car_routes_path, ignore_query: true)
 
