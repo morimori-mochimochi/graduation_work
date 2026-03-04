@@ -165,7 +165,10 @@ export async function carDrawRoute(map = window.map) {
 }
 export function drawRouteBtn() {
   const drawRouteBtn = document.getElementById("drawRoute");
+  initRouteBtn(drawRouteBtn);
+}
 
+function initRouteBtn(drawRouteBtn) {
   if (drawRouteBtn) {
     drawRouteBtn.addEventListener("click", async() => {
       // 連打防止：処理中はボタンを無効化し、テキストを変更
