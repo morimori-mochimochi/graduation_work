@@ -168,52 +168,57 @@ export function drawRouteBtn() {
   initRouteBtn(drawRouteBtn);
 }
 
+async function handleDrawRouteClick(event) {
+  // event.currentTarget は addEventListener がセットされた要素（ここではボタン）を指す
+  const drawRouteBtn = event.currentTarget;
+
+  // 連打防止：処理中はボタンを無効化し、テキストを変更
+  // disabledプロパティ: クリックに無反応になる
+  drawRouteBtn.disabled = true;
+  const originalText = drawRouteBtn.innerHTML;
+  drawRouteBtn.textContent = "検索中...";
+
+  try {
+    // 既存のクリック判定用ラインを削除
+    if (window.routeHitLines) {
+      window.routeHitLines.forEach(line => line.setMap(null));
+    }
+    window.routeHitLines = [];
+
+    const [carResult, walkResult] = await Promise.all([
+      carDrawRoute(window.map).catch(e => {
+        console.error("carDrawRoute failed:", e);
+        return null;
+      }),
+      walkDrawRoute().catch(e => {
+        console.error("walkDrawRoute failed:", e);
+        return null;
+      })
+    ]);
+
+    // どちらかのルート検索が成功した場合に、初回描画完了イベントを発火
+    const successfulResult = (carResult && carResult.status === 'OK') ? carResult : walkResult;
+    if (successfulResult && successfulResult.status === 'OK') {
+      // sessionStorageへの保存は selectRouteModule 内で行われるため、ここではイベント発火のみ行う
+      const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
+      document.dispatchEvent(event);
+    }
+
+    selectRouteModule(carResult, walkResult);
+
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
+  } finally {
+    // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
+    drawRouteBtn.disabled = false;
+    drawRouteBtn.innerHTML = originalText;
+  }
+}
+
 function initRouteBtn(drawRouteBtn) {
   if (drawRouteBtn) {
-    drawRouteBtn.addEventListener("click", async() => {
-      // 連打防止：処理中はボタンを無効化し、テキストを変更
-      // disabledプロパティ: クリックに無反応になる
-      drawRouteBtn.disabled = true;
-      const originalText = drawRouteBtn.innerHTML;
-      drawRouteBtn.textContent = "検索中...";
-
-      try {
-        // 既存のクリック判定用ラインを削除
-        if (window.routeHitLines) {
-          window.routeHitLines.forEach(line => line.setMap(null));
-        }
-        window.routeHitLines = [];
-
-        const [carResult, walkResult] = await Promise.all([
-          carDrawRoute(window.map).catch(e => { 
-            console.error("carDrawRoute failed:", e);
-            return null; 
-          }),
-          walkDrawRoute().catch(e => { 
-            console.error("walkDrawRoute failed:", e);
-            return null; 
-          })
-        ]);
-
-        // どちらかのルート検索が成功した場合に、初回描画完了イベントを発火
-        const successfulResult = (carResult && carResult.status === 'OK') ? carResult : walkResult;
-        if (successfulResult && successfulResult.status === 'OK') {
-          // sessionStorageへの保存は selectRouteModule 内で行われるため、ここではイベント発火のみ行う
-          const event = new CustomEvent('routeDrawn', { detail: { status: 'OK' } });
-          document.dispatchEvent(event);
-        }
-
-        selectRouteModule(carResult, walkResult);
-
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        // carDrawRoute内部でalertが出ている場合もあるが、予期せぬエラーに備える
-      } finally {
-        // 成功・失敗に関わらず、処理終了後にボタンを必ず元の状態に戻す
-        drawRouteBtn.disabled = false;
-        drawRouteBtn.innerHTML = originalText;
-      }
-    });
+    drawRouteBtn.addEventListener("click", handleDrawRouteClick);
   }else{
   console.warn("drawRouteボタンが存在しません");
   }
