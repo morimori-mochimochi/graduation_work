@@ -20,6 +20,8 @@ class SaveRoutesController < ApplicationController
   def edit; end
 
   def create
+    # build: newメソッド別名のようなもの。インスタンスをメモリ上に作成するだけなので
+    # saveメソッドを読んで保存する必要がある
     @save_route = current_user.save_routes.build(processed_route_params)
     if @save_route.save
       render json: {
