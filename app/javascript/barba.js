@@ -1,3 +1,4 @@
+// ページ遷移のたびに実行されるべき処理が書かれている
 import barba from "@barba/core";
 import Splide from "@splidejs/splide";
 import { initMap } from "./map";
