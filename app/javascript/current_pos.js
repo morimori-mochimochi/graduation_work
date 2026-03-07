@@ -42,9 +42,9 @@ export function getCurrentPos() {
 export function initCurrentPosBtn() {
   console.log("initCurrentPosBtnが呼ばれました");
 
-  const btn = document.getElementById(currentPosBtn);
+  const btn = document.getElementById("currentPosBtn");
   if (!btn) {
-    console.warn(`ボタンが存在しません: ${buttonId}`);
+    console.warn(`ボタンが存在しません: currentPosBtn`);
     return;
   }
 
