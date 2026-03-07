@@ -39,13 +39,13 @@ export function getCurrentPos() {
 
 //現在地ボタンの初期化
 //ボタンをクリックすると現在地取得とマップの移動＆マーカー表示
-export function initCurrentPosBtn(currentPosBtnCar) {
-  const btn = document.getElementById(currentPosBtnCar);
+export function initCurrentPosBtn() {
+  const btn = document.getElementById("currentPosBtn");
   if (!btn) {
-    console.warn(`ボタンが存在しません: ${buttonId}`);
+    console.warn(`ボタンが存在しません: currentPosBtn`);
     return;
   }
-
+  
   // ボタンに現在地取得が実行すみか確認して実行済み場合は何もしない
   if (btn.dataset.eventAttached) {
     return;
