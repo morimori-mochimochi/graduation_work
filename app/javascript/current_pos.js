@@ -40,15 +40,11 @@ export function getCurrentPos() {
 //現在地ボタンの初期化
 //ボタンをクリックすると現在地取得とマップの移動＆マーカー表示
 export function initCurrentPosBtn() {
-  console.log("initCurrentPosBtnが呼ばれました");
-
   const btn = document.getElementById("currentPosBtn");
   if (!btn) {
     console.warn(`ボタンが存在しません: currentPosBtn`);
     return;
   }
-
-  console.log("現在地ボタンが見つかりました:", btn);
   
   // ボタンに現在地取得が実行すみか確認して実行済み場合は何もしない
   if (btn.dataset.eventAttached) {
@@ -59,8 +55,6 @@ export function initCurrentPosBtn() {
   btn.addEventListener("click", async(e) => {
     try{
       const newPos = await fetchCurrentPos();
-
-      console.log("現在地が取得されました:", newPos);
 
       const map = window.map;
       if (map) {
