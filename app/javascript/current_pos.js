@@ -48,6 +48,8 @@ export function initCurrentPosBtn() {
     return;
   }
 
+  console.log("現在地ボタンが見つかりました:", btn);
+  
   // ボタンに現在地取得が実行すみか確認して実行済み場合は何もしない
   if (btn.dataset.eventAttached) {
     return;
