@@ -1,4 +1,3 @@
-// ページ遷移のたびに実行されるべき処理が書かれている
 import barba from "@barba/core";
 import Splide from "@splidejs/splide";
 import { initMap } from "./map";
@@ -11,15 +10,27 @@ import { initCurrentPosBtn } from "./current_pos";
 import { startNavigation } from "./navigation";
 import { drawRouteBtn } from "./car_route";
 import { initInfoWindow } from "./info_window";
-import { initResetRouteBtn } from "./reset_route";
 import { initSaveRoute } from "./save_route";
 import { initMoveNavi } from "./move_navi";
 import { initDrawSavedRoute } from "./draw_saved_route";
 import { initCalendar } from "./calendar_initializer.js"; // 新しいファイルからインポート
 
+// フラッシュメッセージをフェードアウトさせる関数
+function fadeOutFlash() {
+  const flash = document.querySelector(".flash_message");
+  if (!flash) return;
+
+  setTimeout(() => {
+    flash.style.transition = "opacity 0.8s";
+    flash.style.opacity = "0";
+  }, 3000);
+}
 
 // ページ初期化のための共通関数
 function initializePage(container) {
+  // ページが表示されるたびにフラッシュメッセージのフェードアウト処理を実行
+  fadeOutFlash();
+
   // Splideの初期化
   const el = container.querySelector('#splide');
   if (el && !el.classList.contains('is-initialized')) {
@@ -59,7 +70,6 @@ function initializePage(container) {
     if (mapDiv && id === 'map') {
       initSearchBox(container);
       initInfoWindow();
-      initResetRouteBtn();
       initSaveRoute(container);
     }
 
