@@ -37,6 +37,28 @@ export function getCurrentPos() {
   return currentPos;
 }
 
+// マーカーの更新処理を関数に切り出し
+function updateCurrentPosMarker(map, pos) {
+  //既存のマーカーを消す
+  if (window.currentPosMarker) {
+    window.currentPosMarker.setMap(null);
+  }
+
+  //新しいマーカーを作成
+  window.currentPosMarker = new google.maps.Marker({
+    position: pos,
+    map: map,
+    title: "現在地",
+    animation: google.maps.Animation.BOUNCE
+  });
+
+  setTimeout(() => {
+    if (window.currentPosMarker) {
+      window.currentPosMarker.setAnimation(null);
+    }
+  }, 1300);
+}
+
 //現在地ボタンの初期化
 //ボタンをクリックすると現在地取得とマップの移動＆マーカー表示
 export function initCurrentPosBtn() {
@@ -52,33 +74,19 @@ export function initCurrentPosBtn() {
   }
   btn.dataset.eventAttached = "true";
 
-  btn.addEventListener("click", async(e) => {
-    try{
+  btn.addEventListener("click", async () => {
+    try {
       const newPos = await fetchCurrentPos();
-
       const map = window.map;
-      if (map) {
-        map.setCenter(newPos);
 
-        //既存のマーカーを消す
-        if (window.currentPosMarker) {
-          window.currentPosMarker.setMap(null);
-        }
-
-        //新しいマーカーを作成
-        window.currentPosMarker = new google.maps.Marker({
-          position: newPos,
-          map: map,
-          title: "現在地",
-          animation: google.maps.Animation.BOUNCE
-        });
-
-        setTimeout( () => {
-          window.currentPosMarker.setAnimation(null);
-        }, 1300);
-      }else{
-        console.warn("マップがまだ存在しません")
+      // ガード節でネストを解消
+      if (!map) {
+        console.warn("マップがまだ存在しません");
+        return;
       }
+
+      map.setCenter(newPos);
+      updateCurrentPosMarker(map, newPos);
     } catch (err) {
       console.error("現在地取得に失敗しました:", err);
     }
