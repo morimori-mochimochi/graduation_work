@@ -10,12 +10,12 @@
       <div class="space-y-7">
         <div class="field">
           <%= f.label :email %><br />
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
         </div>
         
         <div class="field">
           <%= f.label :"名前" %><br />
-          <%= f.text_field :name, autofocus: true, class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+          <%= f.text_field :name, autofocus: true, class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
         </div>
 
         <div class="field">
@@ -23,12 +23,12 @@
           <% if @minimum_password_length %>
           <em>(<%= @minimum_password_length %> 文字以上)</em>
           <% end %><br />
-          <%= f.password_field :password, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
         </div>
 
         <div class="field">
           <%= f.label :"パスワード（確認用）" %><br />
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
         </div>
 
         <div class="actions" style="space-y-3;">
