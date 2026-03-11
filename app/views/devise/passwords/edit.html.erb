@@ -13,12 +13,12 @@
         <% if @minimum_password_length %>
           <em>(<%= @minimum_password_length %> 文字以上)</em><br />
         <% end %><br />
-        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
       </div>
 
       <div class="field mt-10">
         <%= f.label :"パスワード確認用"%><br />
-        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFEFE2]" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
       </div>
     </div>
 
