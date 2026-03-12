@@ -23,11 +23,11 @@ RSpec.describe 'Locations', type: :system, js: true do
       # 保存ボタンをクリック
       expect do
         click_button '保存'
+        expect(page).to have_content '場所を保存しました'
       end.to change(Location, :count).by(1)
 
       # 詳細ページでの確認
       # 保存後、一覧に飛ぶことを確認
-      expect(page).to have_content '場所を保存しました'
       expect(page).to have_current_path(locations_path)
       expect(page).to have_content location_attributes[:name]
     end
