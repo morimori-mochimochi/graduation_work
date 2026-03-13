@@ -74,7 +74,7 @@ async function searchExactPlace(query) {
 };
 
 function displayPlaces(places) {
-  console.log("paled API検索開始");
+  console.log("places API検索開始");
   const center = map.getCenter();
 
   // 距離順に並べ替え
@@ -86,7 +86,11 @@ function displayPlaces(places) {
   
   // 既存のマーカーを削除
   if (window.markers && window.markers.length > 0) {
-    window.markers.forEach(m => m.setMap(null));
+    window.markers.forEach(m => {
+      if (!isMarkerSelectedInRoute(m)) {
+        m.setMap(null);
+      }
+    });
   }
   window.markers = [];
 
@@ -290,4 +294,26 @@ export function clearSearchMarkersOnRouteDraw() {
   };
   if (walkBtn) walkBtn.addEventListener("click", clearMarkers);
   if (carBtn) carBtn.addEventListener("click", clearMarkers);
+}
+
+// マーカーが現在選択されているルート地点（出発地・目的地・経由地）かどうかを判定する関数
+function isMarkerSelectedInRoute(marker) {
+  const r = window.routeData;
+  if (!r || !marker.position) return false;
+
+  const pointsToCheck = [];
+
+  if (r.start && r.start.point) pointsToCheck.push(r.start.point);
+  if (r.destination && r.destination.mainPoint && r.destination.mainPoint.point) {
+    pointsToCheck.push(r.destination.mainPoint.point);
+  }
+  if (r.waypoints) {
+    r.waypoints.forEach(wp => {
+      if (wp.mainPoint && wp.mainPoint.point) pointsToCheck.push(wp.mainPoint.point);
+    });
+  }
+
+  // マーカーの位置がいずれかの登録地点と一致すればtrue
+  // Google Maps APIのLatLng.equalsメソッドを使用
+  return pointsToCheck.some(p => p.equals && p.equals(marker.position));
 }
