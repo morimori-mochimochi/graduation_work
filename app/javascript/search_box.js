@@ -86,13 +86,19 @@ function displayPlaces(places) {
   
   // 既存のマーカーを削除
   if (window.markers && window.markers.length > 0) {
+    const keptMarkers = []; // 地図に残すマーカーを一時的に保存する配列
     window.markers.forEach(m => {
       if (!isMarkerSelectedInRoute(m)) {
-        m.setMap(null);
+        m.setMap(null); // 選択されていないマーカーは地図から消す
+      } else {
+        keptMarkers.push(m); // 選択されているマーカーは一時配列に追加
       }
     });
+    // set.map(null)でマーカーを消すようにAPIに指示
+    window.markers = keptMarkers; // 地図に残ったマーカーだけを正式な配列に戻す
+  } else {
+    window.markers = [];
   }
-  window.markers = [];
 
   sortedPlaces.forEach(place => {
     const marker = new google.maps.Marker({
