@@ -54,7 +54,7 @@ export function openInfoWindow(marker, place) {
           // UIを再描画
           renderRelayPoints();
           infoWindow.close();
-          marker.setMap(null); // マーカーを地図から削除
+          // marker.setMap(null); // マーカーを地図から削除
         });
       } 
     } else {
@@ -68,7 +68,7 @@ export function openInfoWindow(marker, place) {
         window.routeData.destination.mainPoint = { point: place.point, name: place.name };
         document.getElementById('destinationPoint').textContent = place.name;
         infoWindow.close();
-        marker.setMap(null); // マーカーを地図から削除
+        //marker.setMap(null); // マーカーを地図から削除
       });
     }
 
