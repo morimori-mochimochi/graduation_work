@@ -36,7 +36,7 @@ export function openInfoWindow(marker, place) {
         window.routeData.start = { point: place.point, name: place.name };
         document.getElementById('startPoint').textContent = place.name;
         infoWindow.close();
-        marker.setMap(null); // マーカーを地図から削除
+        // marker.setMap(null); // マーカーを地図から削除
       });
     }
 
