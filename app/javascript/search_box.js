@@ -294,6 +294,17 @@ export function initSearchBox(container = document) {
       if (routeData && typeof routeData.total_distance !== 'undefined') {
         const resultContainer = document.getElementById("resultContainer");
         if (resultContainer) resultContainer.remove();
+
+        if (window.markers && window.markers.length > 0) {
+          window.markers = window.markers.filter(marker => {
+            if (isMarkerSelectedInRoute(marker)) {
+              return true;
+            } else {
+              marker.setMap(null);
+              return false;
+            }
+          });
+        }
       }
     });
     isResultClearListenerAttached = true;
