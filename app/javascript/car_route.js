@@ -3,6 +3,7 @@ import { initSetTime } from "./set_arrival_time";
 import { initResetRouteBtn } from "./reset_route";
 import { walkDrawRoute } from "./walk_route";
 import { selectRouteModule } from "./select_route";
+import { clearSearchMarkersOnRouteDraw } from "./search_box";
 
 function isValidLatLng(point) {
   return point && typeof point.lat === 'function' && typeof point.lng === 'function';
@@ -14,6 +15,9 @@ window.routeHitLines = [];
 export async function carDrawRoute(map = window.map) {
   // 新しいルートを作成する前に、既存のルート情報をsessionStorageから削除
   sessionStorage.removeItem("directionsResult");
+
+  // 不要になった検索マーカーをクリア
+  clearSearchMarkersOnRouteDraw();
 
   // 既存の車アイコンマーカーをクリア
   if (window.carIconMarker) {
