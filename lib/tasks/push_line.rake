@@ -14,7 +14,7 @@ namespace :push_line do
     # リクエストの内容を作成（POSTメソッド）
     request = Net::HTTP::Post.new(uri.path)
     request["Content-Type"] = "application/json"
-    request["Authorization"] = "Bearer #{Rails.application.credentials.line[:channel_access_token]}"
+    request["Authorization"] = "Bearer #{Rails.application.credentials.line[:messaging_api_channel_access_token]}"
 
     # Rakeタスクではcurrent_userが使えないため、DBからユーザーを取得します
     # line_login_uidが登録されているユーザーの中で、最後に登録されたユーザーを取得します
