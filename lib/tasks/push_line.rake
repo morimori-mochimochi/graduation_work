@@ -20,6 +20,12 @@ namespace :push_line do
     # line_login_uidが登録されているユーザーの中で、最後に登録されたユーザーを取得します
     user = User.where.not(line_login_uid: nil).last
 
+    # --- デバッグ用ログを追加 ---
+    puts "--- [Debug Info] ---"
+    puts "Target User ID in DB: #{user&.id}"
+    puts "Target LINE UID: #{user&.line_login_uid}"
+    # ------------------------
+
     unless user
       puts "LINE UIDが登録されているユーザーが見つかりませんでした。"
       return
@@ -35,11 +41,19 @@ namespace :push_line do
     }
     request.body = data.to_json
 
+    # --- デバッグ用ログを追加 ---
+    puts "Request Body: #{request.body}"
+    puts "--------------------"
+    # ------------------------
+
     # 送信実行して結果を受け取る
     response = http.request(request)
 
     # 結果の確認(200なら成功)
     puts "Response Code: #{response.code}"
-    puts response.body unless response.code == '200'
+    unless response.code == '200'
+      puts "--- Error Response Body ---"
+      puts JSON.pretty_generate(JSON.parse(response.body)) rescue puts response.body
+    end
   end
 end
