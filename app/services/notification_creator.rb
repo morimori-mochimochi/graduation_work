@@ -16,6 +16,9 @@ class NotificationCreator
   def call
     return handle_missing_datetime unless start_datetime_present?
 
+    # 「条件に合うレコードがあればそれを取得し（find）、
+    #  なければ新しいインスタンスをメモリ上に作成する（initialize）」
+    #  というrailsに組み込まれている便利なメソッド
     notification = @save_route.notifications.find_or_initialize_by(user: @user)
     assign_notification_attributes(notification)
 
