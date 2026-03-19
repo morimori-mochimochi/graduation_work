@@ -5,7 +5,7 @@ class NotificationsController < ApplicationController
   before_action :set_save_route
 
   def create
-    result = NotificationCreator.call(save_route: @save_route, user: current_user, set_to: params[:set_to])
+    result = NotificationCreator.call(save_route: @save_route, user: current_user, send_to: params[:send_to])
     @notification = result.notification
     redirect_to @save_route, result.message
   end
