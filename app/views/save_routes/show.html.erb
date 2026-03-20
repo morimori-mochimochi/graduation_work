@@ -118,18 +118,30 @@
         <% end %>
       <% else %>
         <%# 通知設定可能: 通常のボタン %>
-        <%= button_to save_route_notifications_path(@save_route),
-          method: :post,
-          form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
-          class: "nav-link" do %>
-          <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+        <% if current_user.email.present? %>
+          <%= button_to save_route_notifications_path(@save_route),
+            method: :post,
+            form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
+            class: "nav-link" do %>
+            <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+          <% end %>
+        <% else %>
+          <%= button_tag type: 'button', class: "nav-link", onclick: "alert('メールアドレスが登録されていません')" do %>
+            <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
+          <% end %>
         <% end %>
 
-        <%= button_to save_route_notifications_path(@save_route, send_to: :line),
-          method: :post,
-          form: { data: { turbo: true, turbo_confirm: "出発5分前にLINEで通知を設定します。よろしいですか？" } },
-          class: "nav-link" do %>
-          <%= image_tag "/images/send_line.png", alt: "send_line", class: "h-17 ml-2" %>
+        <% if current_user.line_login_uid.present? %>
+          <%= button_to save_route_notifications_path(@save_route, send_to: :line),
+            method: :post,
+            form: { data: { turbo: true, turbo_confirm: "出発5分前にLINEで通知を設定します。よろしいですか？" } },
+            class: "nav-link" do %>
+            <%= image_tag "/images/send_line.png", alt: "send_line", class: "h-17 ml-2" %>
+          <% end %>
+        <% else %>
+          <%= button_tag type: 'button', class: "nav-link", onclick: "alert('LINE連携されていません')" do %>
+            <%= image_tag "/images/send_line.png", alt: "send_line", class: "h-17 opacity-50 ml-2" %>
+          <% end %>
         <% end %>
       <% end %>
     <% else %>
