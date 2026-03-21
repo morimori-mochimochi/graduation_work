@@ -321,7 +321,8 @@ Devise.setup do |config|
                   ENV['LINE_CHANNEL_SECRET'],
                   {
                     name: :line,
-                    scope: 'profile openid email', # アプリケーションで必要なスコープを指定
+                    # scope: 'profile openid email', # メール権限の問題か確認するため一時的に無効化
+                    scope: 'profile openid',
                     setup: (lambda do |env|
                       strategy = env['omniauth.strategy']
 
@@ -335,7 +336,6 @@ Devise.setup do |config|
                       # ターミナル（Railsのログ）にデバッグ情報を出力します
                       Rails.logger.info("===== OmniAuth-LINE デバッグ情報 =====")
                       Rails.logger.info("  クライアントID (Channel ID): #{strategy.options.client_id}")
-                      Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret&.gsub(/./, '*')}") # 安全のためマスク表示
                       Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret}")
                       Rails.logger.info("  リダイレクトURI (Callback URL): #{line_redirect_uri}")
                       Rails.logger.info("========================================")
