@@ -335,6 +335,7 @@ Devise.setup do |config|
                       # ターミナル（Railsのログ）にデバッグ情報を出力します
                       Rails.logger.info("===== OmniAuth-LINE デバッグ情報 =====")
                       Rails.logger.info("  クライアントID (Channel ID): #{strategy.options.client_id}")
+                      Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret&.gsub(/./, '*')}") # 安全のためマスク表示
                       Rails.logger.info("  クライアントシークレット: #{strategy.options.client_secret}")
                       Rails.logger.info("  リダイレクトURI (Callback URL): #{line_redirect_uri}")
                       Rails.logger.info("========================================")
