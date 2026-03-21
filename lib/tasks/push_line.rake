@@ -34,7 +34,7 @@ namespace :push_line do
     # 送信するデータをセット
     data = {
       to: user.line_login_uid,
-      messages: [{ 
+      messages: [{
         type: "text", # 'test' ではなく 'text' が正しい指定です
         text: "プッシュ通知テスト中"
       }]
@@ -53,7 +53,11 @@ namespace :push_line do
     puts "Response Code: #{response.code}"
     unless response.code == '200'
       puts "--- Error Response Body ---"
-      puts JSON.pretty_generate(JSON.parse(response.body)) rescue puts response.body
+      begin
+        puts JSON.pretty_generate(JSON.parse(response.body))
+      rescue StandardError
+        puts response.body
+      end
     end
   end
 end

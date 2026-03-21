@@ -13,5 +13,5 @@ class Notification < ApplicationRecord
   # due_for_sendingというスコープ。メソッドのようにNotification.due_for_sendingと呼べる。
   # statusがpendingでnotify_atが現時刻以下の通知だけを選ぶ
   scope :due_for_sending, -> { where(status: 'pending').where(notify_at: ..Time.current) }
-  enum send_to: { email: 0, line: 1 }
+  enum :send_to, { email: 0, line: 1 }
 end

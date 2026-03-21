@@ -17,6 +17,7 @@ class NotificationCreator
   def call
     return handle_missing_datetime unless start_datetime_present?
     return handle_missing_line_uid if line_notification_without_uid?
+
     # 「条件に合うレコードがあればそれを取得し（find）、
     #  なければ新しいインスタンスをメモリ上に作成する（initialize）」
     #  というrailsに組み込まれている便利なメソッド
@@ -67,7 +68,7 @@ class NotificationCreator
   end
 
   def handle_missing_line_uid
-    Result.new(false, nil, { alert: I18n.t('notifications.create.line_uid')})
+    Result.new(false, nil, { alert: I18n.t('notifications.create.line_uid') })
   end
 
   def start_datetime_present?
