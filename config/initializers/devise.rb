@@ -321,7 +321,7 @@ Devise.setup do |config|
                   ENV['LINE_CHANNEL_SECRET'],
                   {
                     name: :line,
-                    # scope: 'profile openid email', # メール権限の問題か確認するため一時的に無効化
+                    # scope: 'profile openid email',
                     scope: 'profile openid',
                     setup: (lambda do |env|
                       strategy = env['omniauth.strategy']
