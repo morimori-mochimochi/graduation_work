@@ -28,7 +28,7 @@ namespace :notifications do
         request["Content-Type"] = "application/json"
         request["Authorization"] = "Bearer #{Rails.application.credentials.line[:messaging_api_channel_access_token]}"
 
-        message_text = "出発時刻のお知らせ: #{notification.save_route.name}\n出発時刻の5分前になりました。"
+        message_text = "出発時刻のお知らせ: #{notification.save_route.name}\n出発時刻の5分前をお知らせいたします😊\nお気を付けてお出かけください！"
         data = {
           to: line_uid,
           messages: [{ type: "text", text: message_text }]
