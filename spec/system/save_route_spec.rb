@@ -103,8 +103,8 @@ RSpec.describe 'ルート保存機能', type: :system, js: true do
       end
     rescue Capybara::ModalNotFound => e
       # CIのコンソールで確認しやすいように puts を使用
-      puts "=== Browser Logs (On Failure) ==="
-      puts page.driver.browser.logs.get(:browser).map(&:message)
+      Rails.logger.info "=== Browser Logs (On Failure) ==="
+      Rails.logger.info page.driver.browser.logs.get(:browser).map(&:message)
       raise e
     end
     expect(alert_text).to eq 'ルートを保存しました'
