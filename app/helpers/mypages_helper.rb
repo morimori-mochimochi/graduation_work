@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module MypagesHelper
- def mail_or_line_info(current_user)
-    if user.line_login_uid.present?
+  def mail_or_line_info(user)
+    if user.line_connected?
       "LINEアカウント: #{user.name}"
     else
       "メールアドレス: #{user.email}"
