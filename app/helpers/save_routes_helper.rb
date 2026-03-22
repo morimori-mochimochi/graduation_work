@@ -5,17 +5,16 @@ module SaveRoutesHelper
     notification = save_route.notifications.find_by(user: user)
 
     if notification&.line?
-     # HTMLの<p>タグを生成
-      tag.p do
-       # concatを使うことで、複数の要素を連結して<p>タグの中に入れることができる
-        concat tag.strong("通知先LINEアカウント:")
-        concat " #{user.name}"
-      end
+      label = "通知先LINEアカウント:"
+      value = user.name
     else
-      tag.p do
-        concat tag.strong("通知先メールアドレス:")
-        concat " #{user.email}"
-      end
+      label = "通知先メールアドレス:"
+      value = user.email
+    end
+
+    tag.p do
+      concat tag.strong(label)
+      concat " #{value}"
     end
   end
 end
