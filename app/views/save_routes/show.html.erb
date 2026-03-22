@@ -4,6 +4,9 @@
 <div class="container cute-title mx-auto px-4 py-8">
   <div class="flex justify-between items-center md-6">
     <h1 class="text-2xl font-bold"><%= @save_route.name %>の詳細</h1>
+    <%= link_to save_routes_path, class: "nav-link" do %>
+      <%= image_tag "/images/return_before.png", alt: "return_map", class: "btn_effect h-15" %>
+    <% end %> 
   </div>
 
   <div class="card bg-base-100 shadow-xl">
@@ -66,10 +69,8 @@
         <% if @notify_at.present? %>
           <p><strong>通知日時:</strong> <%= @notify_at.strftime('%Y年%m月%d日 %H:%M') %></p>
           <div class=" flex items-center space-x-5">
-            <p><strong>通知先メールアドレス:</strong> <%= current_user.email %></p>
-            <%= link_to edit_mypage_path do %>
-              <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
-            <% end %>
+            <%= notification_destination_info(@save_route, current_user) %>
+            <%= account_edit_button(current_user) %>
           </div>
         <% end %>
       </div>
@@ -82,10 +83,6 @@
   <div id="map"></div>
 
   <div class="mt-6 flex items-center space-x-2">
-    <%= link_to save_routes_path, class: "nav-link" do %>
-      <%= image_tag "/images/return_before.png", alt: "return_map", class: "btn_effect h-17" %>
-    <% end %> 
-
     <%= link_to edit_save_route_path(@save_route), class: "nav-link" do %>
       <%= image_tag "/images/edit.png", alt: "edit",class:"btn_effect h-17" %>
     <% end %>
@@ -115,20 +112,41 @@
         <%# 通知設定済み: ボタンを無効化し、薄く表示 %>
         <%= button_tag type: 'button', class: "nav-link", disabled: true, title: "通知は設定済みです" do %>
           <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
+          <%= image_tag "/images/send_line.png", alt: "send_line", class: "btn_effect h-17 opacity-50 ml-2" %>
         <% end %>
       <% else %>
         <%# 通知設定可能: 通常のボタン %>
-        <%= button_to save_route_notifications_path(@save_route),
-          method: :post,
-          form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
-          class: "nav-link" do %>
-          <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+        <% if current_user.line_login_uid.present? %>
+          <%= button_tag type: 'button', class: "nav-link", onclick: "alert('メールアドレスが登録されていません')" do %>
+            <%= image_tag "/images/mail_notification.png", alt: "mail", class: "h-17 opacity-50" %>
+          <% end %>
+        <% else %>
+          <%= button_to save_route_notifications_path(@save_route),
+            method: :post,
+            form: { data: { turbo: true, turbo_confirm: "出発5分前にメールで通知を設定します。よろしいですか？" } },
+            class: "nav-link" do %>
+            <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17" %>
+          <% end %>
+        <% end %>
+
+        <% if current_user.line_login_uid.present? %>
+          <%= button_to save_route_notifications_path(@save_route, send_to: :line),
+            method: :post,
+            form: { data: { turbo: true, turbo_confirm: "出発5分前にLINEで通知を設定します。よろしいですか？" } },
+            class: "nav-link" do %>
+            <%= image_tag "/images/send_line.png", alt: "send_line", class: "btn_effect h-17 ml-2" %>
+          <% end %>
+        <% else %>
+          <%= button_tag type: 'button', class: "nav-link", onclick: "alert('LINE連携されていません')" do %>
+            <%= image_tag "/images/send_line.png", alt: "send_line", class: "h-17 opacity-50 ml-2" %>
+          <% end %>
         <% end %>
       <% end %>
     <% else %>
       <%# 前提条件未達: ボタンを無効化し、アラートを表示 %>
       <%= button_tag type: 'button', class: "nav-link", onclick: "alert('通知を設定するには、編集画面で実行日と出発時刻を設定してください。')" do %>
         <%= image_tag "/images/mail_notification.png", alt: "mail", class: "btn_effect h-17 opacity-50" %>
+        <%= image_tag "/images/send_line.png", alt: "send_line", class: "btn_effect h-17 opacity-50" %>
       <% end %>
     <% end %>
   </div>

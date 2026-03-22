@@ -7,13 +7,10 @@
         <p class="text-lg font-medium"><%= current_user.name %></p>
       </div>
       <div class="py-2">
-        <p class="text-sm text-gray-600">メールアドレス</p>
-        <p class="text-lg font-medium"><%= current_user.email %></p>
+        <%= mail_or_line_info(current_user) %>
       </div>
 
-      <%= link_to edit_mypage_path do %>
-        <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
-      <% end %>
+      <%= account_edit_button(current_user) %>
     </div>
   </div>
 

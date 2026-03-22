@@ -11,6 +11,7 @@ class Notification < ApplicationRecord
   # Notificationモデルに「今送るべき通知だけを取り出す」ための便利メソッドを定義。
   # Rails ではこういう検索条件を scope（スコープ） と呼ぶ。
   # due_for_sendingというスコープ。メソッドのようにNotification.due_for_sendingと呼べる。
-  # pendingの通知だけを選ぶ
+  # statusがpendingでnotify_atが現時刻以下の通知だけを選ぶ
   scope :due_for_sending, -> { where(status: 'pending').where(notify_at: ..Time.current) }
+  enum :send_to, { email: 0, line: 1 }
 end

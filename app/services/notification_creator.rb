@@ -1,21 +1,26 @@
 # frozen_string_literal: true
 
 class NotificationCreator
-  def initialize(save_route:, user:)
+  def initialize(save_route:, user:, send_to: nil)
     @save_route = save_route
     @user = user
+    @send_to = send_to || 'email' # デフォルトはemail
   end
 
   # 結果を返すのみの構造体
   Result = Struct.new(:success?, :notification, :message)
 
-  def self.call(save_route:, user:)
-    new(save_route: save_route, user: user).call
+  def self.call(save_route:, user:, send_to: nil)
+    new(save_route: save_route, user: user, send_to: send_to).call
   end
 
   def call
     return handle_missing_datetime unless start_datetime_present?
+    return handle_missing_line_uid if line_notification_without_uid?
 
+    # 「条件に合うレコードがあればそれを取得し（find）、
+    #  なければ新しいインスタンスをメモリ上に作成する（initialize）」
+    #  というrailsに組み込まれている便利なメソッド
     notification = @save_route.notifications.find_or_initialize_by(user: @user)
     assign_notification_attributes(notification)
 
@@ -41,7 +46,9 @@ class NotificationCreator
 
   def assign_notification_attributes(notification)
     notify_at = self.class.send(:calculate_notify_at, @save_route.execution_date, @save_route.start_time)
-    notification.assign_attributes(notify_at: notify_at, status: 'pending')
+    # assign_attributes(railsの標準メソッド): 値をセットするだけ(保存しない)
+    # updateとの違いは、updateは値をセットして保存もすること。assign_attributesは値をセットするだけで保存はしないこと。
+    notification.assign_attributes(notify_at: notify_at, status: 'pending', send_to: @send_to)
   end
 
   def handle_success(notification)
@@ -60,7 +67,15 @@ class NotificationCreator
     Result.new(false, notification, { alert: I18n.t('notifications.create.alert') })
   end
 
+  def handle_missing_line_uid
+    Result.new(false, nil, { alert: I18n.t('notifications.create.line_uid') })
+  end
+
   def start_datetime_present?
     @save_route.execution_date.present? && @save_route.start_time.present?
+  end
+
+  def line_notification_without_uid?
+    @send_to.to_s == 'line' && @user.line_login_uid.blank?
   end
 end
