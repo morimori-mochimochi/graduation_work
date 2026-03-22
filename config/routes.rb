@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :save_routes do
+  resources :save_routes, constraints: { id: /.*/ } do
     resources :notifications, only: [:create]
   end
 
