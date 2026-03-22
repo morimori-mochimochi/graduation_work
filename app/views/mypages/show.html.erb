@@ -7,8 +7,7 @@
         <p class="text-lg font-medium"><%= current_user.name %></p>
       </div>
       <div class="py-2">
-        <p class="text-sm text-gray-600">メールアドレス</p>
-        <p class="text-lg font-medium"><%= current_user.email %></p>
+        <%= mail_or_line_info(current_user) %>
       </div>
 
       <%= link_to edit_mypage_path do %>
