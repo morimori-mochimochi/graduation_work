@@ -70,9 +70,7 @@
           <p><strong>通知日時:</strong> <%= @notify_at.strftime('%Y年%m月%d日 %H:%M') %></p>
           <div class=" flex items-center space-x-5">
             <%= notification_destination_info(@save_route, current_user) %>
-            <%= link_to edit_mypage_path do %>
-              <%= image_tag "/images/user_edit.png", alt: "edit_mypage",class:"btn_effect h-17" %>
-            <% end %>
+            <%= account_edit_button(current_user) %>
           </div>
         <% end %>
       </div>
