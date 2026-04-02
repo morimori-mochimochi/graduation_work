@@ -1,0 +1,23 @@
+<% if @save_routes.empty? %>
+  <div class="card bg-base-200 shadow-xl">
+    <div class="card-body">
+      <p>保存されているルートはありません。</p>
+      <p>地図ページからルートを検索し、「ルート保存」ボタンを押して登録してください。</p>
+    </div>
+  </div>
+<% else %>
+  <div class="overflow-x-auto">
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>移動手段</th>
+          <th class="text-right"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render @save_routes %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
