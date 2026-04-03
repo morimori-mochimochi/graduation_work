@@ -1,6 +1,7 @@
 <div class="container cute-title mx-auto px-4 py-8">
   <%= form_with(model: current_user, url: mypage_path, method: :patch, local: true) do |form| %>
     <div class="flex justify-start mt-6 gap-2">
+      <%= render 'shared/mypage_edit_container', form: form %>
       <%= link_to mypage_path, class: "nav-link" do %>
         <img src="/images/return_before.png" alt="return" class="btn_effect h-17">
       <% end %>
