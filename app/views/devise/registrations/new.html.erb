@@ -3,45 +3,5 @@
     <%= image_tag "/images/logo.png",alt: "Sketto", class:"w-64 md:w-80" %>
   </h1>
 
-  <div class="cute-title">
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-      <%= render "devise/shared/error_messages", resource: resource %>
-
-      <div class="space-y-7">
-        <div class="field">
-          <%= f.label :email %><br />
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
-        </div>
-        
-        <div class="field">
-          <%= f.label :"名前" %><br />
-          <%= f.text_field :name, autofocus: true, class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
-        </div>
-
-        <div class="field">
-          <%= f.label :"パスワード" %>
-          <% if @minimum_password_length %>
-          <em>(<%= @minimum_password_length %> 文字以上)</em>
-          <% end %><br />
-          <%= f.password_field :password, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
-        </div>
-
-        <div class="field">
-          <%= f.label :"パスワード（確認用）" %><br />
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "border-0 border-b-2 border-[#6D4808] focus:border-[#6D4808] outline-none w-2/3 py-1 bg-[#FFF4EB]" %>
-        </div>
-
-        <div class="actions" style="space-y-3;">
-          <%= f.submit nil, style: "display:none;" %>
-          <%= image_tag "sign_up_button.png",
-            alt: "登録",
-            class: "w-64 md:w-72 cursor-pointer transition-transform duration-300 hover:scale-110",
-            onclick: "this.closest('form').submit();" %>
-        </div>
-      </div>
-    <% end %>
-    <%= link_to new_user_session_path, class: "nav-link" do %>
-      <img src="/images/return_before.png" alt="return" class="btn_effect h-17">
-    <% end %>
-  </div>
+  <%= render "shared/registrations_new" %>
 </div>
